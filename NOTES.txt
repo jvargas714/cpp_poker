@@ -1,0 +1,79 @@
+6/15/15: Player class is now sortable by cash value
+
+1. Implement sorting functionality for the Card class
+    ^^ completed 6/6/15
+
+2. Create a header file with const that describe hand weights as well as a map to contain data
+    ^^ completed 6/15/15 @2238
+
+3. Implement Poker virtual class   <-- mostly complete
+    a. make methods to be virtual so they can be overridden
+        ^^ completed 7/8/2015
+
+    b. consider making players vector in a map for ease of look up
+        1. began this and need to retest all constructors again
+        ^^^ completed
+        2. implement Player *isPlayer() as well as find hand methods  <-- had issues doing this
+
+    c. implement Hand ID methods
+        a. Pair
+        b. twoPair
+        c. Straight
+        d. fourofakind
+        e. Trips
+        f. flush
+        g. Straight Flush
+        h. Royal Flush
+    ^^ completed 7/8/2015
+
+    d. have getHand() methods throw exception if hasHand() condition is not met
+        a. these methods should not get called unless hasHand() condition is met, else except is thown
+    ^^ completed 7/8/2015
+
+LEFT OFF POINT:
+    6/29/2015 @1845
+        -- currently left off at finishing the hasTwoPair() method  ***** finished
+            * looks to work, but needs a little more testing   ****** finished
+        -- need to finish the getTwoPair() method ****** finished
+    7/8/2015 @1842
+        -- finished up the poker virtual class <<-- finished 
+        -- will need to implement TexHoldem class, use your own namespace to isolate methods <-- finished
+        -- think of more texHoldem specific classes
+        -- look over scoring system for hands
+
+
+4. Implement TexHoldem class
+    a. inherit Poker abstract class <<-- done 
+    b. declare and define TexHoldem specific methods
+
+5. Implement Json configuration system using jsoncpp library 
+
+6. Create a gui config system for web interface (json as well)
+
+7. have game be installed into /usr/local/games as it is already in our PATH
+
+8. dynamically create a json file that carries that game state, ie as players win and lose 
+    money we can update that file which can then be synced to the web easiest. 
+    ** note that in players array, the actual player index corresponds to the actual player 
+        in the players vector 
+    ** time elapsed is in minutes 
+
+9. need a state machine of sorts in order to actually play a game 
+
+10. Create a logger, logger.h
+    - have the logger have filtering etc etc 
+    - can maybe run in a separate thread 
+
+11. Create a load game function 
+
+12. create web or comm interface so the data can be communicated up to the web GUI (ie to python &
+database then to javascript then to html etc etc )
+    * a socket wrapper class that takes commands from user as how to play 
+        - bet, fold, check etc etc
+    * as well as a comm system to send state of the game 
+    * this class should be a member of the poker class or texas holdem class 
+
+13. Create bots to play against, use some sort of machine learning or AI, something based on stats 
+
+14. Maybe redesign the players vector to a cyclic vector type to make keeping track of the index 
+    easier 

@@ -1,0 +1,20 @@
+{
+	"game" : {
+
+		"id" : 7140,
+		"deck_color" 		: "blue",
+		"table_img" 		: "path_to_image_here",
+		"small_blind" 		: 25,
+		"big_blind" 		: 50,
+		"number_of_players"	: 6,
+
+		"players" : [ 
+			{"name": "Jay",		"photo": "",	"starting_cash" : 1500},
+			{"name": "Kelsey", 	"photo": "",	"starting_cash" : 1500},
+			{"name": "Oscar", 	"photo": "",	"starting_cash" : 1500},
+			{"name": "Jimmy", 	"photo": "",	"starting_cash" : 1500},
+			{"name": "Can", 	"photo": "",	"starting_cash" : 1500},
+			{"name": "Pieter", 	"photo": "",	"starting_cash"	: 1500}
+		]
+	}
+}
