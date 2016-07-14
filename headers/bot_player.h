@@ -46,15 +46,22 @@ static const std::map<std::string, float> chen_map
 		{"A",  10}
 };
 
-class bot_player : public Player {
+class bot_player : public Player 
+{
 
 public:
+	// members
+	Brain* brain;
+
+	// methods 
 	bot_player();
-	bot_player(string name, int cash);
+	bot_player( string name, int cash );
 	~bot_player();
-	int bet(int);
+	int bet( int );
 	int bet();
-	void setStartingPower(int amt);
+	void setStartingPower( int amt );
+	void computeStartingPower();
+	void getBotStatus() const;
 
 private:
 	// data members
@@ -62,11 +69,6 @@ private:
 	int 	startingPower;
 
 	// assesses table assigns a probability of victory, will be based on the amt of cards out
-	void assessTable(const Cards& cds);
-
-public:
-	// uses Chen Formula to find starting hand power
-	void computeStartingPower();
-	void getBotStatus() const;
+	void assessTable( const Cards& cds, poker_states state );	
 };
 #endif /* HEADERS_BOT_PLAYER_H_ */

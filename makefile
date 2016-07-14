@@ -32,7 +32,8 @@ $(LIBFILE): $(OBJS)
 	mv $(LIBFILE) ./lib
 
 exe:
-	g++ -std=c++11 $(DIRS) -static ./sources/$(EXEC) $(LIBS) -o poker_exe -lpoker
+	#g++ -std=c++11 $(DIRS) -static ./sources/$(EXEC) $(LIBS) -o poker_exe -lpoker
+	g++ -std=c++11 $(DIRS) ./sources/$(EXEC) $(LIBS) -o poker_exe -lpoker
 
 .PHONY: install
 install:
@@ -41,7 +42,7 @@ install:
 
 .PHONY: clean
 clean:
-	rm --verbose *.o ./lib/*.a poker_exe
+	rm -v *.o ./lib/*.a poker_exe
 
 .PHONY: help
 help:

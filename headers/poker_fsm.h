@@ -5,10 +5,10 @@
  *  Description:
  *  	- file with functions to manage state of game
  */
-#include "master_poker.h"
 
 #ifndef HEADERS_POKER_FSM_H_
 #define HEADERS_POKER_FSM_H_
+#include "master_poker.h"
 
 static const int TIME_DELAY = 3; // 3 second delay before the AI makes a move
 
@@ -18,8 +18,11 @@ enum poker_states {
 	PREFLOP,
 	ROUND_OF_BETS,
 	DEAL_FLOP,
+	FLOP,
 	DEAL_TURN,
+	TURN,
 	DEAL_RIVER,
+	RIVER,
 	SHOWDOWN,
 
 };

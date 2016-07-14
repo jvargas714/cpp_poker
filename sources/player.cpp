@@ -13,11 +13,7 @@ Player::Player()
         :smallBlind_bet(false), bigBlind_bet(false), dealer(false),
 		 cash(1500), handStrength(0), highCardRnk(0)
 {
-//    string plyrName("Player 1");
-//    string tmp("1");
-//    plyrName.append(tmp);
-//    name = plyrName;
-    name = "Player 1";
+    name = "Player";
 }
 
 

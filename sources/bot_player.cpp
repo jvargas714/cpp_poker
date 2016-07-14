@@ -7,7 +7,7 @@
 #include "bot_player.h"
 
 bot_player::bot_player()
-: Player(), chancesOfVictory(0), startingPower(0){}
+: Player(), chancesOfVictory(0), startingPower(0){ name = "Bot_Player";}
 
 bot_player::bot_player(std::string name, int cash)
 : Player(name, cash), chancesOfVictory(0), startingPower(0){}
@@ -86,7 +86,6 @@ void bot_player::getBotStatus() const
 	std::cout << *this;
 	std::cout << "startingPower: " << startingPower << "\n";
 	std::cout << "chancesOfVictory: " << chancesOfVictory << std::endl;
-
 }
 
 void bot_player::setStartingPower(int amt)
@@ -104,4 +103,12 @@ int bot_player::bet()
 {
 	//TODO: implement
 	return 0;
+}
+
+void bot_player::assessTable( const Cards& cds, poker_states state ) 
+{
+	/*
+		FLOP Situation (RATIO METHOD):
+			TODO: define flop situation betting
+	*/
 }
