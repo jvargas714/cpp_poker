@@ -7,12 +7,22 @@
 #include "bot_player.h"
 
 bot_player::bot_player()
-: Player(), chancesOfVictory(0), startingPower(0){ name = "Bot_Player";}
+: Player(), chancesOfVictory(0), startingPower(0),
+  currentBestHand(), currentHandStrength(0)
+{
+	name = "Bot_Player";
+}
 
 bot_player::bot_player(std::string name, int cash)
-: Player(name, cash), chancesOfVictory(0), startingPower(0){}
+: Player(name, cash), chancesOfVictory(0), startingPower(0),
+  currentBestHand(), currentHandStrength(0){}
 
 bot_player::~bot_player(){}
+
+void initBrain(TexasHoldem& game)
+{
+
+}
 
 void bot_player::computeStartingPower()
 {
@@ -105,10 +115,14 @@ int bot_player::bet()
 	return 0;
 }
 
-void bot_player::assessTable( const Cards& cds, poker_states state ) 
+bool bot_player::assessTable( const Cards& cds, poker_states state )
 {
-	/*
-		FLOP Situation (RATIO METHOD):
-			TODO: define flop situation betting
-	*/
+	//TODO:: really should just wrap the brain assessTable
+	return true;
+}
+
+bool bot_player::findValidHand()
+{
+	//TODO:: needs implementation use similar strategy that find hand uses in TexasHoldem class
+	return true;
 }

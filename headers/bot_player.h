@@ -14,7 +14,6 @@
 #include <cmath>
 
 /*
- *
  * AI player, to play against
  * Override bet function
  * arg of bet will be disregarded
@@ -30,7 +29,7 @@
  * 	2. implement assess table function to determine viability of a bet
  * 	3. create an appropriate data structure to assess cards on table to help with betting strategy
  * 	4. implement bet function based on state of game, consider starting power and chances_of_victory
- *
+ * 	5. Maybe define some personality traits the bot can exhibit in its betting habits
  */
 
 // static const here in the head ensures that only one copy of this map is generated per cpp file
@@ -48,27 +47,29 @@ static const std::map<std::string, float> chen_map
 
 class bot_player : public Player 
 {
+	friend class Brain;
 
 public:
-	// members
-	Brain* brain;
-
-	// methods 
 	bot_player();
 	bot_player( string name, int cash );
 	~bot_player();
 	int bet( int );
 	int bet();
 	void setStartingPower( int amt );
-	void computeStartingPower();
-	void getBotStatus() const;
+	void computeStartingPower(); 	// TODO:: should be moved to brain
+	void getBotStatus() const;  	// TODO:: for debug only
+	void initBrain(TexasHoldem& game);
 
 private:
 	// data members
-	double 	chancesOfVictory;
+	float 	chancesOfVictory;
 	int 	startingPower;
+	Cards 	currentBestHand;
+	int	 	currentHandStrength;
+	Brain 	brain;
 
-	// assesses table assigns a probability of victory, will be based on the amt of cards out
-	void assessTable( const Cards& cds, poker_states state );	
+	// Helper functions
+	bool assessTable( const Cards& cds, poker_states state );
+	bool findValidHand();
 };
 #endif /* HEADERS_BOT_PLAYER_H_ */

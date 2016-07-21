@@ -3,48 +3,70 @@
 using namespace std;
 
 Brain::Brain()
-{}
+{ game = nullptr; }
 
 Brain::~Brain()
 {}
 
 // TOOD:: needs testing 
-void Brain::assessTable( const Cards& cds, poker_states state )
+bool Brain::assessTable( bot_player& bot, poker_states state )
 {	/* TODO:: Implement assessTable function to switch through each state of the game */
 	switch(state)
 	{
-		case: 
+		case FLOP:
+			assessFlopScenario( bot );
 	}
+	return true;
 }
 
+//--------------------------------------------------JayBrain----------------------------------------
 JayBrain::JayBrain() : Brain()
 {
 	// will need to call init() with a poker game when it becomes available 
 }
 
-JayBrain::JayBrain( Poker* pkr ) : Brain()
+JayBrain::JayBrain( TexasHoldem* pkr ) : Brain()
 {
 	init( pkr );
 }
 
-~JayBrain::JayBrain()
+JayBrain::~JayBrain()
 {}
 
-void JayBrain::init( Poker* pkr )
+void JayBrain::init( TexasHoldem* pkr )
 {
 	// txGame should be on heap, from outside this class, point to game at hand  
 	game = pkr;
 }
 
 // TODO:: needs testing 
-void JayBrain::assessFlopScenario( const Cards& cds )
+bool JayBrain::assessFlopScenario( bot_player& bot )
 {
 	/*
-		- analyze flop situation
-		- take into consideration actions of other players in game
-		- input: 
+		1. analyze flop situation
+		2. find out what hand we are closest to and use that hand to go for
+		3. calculate pot odds
+		4. calculate card odds
+		5. use card and pot odds to inform decision
+		6. take into consideration actions of other players in game
 	*/
-	int cardsDealt = game.numPlayers*2 + 3;
+	int numCardsDealt = 52 - game->gameDeck.numCardsLeft();
 	int outs;
+	Card hole1 = bot.hand[0];
+	Card hole2 = bot.hand[1];
+
+	if( game->tableCards.size() != 3 )
+	{
+		cout << "JayBrain::assessFlopScenario(): Error --> tableCards.size() != 3, exiting" << endl;
+		return;
+	}
+
+	// first we see if we have a valid hand off the flop
+	vector<Card>::iterator it = bot.hand.begin();
+	bot.hand.insert(it, game->tableCards.begin(), game->tableCards.end() );
+	if( bot.hand.size() != 5 )
+		return false;
+
+
 
 }

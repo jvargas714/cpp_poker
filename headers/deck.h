@@ -7,8 +7,8 @@
 
 class Deck {
 
-public:
-    std::vector<Card> deck;                // allocate memory for deck
+private:
+    std::vector<Card> deck;
 
 public:
     Deck();
@@ -20,6 +20,4 @@ public:
     size_t numCardsLeft() const;           // returns number of cards left in deck
 
 };
-
-
 #endif // DECK_H_INCLUDED

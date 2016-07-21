@@ -7,21 +7,24 @@
 /*
 	Abstract class that will characterize bot_player's autonomous behavior
 	REF: http://www.thepokerbank.com/strategy/mathematics/pot-odds/
+
+	Design is to have a brain class type wrapped in a bot player. Betting functions will wrap
+	brain functionality.
 */
 class Brain
 {
 public:
 	Brain();
 	virtual ~Brain();
-	void assessTable( const Cards& cds, poker_states state );
+	bool assessTable( bot_player& bot, poker_states state );
 	virtual void bet()=0;
 
 private:
-	Poker* game;
-	void init(Poker* pkr);
-	virtual void assessFlopScenario( const Cards& cds, TexasHoldem& game )=0;
-	virtual void assessTurnScenario( const Cards& cds, TexasHoldem& game )=0;
-	virtual void assessRiverScenario( const Carfds& cds, TexasHoldem& game )=0; 
+	TexasHoldem* game;
+	virtual void init(TexasHoldem* pkr) = 0;
+	virtual bool assessFlopScenario( bot_player& bot )=0;
+	virtual bool assessTurnScenario( bot_player& bot )=0;
+	virtual bool assessRiverScenario( bot_player& bot )=0;
 };
 
 
@@ -36,9 +39,9 @@ public:
 	~PotBrain();
 
 private:
-	void assessFlopScenario( const Cards& cds, TexasHoldem& game );
-	void assessTurnScenario( const Cards& cds, TexasHoldem& game );
-	void assessRiverScenario( const Cards& cds TexasHoldem& game );
+	bool assessFlopScenario( bot_player& bot );
+	bool assessTurnScenario( bot_player& bot );
+	bool assessRiverScenario( bot_player& bot );
 };
 
 
@@ -53,12 +56,14 @@ class JayBrain : public Brain
 {
 public:
 	JayBrain();
+	JayBrain( TexasHoldem* pkr );
 	~JayBrain();
 
 private:
-	void assessFlopScenario( const Cards& cds, TexasHoldem& game );
-	void assessTurnScenario( const Cards& cds, TexasHoldem& game );
-	void assessRiverScenario( const Cards& cds TexasHoldem& game );
+	void init( TexasHoldem* pkr );
+	bool assessFlopScenario( bot_player& bot );
+	bool assessTurnScenario( bot_player& bot );
+	bool assessRiverScenario( bot_player& bot );
 };
 
 
