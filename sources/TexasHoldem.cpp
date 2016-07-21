@@ -460,7 +460,7 @@ void TexasHoldem::findWinner(){
 
 Player* TexasHoldem::findPlayer(const string name) { // TODO:::::needs testing
 	// private method that returns pointer to player identified by the name
-	Player* plyr;
+	Player* plyr = nullptr;
 	for(unsigned int i = 0; i < players.size(); i++){
 		if(players[i].name == name){
 			plyr = &players[i];
