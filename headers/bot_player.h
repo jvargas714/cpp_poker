@@ -9,6 +9,8 @@
 #define HEADERS_BOT_PLAYER_H_
 #include "master_poker.h"
 #include "player.h"
+#include "brain.h"
+#include "poker_fsm.h"
 #include <map>
 #include <cstdlib>
 #include <cmath>
@@ -25,7 +27,7 @@
  * Another betting factor will be the players temperment (is he a puss or will he go big)
  *
  * TODO:
- * 	1. use chen formula to determine startingPower
+ * 	1. use chen formula to determine startingPower ** done **
  * 	2. implement assess table function to determine viability of a bet
  * 	3. create an appropriate data structure to assess cards on table to help with betting strategy
  * 	4. implement bet function based on state of game, consider starting power and chances_of_victory
@@ -66,7 +68,7 @@ private:
 	int 	startingPower;
 	Cards 	currentBestHand;
 	int	 	currentHandStrength;
-	Brain 	brain;
+	Brain* 	brain;
 
 	// Helper functions
 	bool assessTable( const Cards& cds, poker_states state );

@@ -19,15 +19,14 @@ public:
 	bool assessTable( bot_player& bot, poker_states state );
 	virtual void bet()=0;
 
-private:
+protected:
 	TexasHoldem* game;
 	virtual void init(TexasHoldem* pkr) = 0;
 	virtual bool assessFlopScenario( bot_player& bot )=0;
 	virtual bool assessTurnScenario( bot_player& bot )=0;
 	virtual bool assessRiverScenario( bot_player& bot )=0;
+	virtual bool assessTable( const Cards& cds );
 };
-
-
 
 //--------------------------------------------------------------------------------------------------
 
@@ -38,7 +37,7 @@ public:
 	PotBrain();
 	~PotBrain();
 
-private:
+protected:
 	bool assessFlopScenario( bot_player& bot );
 	bool assessTurnScenario( bot_player& bot );
 	bool assessRiverScenario( bot_player& bot );
@@ -46,9 +45,6 @@ private:
 
 
 //--------------------------------------------------------------------------------------------------
-
-
-
 
 
 /* Brain that simply uses ideas from me REF:: my brain */
@@ -59,7 +55,7 @@ public:
 	JayBrain( TexasHoldem* pkr );
 	~JayBrain();
 
-private:
+protected:
 	void init( TexasHoldem* pkr );
 	bool assessFlopScenario( bot_player& bot );
 	bool assessTurnScenario( bot_player& bot );
@@ -68,6 +64,4 @@ private:
 
 
 //--------------------------------------------------------------------------------------------------
-
-
 #endif /* END HEADERS_BRAIN_H */

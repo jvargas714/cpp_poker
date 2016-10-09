@@ -96,7 +96,8 @@ void Poker::dealCard(Player* plyr) {
     plyr->hand.push_back(Card());
 }
 
-vector<int> Poker::dupRankInd(const Player* plyr) const{
+vector<int> Poker::dupRankInd(const Player* plyr) const
+{
     using std::begin;
     using std::end;
 
@@ -106,20 +107,24 @@ vector<int> Poker::dupRankInd(const Player* plyr) const{
     int tmp = 0;
     int index = 0;
 
-    for(int i = 0; i<13; i++){
-        for(int *rk = handRanks; rk < (handRanks+5); rk++){
-
-            if(*rk == i){
+    for(int i = 0; i<13; i++)
+    {
+        for(int *rk = handRanks; rk < (handRanks+5); rk++)
+        {
+            if(*rk == i)
+            {
                 cnt++;
-
-                if(cnt == 1){
+                if(cnt == 1)
+                {
                     tmp = index;
                 }
-                else if(cnt == 2){
+                else if(cnt == 2)
+                {
                     dupRanksInd.push_back(tmp);
                     dupRanksInd.push_back(index);
                 }
-                else if(cnt > 2){
+                else if(cnt > 2)
+                {
                     dupRanksInd.push_back(index);
                 }
             }index++;
@@ -129,11 +134,7 @@ vector<int> Poker::dupRankInd(const Player* plyr) const{
         tmp = 0;
     }
     delete [] handRanks;
-
-    // cout << "Debug:Poker:dupRanksInd().dupRanksInd: " << dupRanksInd.size() << endl;
-
     return dupRanksInd;
-
 }
 
 int* Poker::getRankInd(const Player* plyr) const{
@@ -170,17 +171,13 @@ bool Poker::hasPair(const Player* plyr) const {
 
 Cards Poker::getPair(const Player *player) const {
     vector<Card> pair;
-//TODO: add error handling here
     if(!hasPair(player))
         throw poker_error::HandIDError("Error--> Poker:getPair(): HandIDError");
-
     else{
-
         vector<int> rankIndex = dupRankInd(player);
         pair.push_back(player->hand[rankIndex[0]]);
         pair.push_back(player->hand[rankIndex[1]]);
     }
-
     return pair;
 }
 
@@ -193,11 +190,8 @@ bool Poker::hasTwoPair(const Player *player) const {
     bool condition = handInd.size() == 4 &&
                      std::count(handRanks, handRanks+5,
                                 player->hand[handInd[0]].rankIndex) != 4;
-
 delete [] handRanks;
-
 return condition;
-
 }
 
 Cards Poker::getTwoPair(const Player *player) const {
@@ -402,10 +396,6 @@ bool Poker::hasRoyalFlush(const Player *player) const {
     }
 
     stCnt = std::count(suits.begin(), suits.end(), suits[0]);
-
-// cout << "Debug: stCnt-> " << stCnt << " rnkCnt-->" << rnkCnt << cards[4].getRank() << endl;
-
-
     return stCnt == 5 && rnkCnt == 4 && cards[4].getRank() == "A";
 }
 

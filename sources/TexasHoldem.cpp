@@ -197,9 +197,6 @@ void TexasHoldem::findHand(Player* plyr){
 	allCards.push_back(hole1);
 	allCards.push_back(hole2);
 	sort(allCards.begin(), allCards.end());
-
-	Cards currentBestHand;
-	
 	plyr->bestHand.clear();
 	plyr->clearHand();
 	plyr->clearHandStrength();

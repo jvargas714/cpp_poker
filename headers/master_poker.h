@@ -15,5 +15,5 @@
 #include "player.h"
 #include "TexasHoldem.h"
 #include "bot_player.h"
-
+#include "poker_fsm.h"
 #endif /* HEADERS_MASTER_POKER_H_ */

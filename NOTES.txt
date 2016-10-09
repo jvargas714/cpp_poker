@@ -42,10 +42,8 @@ LEFT OFF POINT:
         -- look over scoring system for hands
 
 
-4. Implement TexHoldem class
-    a. inherit Poker abstract class <<-- done 
-    b. declare and define TexHoldem specific methods
 
+TODO:: --> 
 5. Implement Json configuration system using jsoncpp library 
 
 6. Create a gui config system for web interface (json as well)
@@ -75,5 +73,4 @@ database then to javascript then to html etc etc )
 
 13. Create bots to play against, use some sort of machine learning or AI, something based on stats 
 
-14. Maybe redesign the players vector to a cyclic vector type to make keeping track of the index 
-    easier 
+14. Maybe redesign the players vector to a cyclic vector type to make keeping track of the index easier 

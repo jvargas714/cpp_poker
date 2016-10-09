@@ -50,7 +50,7 @@
 			- creates a Set<Set>> of cards where inner set is 5 cards
 				a. holds 21 possible hands (combo where order does not matter)
 			- from the set the best hand is found and assigned a weight to the
-				player's handStrenght member
+				player's handStrength member
 
 		5. void dealFlop()
 			- deals 3 community cards to the table (deals flop)
@@ -118,7 +118,8 @@ const string CFG_FILE = "/home/likewise-open/G3TI/jay.vargas/Documents/Dev/Poker
 typedef std::vector<std::vector<Card>> cardSuperVector;	// card vector embedded in card set for combo Method
 typedef vector<vector<int>> intComb;
 
-class TexasHoldem : public Poker{
+class TexasHoldem : public Poker
+{
 
 private:
 	int pot, smallBlind, bigBlind, gameId;
