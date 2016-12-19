@@ -7,8 +7,7 @@
 
 #ifndef HEADERS_BOT_PLAYER_H_
 #define HEADERS_BOT_PLAYER_H_
-#include "master_poker.h"
-#include "player.h"
+#include "poker_types.h"
 #include "brain.h"
 #include "poker_fsm.h"
 #include <map>
@@ -46,8 +45,9 @@ static const std::map<std::string, float> chen_map
 		{"Q",  7}, {"K",   8},
 		{"A",  10}
 };
-
-class bot_player : public Player 
+class Brain;
+typedef std::vector<Card> Cards;
+class bot_player : public Player
 {
 	friend class Brain;
 
@@ -61,6 +61,8 @@ public:
 	void computeStartingPower(); 	// TODO:: should be moved to brain
 	void getBotStatus() const;  	// TODO:: for debug only
 	void initBrain(TexasHoldem& game);
+	inline int getCurrentHandStrength() { return currentHandStrength; }
+	inline void setCurrentHandStrength( int amt ) { currentHandStrength = amt; }
 
 private:
 	// data members

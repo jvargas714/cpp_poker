@@ -1,11 +1,3 @@
-/*
- * test_suite.cpp
- *
- *  Created on: Jul 11, 2016
- *      Author: jay
- *
- *  General Testing file
- */
 #include "master_poker.h"
 
 #define TEST_CNT 5

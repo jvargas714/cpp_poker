@@ -8,12 +8,12 @@
 
 #ifndef HEADERS_POKER_FSM_H_
 #define HEADERS_POKER_FSM_H_
-#include "master_poker.h"
+#include "TexasHoldem.h"
 
 static const int TIME_DELAY = 3; // 3 second delay before the AI makes a move
 
-
-enum poker_states {
+enum poker_states
+{
 	DEAL_HOLE_CARDS,
 	PREFLOP,
 	ROUND_OF_BETS,
@@ -24,10 +24,10 @@ enum poker_states {
 	DEAL_RIVER,
 	RIVER,
 	SHOWDOWN,
-
 };
 
-enum player_actions {
+enum player_actions
+{
 	BET = 10,
 	RAISE,
 	FOLD,
@@ -36,12 +36,12 @@ enum player_actions {
 };
 
 // pre-flop bets, returns next game state
-int pre_flop_bets(TexasHoldem& game);
+int pre_flop_bets( TexasHoldem& game );
 
 // round of regular bets, returns next game state
-int round_of_bets(TexasHoldem& game);
+int round_of_bets( TexasHoldem& game );
 
 // show down where remaining players reveal cards and a winner is determined or pot is split etc
-int showdown(TexasHoldem& game);
+int showdown( TexasHoldem& game );
 
 #endif /* HEADERS_POKER_FSM_H_ */

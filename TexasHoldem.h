@@ -4,8 +4,6 @@
 #include <iostream>
 #include <set>
 #include <cstdlib>
-#include "card.h"
-#include "hand_weight.h"
 #include "poker.h"
 #include "json/json.h"
 #include "json/json-forwards.h"
@@ -114,13 +112,11 @@
 		intComb --> vector<vector<int>>
 */
 // debug cfg file 
-const string CFG_FILE = "/home/likewise-open/G3TI/jay.vargas/Documents/Dev/Poker/poker/config/TXHldm.json";
-typedef std::vector<std::vector<Card>> cardSuperVector;	// card vector embedded in card set for combo Method
-typedef vector<vector<int>> intComb;
+const std::string CFG_FILE = "../config/TXHldm.json";
+class Poker;
 
 class TexasHoldem : public Poker
 {
-
 private:
 	int pot, smallBlind, bigBlind, gameId;
 	// flags 
@@ -133,8 +129,8 @@ public:
 	TexasHoldem();
 	TexasHoldem(std::string& cfg_path);
 	TexasHoldem(int smallBlind, int bigBlind, int cash);
-	TexasHoldem(std::initializer_list<string>);
-	TexasHoldem(std::initializer_list<std::pair<string, int>>);
+	TexasHoldem(std::initializer_list<std::string>);
+	TexasHoldem(std::initializer_list<std::pair<std::string, int>>);
 	void showHand(const Player*) const;						// pure virtual in poker
 	void dealHands();										// pure virtual in poker
 	void findHand(Player*);									// pure virtual in poker
@@ -154,15 +150,14 @@ public:
    	virtual void findWinner();
 
 private:
-	Player* findPlayer(const string name);
+	Player* findPlayer(const std::string name);
 	void assign_dealer();
 	void rotateDealer();
 };
 
-
 long nCr(int n, int k);
 long fact(int n);
 intComb comb(int n, int k);
-void debugPrintVect(vector<int>);
+void debugPrintVect(std::vector<int>);
 
 #endif

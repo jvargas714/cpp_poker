@@ -73,7 +73,7 @@ license you like.
 
 
 
-#include "json/json.h"
+#include "../json/json.h"
 
 #ifndef JSON_IS_AMALGAMATION
 #error "Compile with -I PATH_TO_JSON_DIRECTORY"
@@ -191,10 +191,10 @@ static inline void fixNumericLocale(char* begin, char* end) {
 // See file LICENSE for detail or copy at http://jsoncpp.sourceforge.net/LICENSE
 
 #if !defined(JSON_IS_AMALGAMATION)
-#include <json/assertions.h>
-#include <json/reader.h>
-#include <json/value.h>
-#include "json_tool.h"
+#include <../headers/json/assertions.h>
+#include <../headers/json/reader.h>
+#include <../headers/json/value.h>
+#include "../headers/json_tool.h"
 #endif // if !defined(JSON_IS_AMALGAMATION)
 #include <utility>
 #include <cstdio>
