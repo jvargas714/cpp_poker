@@ -12,6 +12,7 @@
 #include "deck.h"
 #include "poker_types.h"
 #include "poker_error.h"
+#include "logger.h"
 
 namespace assessment
 {

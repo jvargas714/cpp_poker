@@ -1,11 +1,4 @@
-/*
- * assessment.cpp
- *
- *  Created on: Aug 9, 2016
- *      Author: jay
- */
 #include "assessment.h"
-#include <iostream>
 #include <algorithm>
 
 std::vector<std::string> assessment::getHandSuits( const Cards& cds )
@@ -68,6 +61,7 @@ std::vector<int> assessment::dupRankInd( const Cards& cds )
 		cnt = 0;
 		tmp = 0;
 	}
+	delete[] handRanks;
 	return dupRanksInd;
 }
 
@@ -91,6 +85,7 @@ bool assessment::hasTwoPair( const Cards& cds )
 	bool condition = handInd.size() == 4 &&
 					 std::count( handRanks, handRanks + 5,
 								 cds[ handInd[ 0 ] ].rankIndex ) != 4;
+	delete[] handRanks;
 	return condition;
 }
 
@@ -361,6 +356,7 @@ Cards assessment::getRoyalFlush( const Cards& cds )
 int assessment::findHandStrength( const Cards& cards )
 {
 	// runs through all assessment functions to determine a hand strength and return it
+	logger& lg = logger::instance();
 	using std::count;
 	Cards cds = cards;
 	std::sort( cds.begin(), cds.end() );
@@ -440,10 +436,6 @@ int assessment::findHandStrength( const Cards& cards )
 		handStrength = HandMapper::handMap.at( "high" )[ cardRnk ];
 		message = "a High Card";
 	}
-	std::cout << "assessment::findHandStrength(): " << "hand type: " << message <<
-			  ", with a hand strength of " << handStrength << std::endl;
-
+	lg << "hand type: " << message << ", with a hand strength of " << handStrength << std::endl;
 	return handStrength;
 }
-
-

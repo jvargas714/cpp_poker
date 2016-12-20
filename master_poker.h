@@ -18,5 +18,6 @@
 #include "bot_player.h"
 #include "poker_fsm.h"
 #include "poker_types.h"
+#include "logger.h"
 
 #endif /* HEADERS_MASTER_POKER_H_ */

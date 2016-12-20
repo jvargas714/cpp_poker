@@ -38,7 +38,7 @@ LEFT OFF POINT:
     7/8/2015 @1842
         -- finished up the poker virtual class <<-- finished 
         -- will need to implement TexHoldem class, use your own namespace to isolate methods <-- finished
-        -- think of more texHoldem specific classes
+        -- think of more texHoldem specific classes <<-- finished
         -- look over scoring system for hands
 
 
@@ -59,8 +59,9 @@ TODO:: -->
 9. need a state machine of sorts in order to actually play a game 
 
 10. Create a logger, logger.h
-    - have the logger have filtering etc etc 
-    - can maybe run in a separate thread 
+    - have the logger have filtering etc etc <<-- finished
+    - can maybe run in a separate thread
+    - refactor code to use the logger instead of std::cout
 
 11. Create a load game function 
 

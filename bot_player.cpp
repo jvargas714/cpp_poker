@@ -37,10 +37,11 @@ void bot_player::computeStartingPower()
 	 		1b. Can use a ratio x/20 and convert that to a probabiltity the player should
 	 			raise or not.
 	 */
-	std::cout << "bot_player::computeStartingPower(): " << std::endl;
+	logger& lg = logger::instance();
+	lg << "bot_player::computeStartingPower(): \n";
 	float tmp_scr;
-	const Card& cd1 = hand[ 0 ];
-	const Card& cd2 = hand[ 1 ];
+	const Card cd1 = hand[ 0 ];
+	const Card cd2 = hand[ 1 ];
 	float cdPwr1 = chen_map.at( cd1.getRank() );
 	float cdPwr2 = chen_map.at( cd2.getRank() );
 	bool pair = false;
@@ -89,18 +90,19 @@ void bot_player::computeStartingPower()
 				break;
 		}
 	}
-
 	// round up
 	startingPower = (int)round( tmp_scr );
 }
 
-void bot_player::getBotStatus() const
+std::string bot_player::getBotStatus( ) const
 {
 	// used for testing
 	// output to standard output
-	std::cout << *this;
-	std::cout << "startingPower: " << startingPower << "\n";
-	std::cout << "chancesOfVictory: " << chancesOfVictory << std::endl;
+	std::stringstream ss;
+	ss << *this;
+	ss << "startingPower: " << startingPower << "\n";
+	ss << "chancesOfVictory: " << chancesOfVictory << std::endl;
+	return ss.str();
 }
 
 void bot_player::setStartingPower( int amt )

@@ -4,18 +4,41 @@
 #include <string>
 #include <vector>
 
-class Card
+typedef enum
 {
+	TWO,
+	THREE,
+	FOUR,
+	FIVE,
+	SIX,
+	SEVEN,
+	EIGHT,
+	NINE,
+	TEN,
+	JACK,
+	QUEEN,
+	KING,
+	ACE
+} CARD_RANK;
+
+typedef enum
+{
+	CLUB,
+	DIAMOND,
+	HEART,
+	SPADE
+} CARD_SUIT;
 
 /*
-index range: 0 - 12 
+index range: 0-12   0    1    2	   3	4    5    6    7    8     9    1-   11   12
 string rank[13] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
 
-index range 0-3 
+index range 0-3    0    1    2    3
 string suit[4] = {"C", "D", "H", "S"};
 */
 
-
+class Card
+{
 private:
 	const static std::string suit[4];
 	const static std::string rank[13];
@@ -44,14 +67,12 @@ public:
 
 	// compare function of cards returns 0 if equal -1 if less than and 1 if greater than
 	int cmp( const Card& cd ) const;
-
 };
 
 
 // functor to set comparator for STL containers 
 struct CardCmp
 {
-
 	bool operator()( Card cd1, Card cd2 ) const;
 };
 

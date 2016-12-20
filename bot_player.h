@@ -59,7 +59,7 @@ public:
 	int bet();
 	void setStartingPower( int amt );
 	void computeStartingPower(); 	// TODO:: should be moved to brain
-	void getBotStatus() const;  	// TODO:: for debug only
+	std::string getBotStatus( ) const;
 	void initBrain(TexasHoldem& game);
 	inline int getCurrentHandStrength() { return currentHandStrength; }
 	inline void setCurrentHandStrength( int amt ) { currentHandStrength = amt; }
