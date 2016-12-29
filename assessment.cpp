@@ -134,7 +134,6 @@ bool assessment::hasFlush( const Cards& cds )
 	Cards cards = cds;
 	std::sort( cards.begin(), cards.end() );
 	int cnt = 0;
-
 	for ( int i = 1; i < 5; i++ )
 	{
 		if ( cards[ i ].rankIndex - cards[ i - 1 ].rankIndex == 1 )
@@ -356,7 +355,7 @@ Cards assessment::getRoyalFlush( const Cards& cds )
 int assessment::findHandStrength( const Cards& cards )
 {
 	// runs through all assessment functions to determine a hand strength and return it
-	logger& lg = logger::instance();
+	logger lg;
 	using std::count;
 	Cards cds = cards;
 	std::sort( cds.begin(), cds.end() );

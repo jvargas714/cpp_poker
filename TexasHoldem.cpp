@@ -375,10 +375,10 @@ void TexasHoldem::findHand( Player* plyr )
 			{
 				plyr->bestHand = plyr->hand;
 				plyr->handStrength = tmp;
-				for ( size_t i = allCards.size() - 1; i >= 0; --i )
+				for ( int i = allCards.size() - 1; i >= 0; --i )
 				{
 					if ( allCards[ i ].rankIndex != twoPair[ 3 ].rankIndex\
- && allCards[ i ].rankIndex != twoPair[ 0 ].rankIndex )
+ 											&& allCards[ i ].rankIndex != twoPair[ 0 ].rankIndex )
 					{
 						plyr->highCardRnk = allCards[ i ].rankIndex;
 					}

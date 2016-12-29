@@ -37,7 +37,7 @@ void bot_player::computeStartingPower()
 	 		1b. Can use a ratio x/20 and convert that to a probabiltity the player should
 	 			raise or not.
 	 */
-	logger& lg = logger::instance();
+	logger lg;
 	lg << "bot_player::computeStartingPower(): \n";
 	float tmp_scr;
 	const Card cd1 = hand[ 0 ];
