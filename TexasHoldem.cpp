@@ -1,47 +1,43 @@
 #include "TexasHoldem.h"
-#include <fstream>
+#include "logger.h"
 
 TexasHoldem::TexasHoldem()
-		: Poker(), pot( 0 ), smallBlind( 10 ), bigBlind( 20 ), gameId( 999 ), findHandFlag( 0 )
+		: Poker(), pot( 0 ), smallBlind( 10 ), bigBlind( 20 ), gameId( 999 )
 {
 	// Constructor that inits from configuration
-	std::cout << "\n-----------Welcome!!!----------------\n New Texas Holdem game created!!!\n" << std::endl;
-	std::cout << "Small Blind: " << smallBlind << "\tBig Blind: " << bigBlind << "\n\nPlayers:\n"
-		 << std::endl;
+	log() << "\n-----------Welcome!!!----------------\n New Texas Holdem game created!!!\n"
+		  << std::endl;
+	log() << "Small Blind: " << smallBlind << "\tBig Blind: " << bigBlind << "\n\nPlayers:\n"
+		  << std::endl;
 	for ( auto p: players )
 	{
-		std::cout << p << std::endl;
+		log() << p << std::endl;
 	}
 	assign_dealer();
 }
 
 TexasHoldem::TexasHoldem( string& loadPath )
-		: Poker(), pot( 0 ), findHandFlag( 0 )
+		: Poker(), pot( 0 )
 {
 
 	// Init game from supplied config file
-	std::cout << "TexasHoldem:: Game init via " << loadPath << std::endl;
+	log() << "TexasHoldem:: Game init via " << loadPath << std::endl;
 	std::ifstream file( loadPath );
 	Json::Value root, game;
 	file >> root;
-
-	std::cout << "cfg file read:: " << std::endl;
-	std::cout << root << std::endl;
+	log() << "cfg file read:: " << std::endl;
+	log() << root << std::endl;
 	Json::Value def_val( -1 );
-
 	gameId = root[ "game" ][ "id" ].asInt(); //root.get( key, def_val );
-	std::cout << "game CFG::Game Id: " << gameId << std::endl;
-
+	log() << "game CFG::Game Id: " << gameId << std::endl;
 	string key = "small_blind";
 	def_val = 10;
 	smallBlind = root[ "game" ].get( key, def_val ).asInt();
-	std::cout << "game CFG::smallBlind:: " << smallBlind << std::endl;
-
+	log() << "game CFG::smallBlind:: " << smallBlind << std::endl;
 	key = "big_blind";
 	def_val = 20;
 	bigBlind = root[ "game" ].get( key, def_val ).asInt();
-	std::cout << "game CFG::bigBlind:: " << bigBlind << std::endl;
-
+	log() << "game CFG::bigBlind:: " << bigBlind << std::endl;
 	Json::Value player_array;
 	player_array = root[ "game" ][ "players" ];
 	if ( !player_array.isArray() )
@@ -50,7 +46,6 @@ TexasHoldem::TexasHoldem( string& loadPath )
 		std::cerr << "Error reading players from configurations, exiting" << std::endl;
 		return;
 	}
-
 	Json::Value::iterator it = player_array.begin();
 	std::string player_name;
 	numPlayers = root[ "game" ][ "number_of_players" ].asInt();
@@ -59,7 +54,7 @@ TexasHoldem::TexasHoldem( string& loadPath )
 		player_name = ( *it )[ "name" ].asString();
 		Player plyr( player_name, ( *it )[ "starting_cash" ].asInt() );
 		players.push_back( plyr );
-		std::cout << "Created player: " + player_name << std::endl;
+		log() << "Created player: " + player_name << std::endl;
 		it++;
 	}
 	// TODO:: finish here getting the player and configuring them as well
@@ -67,57 +62,55 @@ TexasHoldem::TexasHoldem( string& loadPath )
 }
 
 TexasHoldem::TexasHoldem( int smallBlind, int bigBlind, int cash )
-		: Poker( cash ), pot( 0 ), smallBlind( smallBlind ), bigBlind( bigBlind ), gameId( 999 ),
-		  findHandFlag( 0 )
+		: Poker( cash ), pot( 0 ), smallBlind( smallBlind ), bigBlind( bigBlind ), gameId( 999 )
 {
-
-	std::cout << "\n-----------Welcome!!!----------------\n New Texas Holdem game created!!!\n" << std::endl;
-	std::cout << "Small Blind: " << smallBlind << "\tBig Blind: " << bigBlind << "\n\nPlayers:\n"
-		 << std::endl;
+	log() << "\n-----------Welcome!!!----------------\n New Texas Holdem game created!!!\n"
+		  << std::endl;
+	log() << "Small Blind: " << smallBlind << "\tBig Blind: " << bigBlind << "\n\nPlayers:\n"
+		  << std::endl;
 	for ( auto p: players )
 	{
-		std::cout << p << std::endl;
+		log() << p << std::endl;
 	}
 	assign_dealer();
 }
 
 TexasHoldem::TexasHoldem( std::initializer_list<std::pair<std::string, int>> list )
-		: Poker( list ), pot( 0 ), smallBlind( 10 ), bigBlind( 20 ), gameId( 999 ),
-		  findHandFlag( 0 )
+		: Poker( list ), pot( 0 ), smallBlind( 10 ), bigBlind( 20 ), gameId( 999 )
 {
-
-	std::cout << "\n-----------Welcome!!!----------------\n New Texas Holdem game created!!!\n" << std::endl;
-	std::cout << "Small Blind: " << smallBlind << "\tBig Blind: " << bigBlind << "\n\nPlayers:\n"
-		 << std::endl;
+	log() << "\n-----------Welcome!!!----------------\n New Texas Holdem game created!!!\n"
+		  << std::endl;
+	log() << "Small Blind: " << smallBlind << "\tBig Blind: " << bigBlind << "\n\nPlayers:\n"
+		  << std::endl;
 	for ( auto p: players )
 	{
-		std::cout << p << std::endl;
+		log() << p << std::endl;
 	}
 	assign_dealer();
 }
 
 TexasHoldem::TexasHoldem( std::initializer_list<std::string> names )
-		: Poker( names ), pot( 0 ), smallBlind( 10 ), bigBlind( 20 ), gameId( 999 ),
-		  findHandFlag( 0 )
+		: Poker( names ), pot( 0 ), smallBlind( 10 ), bigBlind( 20 ), gameId( 999 )
 {
-
-	std::cout << "\n-----------Welcome!!!----------------\n New Texas Holdem game created!!!\n" << std::endl;
-	std::cout << "Small Blind: " << smallBlind << "\tBig Blind: " << bigBlind << "\n\nPlayers:\n"
-		 << std::endl;
+	log() << "\n-----------Welcome!!!----------------\n New Texas Holdem game created!!!\n"
+		  << std::endl;
+	log() << "Small Blind: " << smallBlind << "\tBig Blind: " << bigBlind << "\n\nPlayers:\n"
+		  << std::endl;
 	for ( auto p: players )
 	{
-		std::cout << p << std::endl;
+		log() << p << std::endl;
 	}
 	assign_dealer();
 }
 
 void TexasHoldem::showHand( const Player* player ) const
 {
-	std::cout << *player << std::endl;
+	log() << *player;
 	for ( Card cd : player->hand )
 	{
-		std::cout << cd << std::endl;
+		log() << cd << std::endl;
 	}
+	log() << "\n";
 }
 
 void TexasHoldem::dealHands()
@@ -130,30 +123,29 @@ void TexasHoldem::dealHands()
 			player.hand.push_back( move( gameDeck.dealCard() ) );
 		}
 	}
-	std::cout << "cards dealt out to players.... \n\n" << std::endl;
+	log() << "cards dealt out to players.... \n\n" << std::endl;
 }
 
 void TexasHoldem::changeBlinds( int sm, int big )
 {
 	smallBlind = sm;
 	bigBlind = big;
-
-	std::cout << "Small blind has been increased to $" << smallBlind << std::endl;
-	std::cout << "Big blind has been increased to $" << bigBlind << "\n" << std::endl;
+	log() << "Small blind has been increased to $" << smallBlind << std::endl;
+	log() << "Big blind has been increased to $" << bigBlind << "\n" << std::endl;
 }
 
 void TexasHoldem::showTableCards() const
 {
 	if ( tableCards.size() == 0 )
 	{
-		std::cout << " No table cards ....\n\n " << std::endl;
+		log() << "No table cards ....\n\n " << std::endl;
 	}
 	else
 	{
-		std::cout << "Table Cards: " << std::endl;
+		log() << "Table Cards: " << std::endl;
 		for ( auto cd : tableCards )
 		{
-			std::cout << cd << std::endl;
+			log() << cd << std::endl;
 		}
 	}
 }
@@ -165,43 +157,42 @@ void TexasHoldem::dealFlop()
 	{
 		tableCards.push_back( gameDeck.dealCard() );
 	}
-
-	std::cout << "Flop has been dealt....\n" << std::endl;
+	log() << "Flop has been dealt....\n" << std::endl;
 }
 
 void TexasHoldem::dealTurn()
 {
 	gameDeck.dealCard();
 	tableCards.push_back( gameDeck.dealCard() );
-	std::cout << "Turn card has been dealt....\n" << std::endl;
+	log() << "Turn card has been dealt....\n" << std::endl;
 }
 
 void TexasHoldem::dealRiver()
 {
 	gameDeck.dealCard();
 	tableCards.push_back( gameDeck.dealCard() );
-	std::cout << "River card has been dealt...\n" << std::endl;
+	log() << "River card has been dealt...\n" << std::endl;
 }
 
 void TexasHoldem::playerBet( Player* plyr, int amt )
 {
 	plyr->bet( amt );
 	pot += amt;
-	std::cout << "Pot is now $" << pot << std::endl;
+	log() << "Pot is now $" << pot << std::endl;
 }
 
 void TexasHoldem::betSmallBlind( Player* plyr )
 {
 	plyr->bet( smallBlind );
 	pot += smallBlind;
-	std::cout << "Pot is now $" << pot << std::endl;
+	log() << "Pot is now $" << pot << std::endl;
 }
 
 void TexasHoldem::betBigBlind( Player* plyr )
 {
 	plyr->bet( bigBlind );
 	pot += bigBlind;
-	std::cout << "Pot is now $" << pot << std::endl;
+	log() << "Pot is now $" << pot << std::endl;
 }
 
 void TexasHoldem::findHand( Player* plyr )
@@ -223,15 +214,12 @@ void TexasHoldem::findHand( Player* plyr )
 				the high card cannot be 8, need to fix this, 8/21/2015 @2236
 	*/
 	using std::count;
-
 	if ( tableCards.size() != 5 || plyr->hand.size() != 2 )
 	{
 		throw poker_error::HandIDError( "Error--> TexasHoldem:findHand():: 7 cards not present" );
 	}
-
 	Cards allCards = tableCards;
 	cardSuperVector possHands = comboCards( plyr );
-
 	Card hole1 = plyr->hand[ 0 ];
 	Card hole2 = plyr->hand[ 1 ];
 	allCards.push_back( hole1 );
@@ -240,14 +228,10 @@ void TexasHoldem::findHand( Player* plyr )
 	plyr->bestHand.clear();
 	plyr->clearHand();
 	plyr->clearHandStrength();
-	int handsChecked = 0;
 	std::string message( "error" );
-
 	for ( Cards possHand: possHands )
 	{
-		handsChecked++;
 		plyr->hand = possHand;
-
 		if ( hasRoyalFlush( plyr ) )
 		{
 			int tmp = HandMapper::handMap.at( "royalFlush" )[ 0 ];
@@ -263,7 +247,6 @@ void TexasHoldem::findHand( Player* plyr )
 		{
 			int highCardRank = plyr->bestHand[ 4 ].rankIndex;
 			int tmp = HandMapper::handMap.at( "straightFlush" )[ highCardRank ];
-
 			if ( tmp > plyr->handStrength )
 			{
 				plyr->bestHand = plyr->hand;
@@ -276,12 +259,10 @@ void TexasHoldem::findHand( Player* plyr )
 		{
 			int cardRnk = getFourOfAKind( plyr )[ 0 ].rankIndex;
 			int tmp = HandMapper::handMap.at( "fourOfAKind" )[ cardRnk ];
-
 			if ( tmp > plyr->handStrength )
 			{
 				plyr->bestHand = plyr->hand;
 				plyr->handStrength = tmp;
-
 				if ( cardRnk == allCards[ 6 ].rankIndex )
 				{
 					plyr->highCardRnk = allCards[ 2 ].rankIndex;  // c0 c1 c2 c3 c4 c5 c6-->
@@ -297,7 +278,6 @@ void TexasHoldem::findHand( Player* plyr )
 		{
 			Cards fullHouse = getFullHouse( plyr );
 			int cardRnk;
-
 			if ( count( fullHouse.begin(), fullHouse.end(), fullHouse[ 0 ] ) == 3 )
 			{
 				cardRnk = fullHouse[ 0 ].rankIndex;
@@ -306,9 +286,7 @@ void TexasHoldem::findHand( Player* plyr )
 			{
 				cardRnk = fullHouse[ 4 ].rankIndex;
 			}
-
 			int tmp = HandMapper::handMap.at( "fullHouse" )[ cardRnk ];
-
 			if ( tmp > plyr->handStrength )
 			{
 				plyr->bestHand = plyr->hand;
@@ -322,7 +300,6 @@ void TexasHoldem::findHand( Player* plyr )
 			Cards flush = getFlush( plyr );
 			int cardRnk = flush[ 4 ].rankIndex;
 			int tmp = HandMapper::handMap.at( "flush" )[ cardRnk ];
-
 			if ( tmp > plyr->handStrength )
 			{
 				plyr->bestHand = plyr->hand;
@@ -335,7 +312,6 @@ void TexasHoldem::findHand( Player* plyr )
 		{
 			int cardRnk = getStraight( plyr )[ 4 ].rankIndex;
 			int tmp = HandMapper::handMap.at( "straight" )[ cardRnk ];
-
 			if ( tmp > plyr->handStrength )
 			{
 				plyr->bestHand = plyr->hand;
@@ -348,12 +324,10 @@ void TexasHoldem::findHand( Player* plyr )
 		{
 			int cardRnk = getTrips( plyr )[ 0 ].rankIndex;
 			int tmp = HandMapper::handMap.at( "trips" )[ cardRnk ];
-
 			if ( tmp > plyr->handStrength )
 			{
 				plyr->bestHand = plyr->hand;
 				plyr->handStrength = tmp;
-
 				if ( cardRnk == allCards[ 6 ].rankIndex )
 				{
 					plyr->highCardRnk = allCards[ 3 ].rankIndex;
@@ -362,7 +336,6 @@ void TexasHoldem::findHand( Player* plyr )
 				{
 					plyr->highCardRnk = allCards[ 6 ].rankIndex;
 				}
-
 				message = "a Three of a Kind";
 			}
 		}
@@ -377,8 +350,9 @@ void TexasHoldem::findHand( Player* plyr )
 				plyr->handStrength = tmp;
 				for ( int i = allCards.size() - 1; i >= 0; --i )
 				{
-					if ( allCards[ i ].rankIndex != twoPair[ 3 ].rankIndex\
- 											&& allCards[ i ].rankIndex != twoPair[ 0 ].rankIndex )
+					if ( allCards[ i ].rankIndex != twoPair[ 0 ].rankIndex &&
+						 allCards[ i ].rankIndex != twoPair[ 3 ].rankIndex\
+ )
 					{
 						plyr->highCardRnk = allCards[ i ].rankIndex;
 					}
@@ -390,12 +364,10 @@ void TexasHoldem::findHand( Player* plyr )
 		{
 			int cardRnk = getPair( plyr )[ 0 ].rankIndex;
 			int tmp = HandMapper::handMap.at( "pair" )[ cardRnk ];
-
 			if ( tmp > plyr->handStrength )
 			{
 				plyr->bestHand = plyr->hand;
 				plyr->handStrength = tmp;
-
 				if ( allCards[ 6 ].rankIndex != cardRnk )
 				{
 					plyr->highCardRnk = allCards[ 6 ].rankIndex;
@@ -412,7 +384,6 @@ void TexasHoldem::findHand( Player* plyr )
 			sort( plyr->hand.begin(), plyr->hand.end() );
 			int cardRnk = plyr->hand[ 4 ].rankIndex;
 			int tmp = HandMapper::handMap.at( "high" )[ cardRnk ];
-
 			if ( tmp > plyr->handStrength )
 			{
 				plyr->bestHand = plyr->hand;
@@ -422,20 +393,18 @@ void TexasHoldem::findHand( Player* plyr )
 			}
 		}
 	}
-
 	plyr->hand.clear();
-	std::cout << plyr->name << " has " << message << " with a hand strength of " <<
-		 plyr->handStrength << " with a high card value of " << plyr->highCardRnk << std::endl;
+	log() << plyr->name << " has " << message << " with a hand strength of " <<
+		  plyr->handStrength << " with a high card value of " << plyr->highCardRnk << std::endl;
 	plyr->hand.push_back( hole1 );
 	plyr->hand.push_back( hole2 );
-	findHandFlag = true;
+}
 
-	for ( auto p : players )
+void TexasHoldem::calculateHands()
+{
+	for ( auto& plyr : players )
 	{
-		if ( p.handStrength == 0 )
-		{
-			findHandFlag = false;
-		}
+		findHand( &plyr );
 	}
 }
 
@@ -454,18 +423,22 @@ void TexasHoldem::findWinner()
 	    * possibly make a copy of the players first then call collectPot using players[i] pointer
 	*/
 
-	if ( !findHandFlag )
-	{    // ensures all players have had their hand strengths set
-		throw poker_error::FindWinnerError();
+	// ensure all players have assessed there hand strengths
+	for ( auto& p : players )
+	{
+		if ( p.handStrength == 0 )
+		{
+			findHand( &p );
+		}
 	}
-
+	// put players in acesceding order iaw their handstrengths
 	sort( players.begin(), players.end(), HandComparator() ); //TODO: may change player order
-	// debug line: to check if players were sorted properly 
+	// check player order
 	for ( Player plyr : players )
 	{
-		std::cout << "Debug@TexasHoldem::findWinner->handStrengths " << plyr.handStrength << std::endl;
+		log() << "TexasHoldem::findWinner(): handStrengths " << plyr.handStrength
+			  << std::endl;
 	}
-
 	// continue with find winner logic [. . . . . .]
 	int cnt = 0;
 	size_t maxInd = players.size() - 1;
@@ -476,9 +449,7 @@ void TexasHoldem::findWinner()
 			cnt++;
 		}
 	}
-	// debug 
-	std::cout << "Count of ties: " << cnt << std::endl;
-
+	log() << "TexasHoldem::findWinner(): Count of ties: " << cnt << std::endl;
 	std::vector<Player> tiedPlayers;
 	if ( cnt > 0 )
 	{
@@ -489,24 +460,23 @@ void TexasHoldem::findWinner()
 	}
 	else
 	{
-		std::cout << players[ maxInd ].name << " has won the hand!!" << std::endl;
+		log() << "TexasHoldem::findWinner(): "
+			  << players[ maxInd ].name << " has won the hand!!" << std::endl;
 		players[ maxInd ].collectPot( pot );
-		findHandFlag = false;
 		return;
 	}
 
 	// debug line 
-	std::cout << "Debug@TexasHoldem::findWinner->tiedPlayers.size()::::: " << tiedPlayers.size() << std::endl;
-
+	log() << "TexasHoldem::findWinner(): tiedPlayers.size -->  " << tiedPlayers.size()
+		  << std::endl;
 	// break tie if present using tiedPlayers vector
 	sort( tiedPlayers.begin(), tiedPlayers.end(), HighCardRnkComparator() );
-	// still need logic to sort out tied players below 
 	int stillTied = 0;
 
+	// if we still have a tie then split pot amongst the winners
 	if ( tiedPlayers[ tiedPlayers.size() - 2 ].highCardRnk == \
                                                 tiedPlayers[ tiedPlayers.size() - 1 ].highCardRnk )
 	{
-
 		for ( auto p : tiedPlayers )
 		{
 			if ( p.highCardRnk == tiedPlayers[ tiedPlayers.size() - 1 ].highCardRnk )
@@ -515,8 +485,7 @@ void TexasHoldem::findWinner()
 			}
 		}
 		// debug line 
-		std::cout << "We have " << stillTied << " players " << std::endl;
-
+		log() << "We have " << stillTied << " players " << "still tied." << std::endl;
 		std::vector<std::string> winningNames;
 		for ( int i = 0; i < stillTied; ++i )
 		{    // [ * * * * *]  say stillTied = 3; loop goes 0 1 2
@@ -526,7 +495,7 @@ void TexasHoldem::findWinner()
 		size_t amtAwarded =
 				pot / numTies;            // to split pot amongst ppl involved in the tie
 
-		std::cout << "Pot must be split amongst " << numTies << " players\n" << std::endl;
+		log() << "Pot must be split amongst " << numTies << " players\n" << std::endl;
 		for ( auto name : winningNames )
 		{                // award winners split pot
 			Player* winner = findPlayer( name );
@@ -540,25 +509,18 @@ void TexasHoldem::findWinner()
 		Player* winner = findPlayer( winnerName );
 		winner->collectPot( pot );
 	}
-
-	// end of method findWinner 
-	findHandFlag = false;
-	return;
 }
 
 Player* TexasHoldem::findPlayer( const std::string name )
-{ // TODO:::::needs testing
+{
 	// private method that returns pointer to player identified by the name
-	Player* plyr = new Player;
 	for ( unsigned int i = 0; i < players.size(); i++ )
 	{
 		if ( players[ i ].name == name )
 		{
-			plyr = &players[ i ];
-			return plyr;
+			return &players[ i ];
 		}
 	}
-	delete plyr;
 	return nullptr;
 }
 
@@ -568,23 +530,18 @@ cardSuperVector TexasHoldem::comboCards( const Player* plyr ) const
 	Cards cardSubSet;
 	intComb combInd;
 	Cards allCards = tableCards;
-
 	for ( auto cd: plyr->hand )
 	{
 		allCards.push_back( cd );
 	}
-
 	if ( allCards.size() != 7 )
 	{
 		throw poker_error::HandIDError( "Error @ comboCards(): 7 cards not present..." );
 	}
-
 	long numCombos = nCr( 7, 5 );
 	combInd = comb( 7, 5 );
-
 	for ( std::vector<int> subIndVect: combInd )
 	{
-
 		for ( int index: subIndVect )
 		{
 			cardSubSet.push_back( allCards[ index ] );
@@ -592,13 +549,11 @@ cardSuperVector TexasHoldem::comboCards( const Player* plyr ) const
 		result.push_back( cardSubSet );
 		cardSubSet.clear();
 	}
-
 	if ( result.size() != numCombos )
 	{
 		throw poker_error::HandIDError(
 				"Error @ comboCards(): 21 combos not present in hand combos" );
 	}
-
 	return result;
 }
 
@@ -607,13 +562,12 @@ void TexasHoldem::resetHand( int num )
 	pot = 0;
 	gameDeck.resetDeck();
 	tableCards.clear();
-
 	for ( unsigned int i = 0; i < players.size(); i++ )
 	{
 		players[ i ].reset();
 	}
-
-	std::cout << "======================hand reset!!=======#" << num << "==================\n\n" << std::endl;
+	log() << "======================hand reset!!=======#" << num << "==================\n\n"
+		  << std::endl;
 }
 
 intComb comb( int n, int k )
@@ -623,7 +577,6 @@ intComb comb( int n, int k )
 	maskVect.resize( (size_t)n, 0 );
 	std::vector<int> subVect;
 	int cnt = 1;
-
 	do
 	{
 		for ( int i = 0; i < n; ++i )
@@ -637,7 +590,6 @@ intComb comb( int n, int k )
 		subVect.clear();
 		cnt++;
 	} while ( prev_permutation( maskVect.begin(), maskVect.end() ) );
-
 	return result;
 }
 
@@ -661,12 +613,12 @@ long fact( int n )
 
 void debugPrintVect( std::vector<int> vect )
 {
-	std::cout << "Current vector values: ";
+	log() << "Current vector values: ";
 	for ( auto i: vect )
 	{
-		std::cout << i << " ";
+		log() << i << " ";
 	}
-	std::cout << "\nEnd debug print\n\n" << std::endl;
+	log() << "\nEnd debug print\n\n" << std::endl;
 }
 
 void TexasHoldem::collectPot( Player* plyr )
@@ -676,34 +628,36 @@ void TexasHoldem::collectPot( Player* plyr )
 
 void TexasHoldem::gameStatus() const
 {
-	std::cout
-			<< "=========================Game Status==================================================="
+	log()
+			<< "=========================Game Status================================================"
 			<< std::endl;
-	std::cout << "\tSmall Blind: " << smallBlind << "\tBig Blind: " << bigBlind << std::endl;
-	std::cout << "\tPot: " << pot << std::endl;
-
+	log() << "Small Blind: " << smallBlind << "\nBig Blind: " << bigBlind << std::endl;
+	log() << "Pot: " << pot << "\n" << std::endl;
 	for ( auto plyr : players )
 	{
 		showHand( &plyr );
 	}
 	showTableCards();
+	log() << "====================================================================================="
+		  << std::endl;
+
 }
 
 void TexasHoldem::gameOverview() const
 {
-	std::cout
-			<< "\n\n=========================Game Overview============================================="
-			<< std::endl;
-	std::cout << "Game ID: " << gameId << std::endl;
-	std::cout << "Small Blind: " << smallBlind << std::endl;
-	std::cout << "Big Blind: " << bigBlind << "\n" << std::endl;
-
+	log() << "\n\n=========================Game Overview=========================================="
+		  << std::endl;
+	log() << "Game ID: " << gameId << std::endl;
+	log() << "Small Blind: " << smallBlind << std::endl;
+	log() << "Big Blind: " << bigBlind << "\n" << std::endl;
+	std::ostringstream ss;
 	for ( auto& plyr : players )
 	{
-		std::cout << plyr << std::endl;
+		ss << plyr << "\n";
 	}
-	std::cout
-			<< "======================================================================================="
+	log() << ss.str();
+	log()
+			<< "===================================================================================="
 			<< std::endl;
 }
 
@@ -711,13 +665,12 @@ void TexasHoldem::assign_dealer()
 {
 	// function to assign dealer at beginning of game
 	// helper function to be called in the ctor
-	std::cout << "NumPlayers: " << numPlayers << std::endl;
+	log() << "NumPlayers: " << numPlayers << std::endl;
 	srand( (uint32_t)( NULL ) );
 	int index_player = rand() % numPlayers;
-	std::cout << "Index of player: " << index_player << std::endl;
+	log() << "Index of player: " << index_player << std::endl;
 	getPlayerRef( index_player ).dealer = true;
 	dealerIndex = (uint32_t)index_player;
-
 	if ( index_player >= ( numPlayers - 1 ) )
 	{
 		index_player = 0;
@@ -738,7 +691,6 @@ void TexasHoldem::assign_dealer()
 			getPlayerRef( index_player ).bigBlind_bet = true;
 		}
 	}
-	gameOverview();
 }
 
 void TexasHoldem::rotateDealer()
@@ -750,25 +702,22 @@ void TexasHoldem::rotateDealer()
 		plyr.smallBlind_bet = false;
 		plyr.bigBlind_bet = false;
 	}
-	std::cout << "Dealer Index: " << dealerIndex << std::endl;
+	log() << "Dealer Index: " << dealerIndex << std::endl;
 	getPlayerRef( dealerIndex++ ).dealer = true;
-
 	if ( dealerIndex >= numPlayers - 1 )
 	{
 		dealerIndex = 0;
-		std::cout << "smallBlind Index: " << dealerIndex << std::endl;
+		log() << "smallBlind Index: " << dealerIndex << std::endl;
 		getPlayerRef( dealerIndex++ ).smallBlind_bet = true;
-
-		std::cout << "bigBlind Index: " << dealerIndex << std::endl;
+		log() << "bigBlind Index: " << dealerIndex << std::endl;
 		getPlayerRef( dealerIndex ).bigBlind_bet = true;
 	}
 	else
 	{
 		int tmp = dealerIndex;
-		std::cout << "smallBlind Index: " << dealerIndex << std::endl;
+		log() << "smallBlind Index: " << dealerIndex << std::endl;
 		getPlayerRef( dealerIndex++ ).smallBlind_bet = true;
-
-		std::cout << "smallBlind Index: " << dealerIndex << std::endl;
+		log() << "smallBlind Index: " << dealerIndex << std::endl;
 		getPlayerRef( dealerIndex ).bigBlind_bet = true;
 		dealerIndex = (uint32_t)tmp;
 	}

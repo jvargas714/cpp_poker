@@ -4,6 +4,7 @@
 #include <iostream>
 #include <set>
 #include <cstdlib>
+#include <cstdint>
 #include "poker.h"
 #include "json/json.h"
 #include "json/json-forwards.h"
@@ -113,51 +114,47 @@
 */
 // debug cfg file 
 const std::string CFG_FILE = "../config/TXHldm.json";
+
 class Poker;
 
 class TexasHoldem : public Poker
 {
 private:
 	int pot, smallBlind, bigBlind, gameId;
-	// flags 
-	bool findHandFlag;
-
 public:
 	Cards tableCards;
 	uint32_t dealerIndex;
-
 	TexasHoldem();
-	TexasHoldem(std::string& cfg_path);
-	TexasHoldem(int smallBlind, int bigBlind, int cash);
-	TexasHoldem(std::initializer_list<std::string>);
-	TexasHoldem(std::initializer_list<std::pair<std::string, int>>);
-	void showHand(const Player*) const;						// pure virtual in poker
-	void dealHands();										// pure virtual in poker
-	void findHand(Player*);									// pure virtual in poker
-	void changeBlinds(int sm, int big);
+	TexasHoldem( std::string& cfg_path );
+	TexasHoldem( int smallBlind, int bigBlind, int cash );
+	TexasHoldem( std::initializer_list<std::string> );
+	TexasHoldem( std::initializer_list<std::pair<std::string, int>> );
+	void showHand( const Player* ) const;
+	void dealHands();
+	void findHand( Player* );
+	void changeBlinds( int sm, int big );
 	void dealFlop();
 	void dealTurn();
 	void dealRiver();
-	void playerBet(Player*, int amt);
-	void betSmallBlind(Player*);
-	void betBigBlind(Player*);
-	cardSuperVector comboCards(const Player*) const;
+	void playerBet( Player*, int amt );
+	void betSmallBlind( Player* );
+	void betBigBlind( Player* );
+	cardSuperVector comboCards( const Player* ) const;
 	void showTableCards() const;
-	void resetHand(int);
-	void collectPot(Player*);
+	void resetHand( int );
+	void collectPot( Player* );
 	void gameStatus() const;
-	void gameOverview() const; 
-   	virtual void findWinner();
-
+	void gameOverview() const;
+	virtual void findWinner();
+	void calculateHands();
 private:
-	Player* findPlayer(const std::string name);
+	Player* findPlayer( const std::string name );
 	void assign_dealer();
 	void rotateDealer();
 };
 
-long nCr(int n, int k);
-long fact(int n);
-intComb comb(int n, int k);
-void debugPrintVect(std::vector<int>);
-
+long nCr( int n, int k );
+long fact( int n );
+intComb comb( int n, int k );
+void debugPrintVect( std::vector<int> );
 #endif

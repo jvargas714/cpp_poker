@@ -10,7 +10,6 @@
 #include "poker_types.h"
 #include "brain.h"
 #include "poker_fsm.h"
-#include "logger.h"
 #include <map>
 #include <cstdlib>
 #include <cmath>

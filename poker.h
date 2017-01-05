@@ -9,7 +9,10 @@
  * Usage:
  *  1. for getHand() methods ie. getPair, getStraight ... only call these methods
  *      if the hasPair, hasStraight bool methods have been met, or an exception will
- *      be thrown
+ * 		be thrown
+ *
+ * 	TODO:: Need to refactor this class, set data members private, remove pointers and unecessary
+ *
  */
 
 #ifndef POKER_H_INCLUDED
@@ -64,29 +67,17 @@ public:
 	vector<Player> players;
 	int numPlayers = 0;
 	Deck gameDeck;
-
 	Poker();
-
 	Poker( std::initializer_list<std::pair<string, int> > );
-
 	Poker( int cash );
-
 	Poker( std::initializer_list<string> names );
-
 	virtual ~Poker();
-
 	void enterGame( string name, int cash );
-
 	void enterGame( std::initializer_list<std::pair<string, int> > players );
-
 	void dealCard( Player*, Card&& );
-
 	void dealCard( Player* );
-
 	Player& getPlayerRef( int index );
-
 	Player& getPlayerRef( std::string& name );
-
 	/*
 		This set of methods are has and get methods that return a bool and vector<Cards>
 			--> has___() returns true if and only if the respective hand type
@@ -97,54 +88,32 @@ public:
 					the hand type in question
 	*/
 	bool hasPair( const Player* ) const;
-
 	Cards getPair( const Player* ) const;
-
 	bool hasTwoPair( const Player* ) const;
-
 	Cards getTwoPair( const Player* ) const;
-
 	bool hasTrips( const Player* ) const;
-
 	Cards getTrips( const Player* ) const;
-
 	bool hasFourOfAKind( const Player* ) const;
-
 	Cards getFourOfAKind( const Player* ) const;
-
 	bool hasStraight( const Player* ) const;
-
 	Cards getStraight( const Player* ) const;
-
 	bool hasFlush( const Player* ) const;
-
 	Cards getFlush( const Player* ) const;
-
 	bool hasFullHouse( const Player* ) const;
-
 	Cards getFullHouse( const Player* ) const;
-
 	bool hasStraightFlush( const Player* ) const;
-
 	Cards getStraightFlush( const Player* ) const;
-
 	bool hasRoyalFlush( const Player* ) const;
-
 	Cards getRoyalFlush( const Player* ) const;
 	/*==============End of get__() and has__() methods=====================*/
 
 	/*pure virtual methods*/
 	virtual void showHand( const Player* ) const = 0;
-
 	virtual void dealHands() = 0;
-
 	virtual void findHand( Player* ) = 0;
-
 protected:
 	vector<int> dupRankInd( const Player* ) const;
-
 	int* getRankInd( const Player* ) const;
-
 	vector<string> getHandSuits( const Player* ) const;
 };
 

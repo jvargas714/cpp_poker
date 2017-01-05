@@ -4,19 +4,24 @@
  *  Created on: Jun 27, 2016
  *      Author: jay
  */
+#include <cmath>  // std::round
+#include <tgmath.h>
+#include "logger.h"
 #include "bot_player.h"
 
 bot_player::bot_player()
 		: Player(), chancesOfVictory( 0 ), startingPower( 0 ),
-		  currentBestHand(), currentHandStrength( 0 )
+		  currentHandStrength( 0 )
 {
 	name = "Bot_Player";
 }
 
+
 bot_player::bot_player( std::string name, int cash )
 		: Player( name, cash ), chancesOfVictory( 0 ), startingPower( 0 ),
-		  currentBestHand(), currentHandStrength( 0 )
+		  currentHandStrength( 0 )
 {}
+
 
 bot_player::~bot_player()
 {}
@@ -37,8 +42,7 @@ void bot_player::computeStartingPower()
 	 		1b. Can use a ratio x/20 and convert that to a probabiltity the player should
 	 			raise or not.
 	 */
-	logger lg;
-	lg << "bot_player::computeStartingPower(): \n";
+	log() << "bot_player::computeStartingPower(): \n";
 	float tmp_scr;
 	const Card cd1 = hand[ 0 ];
 	const Card cd2 = hand[ 1 ];
@@ -82,19 +86,22 @@ void bot_player::computeStartingPower()
 				}
 				tmp_scr -= 1;
 				break;
-			case 2: tmp_scr -= 2;
+			case 2:
+				tmp_scr -= 2;
 				break;
-			case 3: tmp_scr -= 4;
+			case 3:
+				tmp_scr -= 4;
 				break;
-			default: tmp_scr -= 5;
+			default:
+				tmp_scr -= 5;
 				break;
 		}
 	}
 	// round up
-	startingPower = (int)round( tmp_scr );
+	startingPower = (int)std::round( tmp_scr );
 }
 
-std::string bot_player::getBotStatus( ) const
+std::string bot_player::getBotStatus() const
 {
 	// used for testing
 	// output to standard output

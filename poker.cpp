@@ -16,14 +16,11 @@
 #include <iostream>
 #include <utility>
 #include "poker.h"
-
-
-using std::cout;
-using std::endl;
+#include "logger.h"
 
 Poker::Poker()
-// creates new game defaulting to 2 players with default cash $1500
-		: numPlayers( 0 ), gameDeck()
+// creates new game defaulting to 0 players with default cash $1500
+		: players( { Player( "Player 1", 1500 ), Player( "Player 2", 1500 ) } ), numPlayers( 2 ), gameDeck()
 {}
 
 Poker::Poker( int cash )
@@ -41,7 +38,7 @@ Poker::Poker( std::initializer_list<string> names )
 {
 	for ( string name : names )
 	{
-		//cout << "Debug@ Poker(list<string>)-> name " << name << endl;
+		//log() << "Debug@ Poker(list<string>)-> name " << name << "\n";
 		players.push_back( Player( name, 1500 ) );
 	}
 	numPlayers = players.size();
@@ -68,17 +65,17 @@ Poker::~Poker()
 void Poker::enterGame(string &&name, int &&cash) {
 
     players.push_back(Player(std::move(name), std::move(cash)));
-    cout << name << " has entered the game with $" << cash << endl;
+    log() << name << " has entered the game with $" << cash << "\n";
     numPlayers++;
-    cout << "Number of players: " << numPlayers << endl;
+    log() << "Number of players: " << numPlayers << "\n";
 }*/
 
 void Poker::enterGame( string name, int cash )
 {
 	players.push_back( Player( name, cash ) );
-	cout << name << " has entered the game with $" << cash << endl;
+	log() << name << " has entered the game with $" << cash << "\n";
 	numPlayers++;
-	cout << "Number of players: " << numPlayers << endl;
+	log() << "Number of players: " << numPlayers << "\n";
 }
 
 void Poker::enterGame( std::initializer_list<std::pair<string, int> > players )
@@ -95,7 +92,7 @@ void Poker::enterGame( std::initializer_list<std::pair<string, int> > players )
 void Poker::dealCard( Player* plyr, Card&& card )
 {
 	plyr->hand.push_back( std::move( card ) );
-	cout << plyr->name << " has been dealt " << card << endl;
+	log() << plyr->name << " has been dealt " << card << "\n";
 }
 
 void Poker::dealCard( Player* plyr )
@@ -157,7 +154,6 @@ int* Poker::getRankInd( const Player* plyr ) const
 		rankInds[ n ] = cd.rankIndex;
 		n++;
 	} );
-
 	return rankInds;
 }
 
@@ -168,12 +164,10 @@ bool Poker::hasPair( const Player* plyr ) const
 	*/
 	vector<int> dupRanks = dupRankInd( plyr );
 	bool condition = false;
-
 	if ( dupRanks.size() == 2 )
 	{
 		condition = true;
 	}
-
 	return condition;
 }
 
@@ -195,10 +189,8 @@ Cards Poker::getPair( const Player* player ) const
 
 bool Poker::hasTwoPair( const Player* player ) const
 {
-
 	vector<int> handInd = dupRankInd( player );
 	int* handRanks = getRankInd( player );
-
 	// checks to see if we have 4 in handInd and its not a 4 of a kind
 	bool condition = handInd.size() == 4 &&
 					 std::count( handRanks, handRanks + 5,

@@ -28,7 +28,7 @@ public:
 protected:
 	TexasHoldem* game;
 
-	virtual void init( TexasHoldem* pkr ) = 0;
+	virtual void init( TexasHoldem* pkr )=0;
 
 	virtual bool assessFlopScenario( Player* bot )=0;
 

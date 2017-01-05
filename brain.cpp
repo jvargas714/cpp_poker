@@ -1,4 +1,5 @@
 #include "brain.h"
+#include "logger.h"
 
 Brain::Brain()
 { game = nullptr; }
@@ -11,16 +12,27 @@ bool Brain::assessTable( Player* bot, poker_states state )
 {    /* TODO:: Implement assessTable function to switch through each state of the game */
 	switch ( state )
 	{
-		case FLOP: assessFlopScenario( bot );
-		case DEAL_HOLE_CARDS:break;
-		case PREFLOP:break;
-		case ROUND_OF_BETS:break;
-		case DEAL_FLOP:break;
-		case DEAL_TURN:break;
-		case TURN:break;
-		case DEAL_RIVER:break;
-		case RIVER:break;
-		case SHOWDOWN:break;
+		case FLOP:
+			assessFlopScenario( bot );
+			break;
+		case DEAL_HOLE_CARDS:
+			break;
+		case PREFLOP:
+			break;
+		case ROUND_OF_BETS:
+			break;
+		case DEAL_FLOP:
+			break;
+		case DEAL_TURN:
+			break;
+		case TURN:
+			break;
+		case DEAL_RIVER:
+			break;
+		case RIVER:
+			break;
+		case SHOWDOWN:
+			break;
 		default:
 			break;
 	}
@@ -31,7 +43,7 @@ bool Brain::assessTable( const Cards& cds )
 {
 	if ( cds.size() != 5 )
 	{
-		std::cout << "Brain::assessTable(): need 5 cards present, exiting ..." << std::endl;
+		log() << "Brain::assessTable(): need 5 cards present, exiting ..." << "\n";
 		return false;
 	}
 
@@ -78,8 +90,8 @@ bool JayBrain::assessFlopScenario( Player* bot )
 
 	if ( game->tableCards.size() != 3 )
 	{
-		std::cout << "JayBrain::assessFlopScenario(): Error -->"
-											"tableCards.size() != 3, exiting" << std::endl;
+		log() << "JayBrain::assessFlopScenario(): Error -->"
+				"tableCards.size() != 3, exiting" << "\n";
 		return false;
 	}
 	// first we see if we have a valid hand off the flop

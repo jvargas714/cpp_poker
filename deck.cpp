@@ -1,26 +1,21 @@
 #include "deck.h"
 #include <iostream>
 #include <algorithm>        // std::random_shuffle()
-
-using std::cout;
-using std::endl;
+#include "logger.h"
 
 Deck::Deck()
 {
 	/*
 		forms a 52 card vector representing the deck
 	*/
-
 	for ( int i = 0; i < 13; i++ )
 	{
-
 		for ( int j = 0; j < 4; j++ )
 		{
 			Card card( i, j );
 			deck.push_back( card );
 		}
 	}
-
 	shuffleDeck();
 }
 
@@ -40,7 +35,7 @@ void Deck::shuffleDeck()
 
 void Deck::displayCard( uint8_t& index )
 {// prints to screen card at index
-	cout << deck[ index ];
+	std::cout << deck[ index ];
 }
 
 
@@ -59,7 +54,7 @@ void Deck::resetDeck()
 	}
 	shuffleDeck();
 
-	cout << "Deck reset and shuffled!!" << endl;
+	log() << "Deck reset and shuffled!!\n";
 }
 
 

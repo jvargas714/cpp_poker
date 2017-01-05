@@ -2,14 +2,16 @@
 #ifndef POKER_PLAYER_H
 #define POKER_PLAYER_H
 
+#include "poker_types.h"
 #include <string>
 #include <vector>
 #include <cstdint>
 #include "card.h"
 #include "hand_weight.h"
-#include "poker_types.h"
+
 typedef std::vector<Card> Cards;
 
+/* TODO :: this class needs a redesign, should not have public data */
 class Player
 {
 public:

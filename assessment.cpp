@@ -1,5 +1,8 @@
 #include "assessment.h"
+#include "logger.h"
 #include <algorithm>
+#include <cstdint>
+
 
 std::vector<std::string> assessment::getHandSuits( const Cards& cds )
 {
@@ -355,7 +358,6 @@ Cards assessment::getRoyalFlush( const Cards& cds )
 int assessment::findHandStrength( const Cards& cards )
 {
 	// runs through all assessment functions to determine a hand strength and return it
-	logger lg;
 	using std::count;
 	Cards cds = cards;
 	std::sort( cds.begin(), cds.end() );
@@ -435,6 +437,6 @@ int assessment::findHandStrength( const Cards& cards )
 		handStrength = HandMapper::handMap.at( "high" )[ cardRnk ];
 		message = "a High Card";
 	}
-	lg << "hand type: " << message << ", with a hand strength of " << handStrength << std::endl;
+	log() << "hand type: " << message << ", with a hand strength of " << handStrength << std::endl;
 	return handStrength;
 }

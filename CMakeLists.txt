@@ -20,9 +20,13 @@ set(LIB_FILES
     poker_error.cpp
     )
 
-set( CMAKE_EXE_LINKER_FLAGS "-v" )
+#set( CMAKE_EXE_LINKER_FLAGS "-v" )
 add_library( poker STATIC ${LIB_FILES} )
 add_library( pokerTest STATIC test_suite.cpp test_suite.h )
-#target_link_libraries( pokerTest poker )
+target_link_libraries( pokerTest poker )
 add_executable( testing test_suite.cpp test_suite.h testing.cpp )
 target_link_libraries( testing poker )
+
+# scrap
+add_executable( scrap_exe scrap.cpp )
+target_link_libraries( scrap_exe poker )

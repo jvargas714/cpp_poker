@@ -1,6 +1,7 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include "poker_types.h"
 #include <fstream>  // ofstream
 #include <iomanip>  // std::put_time
 #include <iostream> // std::cerr 
@@ -21,16 +22,21 @@
 #define fstr()  std::string(__func__) + "(): "
 #define FN      fstr()
 
+class logger;
+
 // helper functions
 std::string now();
+logger& log();
+void delete_logger();
+
+
 
 class logger
 {
-public:
 	std::ostream* strm;
 	std::string log_filename;
 	std::string mode;
-
+public:
 	// ctor, cpy ctor, and assignment operator
 	logger() : log_filename( "" ), mode( D )
 	{
@@ -39,7 +45,13 @@ public:
 
 	logger( std::string name ) : log_filename( name ), mode( D )
 	{
+		std::cerr << "Creating a new logger writing to file name: " << log_filename << std::endl;
 		strm = new std::ofstream( log_filename );
+	}
+
+	logger( std::string name, std::ios_base::openmode op_md ) : log_filename( name ), mode( D )
+	{
+		strm = new std::ofstream( log_filename , op_md );
 	}
 
 	logger( const logger& lg ) 
@@ -55,8 +67,11 @@ public:
 	~logger()
 	{
 		std::cerr << "~logger(): flushing and closing " << log_filename << std::endl;
-		strm->flush();
-		delete strm;
+		if( strm != &std::cout && strm != nullptr )
+		{
+			strm->flush();
+			delete strm;
+		}
 	}
 
 	inline void flush_log( bool new_line = false )
@@ -73,12 +88,16 @@ public:
 		mode = md;
 	}
 
+	// implicit conversion to ostream, so () operator returns
+	//operator std::ostream() { return *strm; }
+
 	template<typename toPrint>
 	std::ostream& operator<<( const toPrint& msg )
 	{
 		if( strm == &std::cout )
 		{
-			std::cout << now() << mode << " " << msg;
+//			std::cout << now() << mode << " " << msg;
+			std::cout << msg;
 		}
 		else
 		{
@@ -91,8 +110,13 @@ public:
 			}
 			else if ( fstrm->is_open() )
 			{
-				*fstrm << now() << mode << " " << msg;
+//				*fstrm << now() << mode << " " << msg;
+				*fstrm << msg;
 				fstrm->flush();
+			}
+			else
+			{
+				std::cerr << "Error log file: " << log_filename << " is not opened." << std::endl;
 			}
 		}
 		return *strm;

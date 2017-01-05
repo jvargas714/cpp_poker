@@ -2,11 +2,11 @@
 // Created by jay on 6/6/15.
 //
 #include "player.h"
-#include <iostream>
+#include "logger.h"
 
 Player::Player()
 		: smallBlind_bet( false ), bigBlind_bet( false ), dealer( false ),
-		  cash( 1500 ), handStrength( 0 ), highCardRnk( 0 )
+		  cash( 1500 ), handStrength( 0 ), highCardRnk( 0 ), name( "Player" )
 {
 	name = "Player";
 }
@@ -16,6 +16,7 @@ Player::Player( std::string name, int cash )
 		: smallBlind_bet( false ), bigBlind_bet( false ), dealer( false ),
 		  cash( cash ), handStrength( 0 ), highCardRnk( 0 ), name( name )
 {}
+
 
 Player::~Player()
 {}
@@ -27,17 +28,18 @@ void Player::namePlayer( std::string name )
 	std::string originalName( name );
 	this->name = name;
 
-	std::cout << originalName << " was named to " << this->name << std::endl;
+	log() << originalName << " was named to " << this->name << std::endl;
 
 }
 
 int Player::bet( int amt )
 {
-	std::cout << name << " bet $" << amt << std::endl;
+	log() << name << " bet $" << amt << std::endl;
 	cash -= amt;
 	return 0;
 }
 
+// TODO:: should be implmented
 int Player::bet()
 {
 	// wrapper function for bet(int)
@@ -49,7 +51,7 @@ int Player::bet()
 void Player::collectPot( int amt )
 {
 	cash += amt;
-	std::cout << name << " collected $" << amt << ", new balance: $" << cash << "\n" << std::endl;
+	log() << name << " collected $" << amt << ", new balance: $" << cash << "\n" << std::endl;
 }
 
 void Player::setBestHand( Cards& cards )
@@ -62,7 +64,7 @@ void Player::setBestHand( Cards& cards )
 		bestHand[ i ] = cd;
 		i++;
 	}
-	std::cout << name << " has set best hand " << std::endl;
+	log() << name << " has set best hand " << std::endl;
 }
 
 void Player::setHandStrength( const std::string& handType, int& rank )

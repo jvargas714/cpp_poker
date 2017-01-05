@@ -33,7 +33,6 @@ Card::Card( int rkInd, int stInd )
 		suitIndex = 0;
 		st = suit[ 0 ];
 		rk = rank[ 0 ];
-		std::cout << "testing " << std::endl;
 	}
 	else
 	{
@@ -62,7 +61,7 @@ const std::string Card::getSuit() const
 
 std::ostream& operator<<( std::ostream& os, const Card& cd )
 {
-	os << cd.rk << " of " << cd.st << "\n";
+	os << cd.rk << " of " << cd.st;
 	return os;
 }
 

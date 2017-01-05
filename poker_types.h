@@ -7,6 +7,12 @@
 #include <unordered_map>
 #include "card.h"
 #include "player.h"
+
+// const strings
+const std::string TEST_SUITE_LOG 	= "./test_suite.log";
+const std::string DEBUG_LOG 		= "./poker_debug.log";
+
+// types
 class Player;
 class Card;
 typedef std::vector<Card> Cards;
