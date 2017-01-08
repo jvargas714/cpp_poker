@@ -5,6 +5,7 @@
 #include "TexasHoldem.h"
 #include "poker_fsm.h"
 #include "assessment.h"
+#include "bot_player.h"
 
 /*
 	Abstract class that will characterize bot_player's autonomous behavior
@@ -21,7 +22,7 @@ public:
 
 	virtual ~Brain();
 
-	bool assessTable( Player* bot, poker_states state );
+	bool assessTable( bot_player& bot, poker_states state );
 
 	virtual void bet()=0;
 
@@ -30,11 +31,11 @@ protected:
 
 	virtual void init( TexasHoldem* pkr )=0;
 
-	virtual bool assessFlopScenario( Player* bot )=0;
+	virtual bool assessFlopScenario( bot_player& bot )=0;
 
-	virtual bool assessTurnScenario( Player* bot )=0;
+	virtual bool assessTurnScenario( bot_player& bot )=0;
 
-	virtual bool assessRiverScenario( Player* bot )=0;
+	virtual bool assessRiverScenario( bot_player& bot )=0;
 
 	virtual bool assessTable( const Cards& cds );
 };
@@ -50,11 +51,11 @@ public:
 	~PotBrain();
 
 protected:
-	bool assessFlopScenario( Player* bot );
+	bool assessFlopScenario( bot_player& bot );
 
-	bool assessTurnScenario( Player* bot );
+	bool assessTurnScenario( bot_player& bot );
 
-	bool assessRiverScenario( Player* bot );
+	bool assessRiverScenario( bot_player& bot );
 };
 
 
@@ -74,11 +75,13 @@ public:
 protected:
 	void init( TexasHoldem* pkr );
 
-	bool assessFlopScenario( Player* bot );
+	bool assessFlopScenario( bot_player& bot );
 
-	bool assessTurnScenario( Player* bot );
+	bool assessTurnScenario( bot_player& bot );
 
-	bool assessRiverScenario( Player* bot );
+	bool assessRiverScenario( bot_player& bot );
+
+
 };
 
 

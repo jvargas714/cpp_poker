@@ -11,7 +11,6 @@
 
 bot_player::bot_player()
 		: Player(), chancesOfVictory( 0 ), startingPower( 0 ),
-		  currentHandStrength( 0 )
 {
 	name = "Bot_Player";
 }
@@ -19,7 +18,6 @@ bot_player::bot_player()
 
 bot_player::bot_player( std::string name, int cash )
 		: Player( name, cash ), chancesOfVictory( 0 ), startingPower( 0 ),
-		  currentHandStrength( 0 )
 {}
 
 
@@ -101,6 +99,7 @@ void bot_player::computeStartingPower()
 	startingPower = (int)std::round( tmp_scr );
 }
 
+// TODO :: this should be a virtual status function in the player class, fix
 std::string bot_player::getBotStatus() const
 {
 	// used for testing

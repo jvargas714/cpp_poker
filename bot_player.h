@@ -7,6 +7,7 @@
 
 #ifndef HEADERS_BOT_PLAYER_H_
 #define HEADERS_BOT_PLAYER_H_
+
 #include "poker_types.h"
 #include "brain.h"
 #include "poker_fsm.h"
@@ -36,17 +37,26 @@
 // static const here in the head ensures that only one copy of this map is generated per cpp file
 // that includes this file
 static const std::map<std::string, float> chen_map
-{
-		{"2",  1}, {"3", 1.5},
-		{"4",  2}, {"5", 2.5},
-		{"6",  3}, {"7", 3.5},
-		{"8",  4}, {"9", 4.5},
-		{"10", 5}, {"J",   6},
-		{"Q",  7}, {"K",   8},
-		{"A",  10}
-};
+		{
+				{ "2",  1 },
+				{ "3",  1.5 },
+				{ "4",  2 },
+				{ "5",  2.5 },
+				{ "6",  3 },
+				{ "7",  3.5 },
+				{ "8",  4 },
+				{ "9",  4.5 },
+				{ "10", 5 },
+				{ "J",  6 },
+				{ "Q",  7 },
+				{ "K",  8 },
+				{ "A",  10 }
+		};
+
 class Brain;
+
 typedef std::vector<Card> Cards;
+
 class bot_player : public Player
 {
 	friend class Brain;
@@ -58,22 +68,25 @@ public:
 	int bet( int );
 	int bet();
 	void setStartingPower( int amt );
-	void computeStartingPower(); 	// TODO:: should be moved to brain
-	std::string getBotStatus( ) const;
-	void initBrain(TexasHoldem& game);
-	inline int getCurrentHandStrength() { return currentHandStrength; }
-	inline void setCurrentHandStrength( int amt ) { currentHandStrength = amt; }
+	void computeStartingPower();    // TODO:: should be moved to brain
+	std::string getBotStatus() const;
+	void initBrain( TexasHoldem& game );
+
+	inline int getCurrentHandStrength() { return currentBestHand.strength; }
+
+	inline void setCurrentHandStrength( int amt ) { currentBestHand.strength = amt; }
+	inline void setCurrentBestHand( Hand hand ) { currentBestHand = hand; }
 
 private:
 	// data members
 	float 	chancesOfVictory;
 	int 	startingPower;
-	Cards 	currentBestHand;
-	int	 	currentHandStrength;
+	HAND 	currentBestHand;
 	Brain* 	brain;
 
 	// Helper functions
 	bool assessTable( const Cards& cds, poker_states state );
 	bool findValidHand();
 };
+
 #endif /* HEADERS_BOT_PLAYER_H_ */

@@ -8,7 +8,7 @@ Brain::~Brain()
 {}
 
 // TOOD:: needs testing 
-bool Brain::assessTable( Player* bot, poker_states state )
+bool Brain::assessTable( bot_player& bot, poker_states state )
 {    /* TODO:: Implement assessTable function to switch through each state of the game */
 	switch ( state )
 	{
@@ -72,7 +72,7 @@ void JayBrain::init( TexasHoldem* pkr )
 }
 
 // TODO:: needs testing 
-bool JayBrain::assessFlopScenario( Player* bot )
+bool JayBrain::assessFlopScenario( bot_player& bot )
 {
 	/*
 		1. analyze flop situation
@@ -84,25 +84,26 @@ bool JayBrain::assessFlopScenario( Player* bot )
 		7. make bet based on data collected
 	*/
 	size_t numCardsDealt = 52 - game->gameDeck.numCardsLeft();
-	int outs;
-	Card hole1 = bot->hand[ 0 ];
-	Card hole2 = bot->hand[ 1 ];
-
+	int outs;   // number of cards left in the deck that contribute to achieving a best hand
+	Card hole1 = bot.hand[ 0 ];
+	Card hole2 = bot.hand[ 1 ];
 	if ( game->tableCards.size() != 3 )
 	{
 		log() << "JayBrain::assessFlopScenario(): Error -->"
-				"tableCards.size() != 3, exiting" << "\n";
+							"tableCards.size() != 3, exiting" << "\n";
 		return false;
 	}
 	// first we see if we have a valid hand off the flop
-	vector<Card>::iterator it = bot->hand.begin();
-	bot->hand.insert( it, game->tableCards.begin(), game->tableCards.end() );
-
-	if ( bot->hand.size() != 5 )
+	vector<Card>::iterator it = bot.hand.begin();
+	bot.hand.insert( it, game->tableCards.begin(), game->tableCards.end() );
+	if ( bot.hand.size() != 5 )
 	{
 		return false;
 	}
 	// here we can run through and determine what hand type we have based on the five cards out
-	bot->setHandStrength( assessment::findHandStrength( bot->hand ) );
+	bot.setCurrentBestHand( assessment::findHandStrength( bot.hand ) );
+
+	// find odds of achieving a better hand or acheiving a hand from nothing on the turn
+
 	return true;
 }

@@ -20,45 +20,33 @@ public:
 	std::string name;
 	Cards hand;
 	Cards bestHand;
-
 	Player();
-
 	Player( std::string name, int cash );
-
 	virtual ~Player();
-
 	void setHand( Cards& newHand );
-
 	void namePlayer( std::string name );
-
 	virtual int bet( int amt );
-
 	virtual int bet();
-
 	void collectPot( int amt );
-
 	void setBestHand( Cards& cards );
-
 	void setHandStrength( const std::string& handType, int& rank );
 
-	virtual void setHandStrength( int ) { ; }
+	virtual void setHandStrength( int val )
+	{ handStrength = val; }
 
 	void clearHand();
-
 	void clearHandStrength();
 
-	virtual void setCurrentHandStrength( int amt ) { ; }
+	virtual void setCurrentHandStrength( int amt )
+	{ ; }
 
 	static bool cmpCash( const Player& plyr1,
-						 const Player& plyr2 ); // compares to another player (cash balance)
+						 const Player& plyr2 );
+
 	bool operator==( const Player& plyr ) const;
-
 	bool operator<( const Player& plyr ) const;
-
 	bool operator>( const Player& plyr ) const;
-
 	void reset();
-
 	friend std::ostream& operator<<( std::ostream& os, const Player& plyr );
 };
 

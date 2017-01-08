@@ -13,6 +13,28 @@
 #include "poker_types.h"
 #include "poker_error.h"
 
+typedef enum
+{
+	HIGH_CARD,
+	PAIR,
+	TWO_PAIR,
+	TRIPS,
+	FOUR_OF_A_KIND,
+	STRAIGHT,
+	FLUSH,
+	FULL_HOUSE,
+	STRAIGHT_FLUSH,
+	ROYAL_FLUSH
+} HAND_TYPE;
+
+typedef struct Hand
+{
+	HAND_TYPE 	type;
+	Cards 		cards;
+	int 		strength;
+	std::string hand_str;
+} HAND;
+
 namespace assessment
 {
 	std::vector<std::string> getHandSuits( const Cards& );
@@ -40,7 +62,7 @@ namespace assessment
 
 	bool hasRoyalFlush( const Cards& );
 
-	int findHandStrength( const Cards& );
+	HAND findHandStrength( const Cards& );
 
 	// get functions
 	Cards getPair( const Cards& );

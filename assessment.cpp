@@ -355,31 +355,37 @@ Cards assessment::getRoyalFlush( const Cards& cds )
 	}
 }
 
-int assessment::findHandStrength( const Cards& cards )
+HAND assessment::findHandStrength( const Cards& cards )
 {
 	// runs through all assessment functions to determine a hand strength and return it
 	using std::count;
+	HAND hand;
 	Cards cds = cards;
 	std::sort( cds.begin(), cds.end() );
-	std::string message( "error" );
-	int handStrength;
+	hand.hand_str = "error";
 
 	if ( hasRoyalFlush( cds ) )
 	{
-		handStrength = HandMapper::handMap.at( "royalFlush" )[ 0 ];
-		message = "a Royal Flush";
+		hand.strength 	= HandMapper::handMap.at( "royalFlush" )[ 0 ];
+		hand.hand_str 	= "a Royal Flush";
+		hand.cards    	= getRoyalFlush( cds );
+		hand.type 		= ROYAL_FLUSH;
 	}
 	else if ( hasStraightFlush( cds ) )
 	{
-		int highCardRank = cds[ 4 ].rankIndex;
-		handStrength = HandMapper::handMap.at( "straightFlush" )[ highCardRank ];
-		message = "a Straight Flush";
+		int highCardRank 	= cds[ 4 ].rankIndex;
+		hand.strength 		= HandMapper::handMap.at( "straightFlush" )[ highCardRank ];
+		hand.hand_str 		= "a Straight Flush";
+		hand.cards			= getStraightFlush( cds );
+		hand.type 			= STRAIGHT_FLUSH;
 	}
 	else if ( hasFourOfAKind( cds ) )
 	{
 		int cardRnk = getFourOfAKind( cds )[ 0 ].rankIndex;
-		handStrength = HandMapper::handMap.at( "fourOfAKind" )[ cardRnk ];
-		message = "a Four of a Kind";
+		hand.strength 	= HandMapper::handMap.at( "fourOfAKind" )[ cardRnk ];
+		hand.hand_str 	= "a Four of a Kind";
+		hand.cards		= getFourOfAKind( cds );
+		hand.type 		= FOUR_OF_A_KIND;
 	}
 	else if ( hasFullHouse( cds ) )
 	{
@@ -395,48 +401,66 @@ int assessment::findHandStrength( const Cards& cards )
 			cardRnk = fullHouse[ 4 ].rankIndex;
 		}
 
-		handStrength = HandMapper::handMap.at( "fullHouse" )[ cardRnk ];
-		message = "a Full House";
+		hand.strength = HandMapper::handMap.at( "fullHouse" )[ cardRnk ];
+		hand.hand_str = "a Full House";
+		hand.cards	  = fullHouse;
+		hand.type 	  = FULL_HOUSE;
 	}
 	else if ( hasFlush( cds ) )
 	{
-		Cards flush = getFlush( cds );
-		int cardRnk = flush[ 4 ].rankIndex;
-		handStrength = HandMapper::handMap.at( "flush" )[ cardRnk ];
-		message = "a Flush";
+		Cards flush   	= getFlush( cds );
+		int cardRnk   	= flush[ 4 ].rankIndex;
+		hand.strength 	= HandMapper::handMap.at( "flush" )[ cardRnk ];
+		hand.hand_str 	= "a Flush";
+		hand.cards	  	= flush;
+		hand.type 		= FLUSH;
 	}
 	else if ( hasStraight( cds ) )
 	{
-		int cardRnk = getStraight( cds )[ 4 ].rankIndex;
-		handStrength = HandMapper::handMap.at( "straight" )[ cardRnk ];
-		message = "a Straight";
+		Cards straight 	= getStraight( cds );
+		int cardRnk    	= straight[ 4 ].rankIndex;
+		hand.strength  	= HandMapper::handMap.at( "straight" )[ cardRnk ];
+		hand.hand_str  	= "a Straight";
+		hand.cards 	   	= straight;
+		hand.type 		= STRAIGHT;
 	}
 	else if ( hasTrips( cds ) )
 	{
-		int cardRnk = getTrips( cds )[ 0 ].rankIndex;
-		handStrength = HandMapper::handMap.at( "trips" )[ cardRnk ];
-		message = "a Three of a Kind";
+		Cards trips   	= getTrips( cds );
+		int cardRnk   	= trips[ 0 ].rankIndex;
+		hand.strength 	= HandMapper::handMap.at( "trips" )[ cardRnk ];
+		hand.hand_str 	= "a Three of a Kind";
+		hand.cards 	  	= trips;
+		hand.type 		= TRIPS;
 	}
 	else if ( hasTwoPair( cds ) )
 	{
-		Cards twoPair = getTwoPair( cds );
-		int cardRnk = twoPair[ 3 ].rankIndex;
-		handStrength = HandMapper::handMap.at( "twoPair" )[ cardRnk ];
-		message = "Two Pair";
+		Cards twoPair 	= getTwoPair( cds );
+		int cardRnk 	= twoPair[ 3 ].rankIndex;
+		hand.strength 	= HandMapper::handMap.at( "twoPair" )[ cardRnk ];
+		hand.hand_str 	= "Two Pair";
+		hand.cards 	  	= twoPair;
+		hand.type 	 	= TWO_PAIR;
 	}
 	else if ( hasPair( cds ) )
 	{
-		int cardRnk = getPair( cds )[ 0 ].rankIndex;
-		handStrength = HandMapper::handMap.at( "pair" )[ cardRnk ];
-		message = "a Pair";
+		Cards pair    	= getPair( cds );
+		int cardRnk   	= pair[ 0 ].rankIndex;
+		hand.strength  	= HandMapper::handMap.at( "pair" )[ cardRnk ];
+		hand.hand_str 	= "a Pair";
+		hand.cards	  	= pair;
+		hand.type 		= PAIR;
 	}
 	else
 	{
 		std::sort( cds.begin(), cds.end() );
-		int cardRnk = cds[ 4 ].rankIndex;
-		handStrength = HandMapper::handMap.at( "high" )[ cardRnk ];
-		message = "a High Card";
+		int cardRnk   = cds[ 4 ].rankIndex;
+		hand.strength = HandMapper::handMap.at( "high" )[ cardRnk ];
+		hand.hand_str = "a High Card";
+		hand.cards.push_back( cds[ 4 ] );
+		hand.type 	  = HIGH_CARD;
+
 	}
-	log() << "hand type: " << message << ", with a hand strength of " << handStrength << std::endl;
-	return handStrength;
+	log() << "hand type: " << hand.hand_str << ", with a hand strength of " << hand.strength << std::endl;
+	return hand;
 }
