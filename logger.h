@@ -61,9 +61,6 @@ public:
 		mode 			= lg.mode;
 	}
 
-	logger& operator=( const logger& lg )
-	{ return *this; }
-
 	~logger()
 	{
 		std::cerr << "~logger(): flushing and closing " << log_filename << std::endl;

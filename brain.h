@@ -22,7 +22,7 @@ public:
 
 	virtual ~Brain();
 
-	bool assessTable( bot_player& bot, poker_states state );
+	bool assessTable( Player* bot, poker_states state );
 
 	virtual void bet()=0;
 
@@ -31,11 +31,11 @@ protected:
 
 	virtual void init( TexasHoldem* pkr )=0;
 
-	virtual bool assessFlopScenario( bot_player& bot )=0;
+	virtual bool assessFlopScenario( Player* bot )=0;
 
-	virtual bool assessTurnScenario( bot_player& bot )=0;
+	virtual bool assessTurnScenario( Player* bot )=0;
 
-	virtual bool assessRiverScenario( bot_player& bot )=0;
+	virtual bool assessRiverScenario( Player* bot )=0;
 
 	virtual bool assessTable( const Cards& cds );
 };
@@ -51,11 +51,11 @@ public:
 	~PotBrain();
 
 protected:
-	bool assessFlopScenario( bot_player& bot );
+	bool assessFlopScenario( Player* bot );
 
-	bool assessTurnScenario( bot_player& bot );
+	bool assessTurnScenario( Player* bot );
 
-	bool assessRiverScenario( bot_player& bot );
+	bool assessRiverScenario( Player* bot );
 };
 
 
@@ -75,11 +75,11 @@ public:
 protected:
 	void init( TexasHoldem* pkr );
 
-	bool assessFlopScenario( bot_player& bot );
+	bool assessFlopScenario( Player* bot );
 
-	bool assessTurnScenario( bot_player& bot );
+	bool assessTurnScenario( Player* bot );
 
-	bool assessRiverScenario( bot_player& bot );
+	bool assessRiverScenario( Player* bot );
 
 
 };

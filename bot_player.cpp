@@ -116,7 +116,7 @@ void bot_player::setStartingPower( int amt )
 	startingPower = amt;
 }
 
-int bot_player::bet( int amt )
+int bot_player:: 1bet( int amt )
 {
 	//TODO: implement
 	return amt;
@@ -130,7 +130,7 @@ int bot_player::bet()
 
 bool bot_player::assessTable( const Cards& cds, poker_states state )
 {
-	//TODO:: really should just wrap the brain assessTable
+	brain->assessTable( *this, state );
 	return true;
 }
 

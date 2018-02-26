@@ -76,6 +76,8 @@ public:
 
 	inline void setCurrentHandStrength( int amt ) { currentBestHand.strength = amt; }
 	inline void setCurrentBestHand( Hand hand ) { currentBestHand = hand; }
+	bool assessTable( const Cards& cds, poker_states state );
+
 
 private:
 	// data members
@@ -85,7 +87,6 @@ private:
 	Brain* 	brain;
 
 	// Helper functions
-	bool assessTable( const Cards& cds, poker_states state );
 	bool findValidHand();
 };
 

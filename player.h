@@ -20,6 +20,7 @@ public:
 	std::string name;
 	Cards hand;
 	Cards bestHand;
+
 	Player();
 	Player( std::string name, int cash );
 	virtual ~Player();
@@ -30,19 +31,12 @@ public:
 	void collectPot( int amt );
 	void setBestHand( Cards& cards );
 	void setHandStrength( const std::string& handType, int& rank );
-
-	virtual void setHandStrength( int val )
-	{ handStrength = val; }
-
+	virtual bool assessTable() { return false; /* TODO :: implement this to have interaction with the human player */ }
+	virtual void setHandStrength( int val ) { handStrength = val; }
 	void clearHand();
 	void clearHandStrength();
-
-	virtual void setCurrentHandStrength( int amt )
-	{ ; }
-
-	static bool cmpCash( const Player& plyr1,
-						 const Player& plyr2 );
-
+	virtual void setCurrentHandStrength( int amt ) { amt++; }  // TODO :: needs implentation
+	static bool cmpCash( const Player& plyr1, const Player& plyr2 );
 	bool operator==( const Player& plyr ) const;
 	bool operator<( const Player& plyr ) const;
 	bool operator>( const Player& plyr ) const;

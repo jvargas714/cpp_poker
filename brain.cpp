@@ -1,5 +1,6 @@
 #include "brain.h"
 #include "logger.h"
+#include <algorithm>
 
 Brain::Brain()
 { game = nullptr; }
@@ -8,7 +9,7 @@ Brain::~Brain()
 {}
 
 // TOOD:: needs testing 
-bool Brain::assessTable( bot_player& bot, poker_states state )
+bool Brain::assessTable( Player* bot, poker_states state )
 {    /* TODO:: Implement assessTable function to switch through each state of the game */
 	switch ( state )
 	{
@@ -72,7 +73,7 @@ void JayBrain::init( TexasHoldem* pkr )
 }
 
 // TODO:: needs testing 
-bool JayBrain::assessFlopScenario( bot_player& bot )
+bool JayBrain::assessFlopScenario( Player* bot )
 {
 	/*
 		1. analyze flop situation
@@ -96,6 +97,7 @@ bool JayBrain::assessFlopScenario( bot_player& bot )
 	// first we see if we have a valid hand off the flop
 	vector<Card>::iterator it = bot.hand.begin();
 	bot.hand.insert( it, game->tableCards.begin(), game->tableCards.end() );
+
 	if ( bot.hand.size() != 5 )
 	{
 		return false;
