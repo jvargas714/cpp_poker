@@ -1,0 +1,10 @@
+cmake_install*
+CMakeCache.txt
+cmake-build*
+.idea
+.idea/*.xml
+CMakeFiles
+*.cbp
+Makefile
+.idea/misc.xml
+.idea/vcs.xml
