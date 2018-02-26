@@ -148,13 +148,13 @@ public:
 	virtual void findWinner();
 	void calculateHands();
 private:
-	Player* findPlayer( const std::string name );
+	Player* findPlayer( const std::string& name );
 	void assign_dealer();
 	void rotateDealer();
 };
 
-long nCr( int n, int k );
-long fact( int n );
-intComb comb( int n, int k );
+uint64_t nCr( uint64_t n, uint64_t k );
+uint64_t fact( uint64_t n );
+intComb comb( uint64_t n, uint64_t k );
 void debugPrintVect( std::vector<int> );
 #endif

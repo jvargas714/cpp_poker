@@ -31,4 +31,4 @@ target_link_libraries( testing poker )
 
 # scrap
 add_executable( scrap_exe scrap.cpp )
-target_link_libraries( scrap_exe poker )
+#target_link_libraries( scrap_exe poker )

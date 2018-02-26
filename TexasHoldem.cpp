@@ -120,7 +120,7 @@ void TexasHoldem::dealHands()
 	{
 		for ( auto& player : players )
 		{
-			player.hand.push_back( move( gameDeck.dealCard() ) );
+			player.hand.push_back( gameDeck.dealCard() );
 		}
 	}
 	log() << "cards dealt out to players.... \n\n" << std::endl;
@@ -496,7 +496,7 @@ void TexasHoldem::findWinner()
 				pot / numTies;            // to split pot amongst ppl involved in the tie
 
 		log() << "Pot must be split amongst " << numTies << " players\n" << std::endl;
-		for ( auto name : winningNames )
+		for ( auto& name : winningNames )
 		{                // award winners split pot
 			Player* winner = findPlayer( name );
 			winner->collectPot( (int)amtAwarded );
@@ -511,14 +511,14 @@ void TexasHoldem::findWinner()
 	}
 }
 
-Player* TexasHoldem::findPlayer( const std::string name )
+Player* TexasHoldem::findPlayer( const std::string& name )
 {
 	// private method that returns pointer to player identified by the name
-	for ( unsigned int i = 0; i < players.size(); i++ )
+	for ( auto& player : players )
 	{
-		if ( players[ i ].name == name )
+		if ( player.name == name )
 		{
-			return &players[ i ];
+			return &player;
 		}
 	}
 	return nullptr;
@@ -530,7 +530,7 @@ cardSuperVector TexasHoldem::comboCards( const Player* plyr ) const
 	Cards cardSubSet;
 	intComb combInd;
 	Cards allCards = tableCards;
-	for ( auto cd: plyr->hand )
+	for ( auto& cd: plyr->hand )
 	{
 		allCards.push_back( cd );
 	}
@@ -562,9 +562,9 @@ void TexasHoldem::resetHand( int num )
 	pot = 0;
 	gameDeck.resetDeck();
 	tableCards.clear();
-	for ( unsigned int i = 0; i < players.size(); i++ )
+	for ( auto& player : players )
 	{
-		players[ i ].reset();
+		player.reset();
 	}
 	log() << "======================hand reset!!=======#" << num << "==================\n\n"
 		  << std::endl;
@@ -593,7 +593,7 @@ intComb comb( int n, int k )
 	return result;
 }
 
-long nCr( int n, int k )
+unsigned long nCr( int n, int k )
 {
 	long x = fact( n );
 	long y = fact( k ) * fact( n - k );
