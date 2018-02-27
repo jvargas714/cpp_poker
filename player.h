@@ -24,7 +24,7 @@ public:
 	Player();
 	Player( std::string name, int cash );
 	virtual ~Player();
-	void setHand( Cards& newHand );
+	void setHand( Cards& newHand ) {log() << "implement me!" << std::endl; };
 	void namePlayer( std::string name );
 	virtual int bet( int amt );
 	virtual int bet();

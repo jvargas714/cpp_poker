@@ -125,13 +125,13 @@ public:
 	Cards tableCards;
 	uint32_t dealerIndex;
 	TexasHoldem();
-	TexasHoldem( std::string& cfg_path );
+    explicit TexasHoldem( std::string& cfg_path );
 	TexasHoldem( int smallBlind, int bigBlind, int cash );
 	TexasHoldem( std::initializer_list<std::string> );
 	TexasHoldem( std::initializer_list<std::pair<std::string, int>> );
-	void showHand( const Player* ) const;
-	void dealHands();
-	void findHand( Player* );
+	void showHand( const Player* ) const override;
+	void dealHands() override;
+	void findHand( Player* ) override;
 	void changeBlinds( int sm, int big );
 	void dealFlop();
 	void dealTurn();

@@ -1,5 +1,6 @@
 #include "TexasHoldem.h"
 #include "logger.h"
+#include <random>
 
 TexasHoldem::TexasHoldem()
 		: Poker(), pot( 0 ), smallBlind( 10 ), bigBlind( 20 ), gameId( 999 )
@@ -9,7 +10,7 @@ TexasHoldem::TexasHoldem()
 		  << std::endl;
 	log() << "Small Blind: " << smallBlind << "\tBig Blind: " << bigBlind << "\n\nPlayers:\n"
 		  << std::endl;
-	for ( auto p: players )
+	for ( auto& p: players )
 	{
 		log() << p << std::endl;
 	}
@@ -68,7 +69,7 @@ TexasHoldem::TexasHoldem( int smallBlind, int bigBlind, int cash )
 		  << std::endl;
 	log() << "Small Blind: " << smallBlind << "\tBig Blind: " << bigBlind << "\n\nPlayers:\n"
 		  << std::endl;
-	for ( auto p: players )
+	for ( auto& p: players )
 	{
 		log() << p << std::endl;
 	}
@@ -82,7 +83,7 @@ TexasHoldem::TexasHoldem( std::initializer_list<std::pair<std::string, int>> lis
 		  << std::endl;
 	log() << "Small Blind: " << smallBlind << "\tBig Blind: " << bigBlind << "\n\nPlayers:\n"
 		  << std::endl;
-	for ( auto p: players )
+	for ( auto& p: players )
 	{
 		log() << p << std::endl;
 	}
@@ -96,7 +97,7 @@ TexasHoldem::TexasHoldem( std::initializer_list<std::string> names )
 		  << std::endl;
 	log() << "Small Blind: " << smallBlind << "\tBig Blind: " << bigBlind << "\n\nPlayers:\n"
 		  << std::endl;
-	for ( auto p: players )
+	for ( auto& p: players )
 	{
 		log() << p << std::endl;
 	}
@@ -106,7 +107,7 @@ TexasHoldem::TexasHoldem( std::initializer_list<std::string> names )
 void TexasHoldem::showHand( const Player* player ) const
 {
 	log() << *player;
-	for ( Card cd : player->hand )
+	for ( const Card& cd : player->hand )
 	{
 		log() << cd << std::endl;
 	}
@@ -136,14 +137,14 @@ void TexasHoldem::changeBlinds( int sm, int big )
 
 void TexasHoldem::showTableCards() const
 {
-	if ( tableCards.size() == 0 )
+	if ( tableCards.empty() )
 	{
 		log() << "No table cards ....\n\n " << std::endl;
 	}
 	else
 	{
 		log() << "Table Cards: " << std::endl;
-		for ( auto cd : tableCards )
+		for ( auto& cd : tableCards )
 		{
 			log() << cd << std::endl;
 		}
@@ -229,7 +230,7 @@ void TexasHoldem::findHand( Player* plyr )
 	plyr->clearHand();
 	plyr->clearHandStrength();
 	std::string message( "error" );
-	for ( Cards possHand: possHands )
+	for ( Cards& possHand: possHands )
 	{
 		plyr->hand = possHand;
 		if ( hasRoyalFlush( plyr ) )
@@ -348,7 +349,7 @@ void TexasHoldem::findHand( Player* plyr )
 			{
 				plyr->bestHand = plyr->hand;
 				plyr->handStrength = tmp;
-				for ( int i = allCards.size() - 1; i >= 0; --i )
+				for ( size_t i = allCards.size() - 1; i != 0; --i )
 				{
 					if ( allCards[ i ].rankIndex != twoPair[ 0 ].rankIndex &&
 						 allCards[ i ].rankIndex != twoPair[ 3 ].rankIndex\
@@ -538,7 +539,7 @@ cardSuperVector TexasHoldem::comboCards( const Player* plyr ) const
 	{
 		throw poker_error::HandIDError( "Error @ comboCards(): 7 cards not present..." );
 	}
-	long numCombos = nCr( 7, 5 );
+	uint64_t numCombos = nCr( 7, 5 );
 	combInd = comb( 7, 5 );
 	for ( std::vector<int> subIndVect: combInd )
 	{
@@ -593,16 +594,16 @@ intComb comb( int n, int k )
 	return result;
 }
 
-unsigned long nCr( int n, int k )
+uint64_t nCr( uint64_t n, uint64_t k )
 {
-	long x = fact( n );
-	long y = fact( k ) * fact( n - k );
+	uint64_t x = fact( n );
+	uint64_t y = fact( k ) * fact( n - k );
 	return x / y;
 }
 
-long fact( int n )
+uint64_t fact( uint64_t n )
 {
-	int tmp = n - 1;
+	uint64_t tmp = n - 1;
 	while ( tmp > 1 )
 	{
 		n *= tmp;
@@ -666,8 +667,8 @@ void TexasHoldem::assign_dealer()
 	// function to assign dealer at beginning of game
 	// helper function to be called in the ctor
 	log() << "NumPlayers: " << numPlayers << std::endl;
-	srand( (uint32_t)( NULL ) );
-	int index_player = rand() % numPlayers;
+	std::random_device rd;
+	int index_player = rd() % numPlayers;
 	log() << "Index of player: " << index_player << std::endl;
 	getPlayerRef( index_player ).dealer = true;
 	dealerIndex = (uint32_t)index_player;

@@ -36,7 +36,7 @@
 
 // static const here in the head ensures that only one copy of this map is generated per cpp file
 // that includes this file
-static const std::map<std::string, float> chen_map
+const std::map<std::string, float> chen_map
 		{
 				{ "2",  1 },
 				{ "3",  1.5 },
@@ -59,14 +59,14 @@ typedef std::vector<Card> Cards;
 
 class bot_player : public Player
 {
-	friend class Brain;
+	friend class Brain;	// TODO :: make Brain just a private member of the class
 
 public:
 	bot_player();
 	bot_player( string name, int cash );
-	~bot_player();
-	int bet( int );
-	int bet();
+	~bot_player() override;
+	int bet( int ) override { log() << "TODO implement me!"; }
+	int bet() override;
 	void setStartingPower( int amt );
 	void computeStartingPower();    // TODO:: should be moved to brain
 	std::string getBotStatus() const;
@@ -81,7 +81,7 @@ public:
 
 private:
 	// data members
-	float 	chancesOfVictory;
+	float 	chancesOfVictory;	// expressed in % or could be 0...1
 	int 	startingPower;
 	HAND 	currentBestHand;
 	Brain* 	brain;
