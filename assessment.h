@@ -15,6 +15,7 @@
 
 typedef enum
 {
+	NONE,
 	HIGH_CARD,
 	PAIR,
 	TWO_PAIR,
@@ -33,6 +34,7 @@ typedef struct Hand
 	Cards 		cards;
 	int 		strength;
 	std::string hand_str;
+	Hand(): type(NONE), strength(0), hand_str("") {}
 } HAND;
 
 namespace assessment

@@ -10,24 +10,15 @@
 #include "bot_player.h"
 
 bot_player::bot_player()
-		: Player(), chancesOfVictory( 0 ), startingPower( 0 ),
+		: Player(), chancesOfVictory( 0 ), startingPower( 0 ), currentBestHand()
 {
 	name = "Bot_Player";
 }
 
 
 bot_player::bot_player( std::string name, int cash )
-		: Player( name, cash ), chancesOfVictory( 0 ), startingPower( 0 ),
+		: Player( std::move(name), cash ), chancesOfVictory( 0 ), startingPower( 0 )
 {}
-
-
-bot_player::~bot_player()
-{}
-
-void initBrain( TexasHoldem& game )
-{
-
-}
 
 void bot_player::computeStartingPower()
 {
@@ -116,7 +107,7 @@ void bot_player::setStartingPower( int amt )
 	startingPower = amt;
 }
 
-int bot_player:: 1bet( int amt )
+int bot_player::bet( int amt )
 {
 	//TODO: implement
 	return amt;
@@ -130,7 +121,7 @@ int bot_player::bet()
 
 bool bot_player::assessTable( const Cards& cds, poker_states state )
 {
-	brain->assessTable( *this, state );
+	brain->assessTable( this, state );
 	return true;
 }
 
@@ -138,4 +129,9 @@ bool bot_player::findValidHand()
 {
 	//TODO:: needs implementation use similar strategy that find hand uses in TexasHoldem class
 	return true;
+}
+
+void bot_player::initBrain(TexasHoldem &game)
+{
+
 }

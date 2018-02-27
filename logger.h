@@ -24,7 +24,7 @@
 
 class logger;
 
-// helper functions
+// helper function
 std::string now();
 logger& log();
 void delete_logger();
@@ -43,13 +43,13 @@ public:
 		strm = &std::cout;
 	}
 
-	logger( std::string name ) : log_filename( name ), mode( D )
+	explicit logger( std::string name ) : log_filename( std::move(name) ), mode( D )
 	{
 		std::cerr << "Creating a new logger writing to file name: " << log_filename << std::endl;
 		strm = new std::ofstream( log_filename );
 	}
 
-	logger( std::string name, std::ios_base::openmode op_md ) : log_filename( name ), mode( D )
+	logger( std::string name, std::ios_base::openmode op_md ) : log_filename( std::move(name) ), mode( D )
 	{
 		strm = new std::ofstream( log_filename , op_md );
 	}
@@ -82,7 +82,7 @@ public:
 
 	inline void set_mode( std::string md = "DEBUG" )
 	{
-		mode = md;
+		mode = std::move(md);
 	}
 
 	// implicit conversion to ostream, so () operator returns
@@ -98,7 +98,7 @@ public:
 		}
 		else
 		{
-			std::ofstream* fstrm = static_cast<std::ofstream*>( strm );
+			auto* fstrm = dynamic_cast<std::ofstream*>( strm );
 			if ( fstrm->is_open() && mode == "OFF" )
 			{
 				std::cerr << "Mode is set to OFF, closing log_file: " << log_filename << std::endl;
@@ -127,7 +127,7 @@ public:
 		}
 		else
 		{
-			std::ofstream* fstrm = static_cast<std::ofstream*>( strm );
+			auto* fstrm = dynamic_cast<std::ofstream*>(strm);
 			if ( fstrm->is_open() )
 			{
 				if ( log_prefix )

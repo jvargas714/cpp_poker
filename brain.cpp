@@ -5,10 +5,7 @@
 Brain::Brain()
 { game = nullptr; }
 
-Brain::~Brain()
-{}
-
-// TOOD:: needs testing 
+// TOOD:: needs testing
 bool Brain::assessTable( Player* bot, poker_states state )
 {    /* TODO:: Implement assessTable function to switch through each state of the game */
 	switch ( state )
@@ -52,18 +49,18 @@ bool Brain::assessTable( const Cards& cds )
 	return false;
 }
 
+Brain::Brain(Poker * pkr) : game(pkr)
+{
+
+}
+
 //--------------------------------------------------JayBrain----------------------------------------
 JayBrain::JayBrain() : Brain()
 {
 	// will need to call init() with a poker game when it becomes available 
 }
 
-JayBrain::JayBrain( TexasHoldem* pkr ) : Brain()
-{
-	init( pkr );
-}
-
-JayBrain::~JayBrain()
+JayBrain::JayBrain( TexasHoldem* pkr ) : Brain( pkr )
 {}
 
 void JayBrain::init( TexasHoldem* pkr )
@@ -88,15 +85,15 @@ bool JayBrain::assessFlopScenario( Player* bot )
 	int outs;   // number of cards left in the deck that contribute to achieving a best hand
 	Card hole1 = bot->hand[ 0 ];
 	Card hole2 = bot->hand[ 1 ];
-	if ( game->tableCards.size() != 3 )
+	if ( thGame->tableCards.size() != 3 )
 	{
 		log() << "JayBrain::assessFlopScenario(): Error -->"
 							"tableCards.size() != 3, exiting" << "\n";
 		return false;
 	}
 	// first we see if we have a valid hand off the flop
-	vector<Card>::iterator it = bot->hand.begin();
-	bot->hand.insert( it, game->tableCards.begin(), game->tableCards.end() );
+	std::vector<Card>::iterator it = bot->hand.begin();
+	bot->hand.insert( it, thGame->tableCards.begin(), thGame->tableCards.end() );
 
 	if ( bot->hand.size() != 5 )
 	{

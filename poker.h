@@ -26,10 +26,6 @@
 #include <algorithm>
 #include <unordered_map>
 
-using std::vector;
-using std::string;
-using std::unordered_map;
-
 /*
     Poker(std::initializer_list<std::pair<string, int> >)
         ** players specified by std::pair<name, cash)
@@ -64,16 +60,16 @@ using std::unordered_map;
 class Poker
 {
 public:
-	vector<Player> players;
-	int numPlayers = 0;
+	std::vector<Player> players;
+	uint32_t numPlayers = 0;
 	Deck gameDeck;
 	Poker();
-	Poker( std::initializer_list<std::pair<string, int> > );
-	Poker( int cash );
-	Poker( std::initializer_list<string> names );
+	Poker( std::initializer_list<std::pair<std::string, int> > );
+	explicit Poker( int cash );
+	Poker( std::initializer_list<std::string> names );
 	virtual ~Poker();
-	void enterGame( string name, int cash );
-	void enterGame( std::initializer_list<std::pair<string, int> > players );
+	void enterGame( std::string name, int cash );
+	void enterGame( std::initializer_list<std::pair<std::string, int> > players );
 	void dealCard( Player*, Card&& );
 	void dealCard( Player* );
 	Player& getPlayerRef( int index );
@@ -112,9 +108,8 @@ public:
 	virtual void dealHands() = 0;
 	virtual void findHand( Player* ) = 0;
 protected:
-	vector<int> dupRankInd( const Player* ) const;
+	std::vector<int> dupRankInd( const Player* ) const;
 	int* getRankInd( const Player* ) const;
-	vector<string> getHandSuits( const Player* ) const;
+	std::vector<std::string> getHandSuits( const Player* ) const;
 };
-
 #endif //POKER_H_INCLUDED

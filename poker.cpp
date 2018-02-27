@@ -14,7 +14,6 @@
  */
 
 #include <iostream>
-#include <utility>
 #include "poker.h"
 #include "logger.h"
 
@@ -30,28 +29,28 @@ Poker::Poker( int cash )
 	numPlayers = 2;
 }
 
-Poker::Poker( std::initializer_list<string> names )
+Poker::Poker( std::initializer_list<std::string> names )
 /*
  * Default cash: $1500
  */
 		: players(), gameDeck()
 {
-	for ( string name : names )
+	for ( const std::string& name : names )
 	{
-		//log() << "Debug@ Poker(list<string>)-> name " << name << "\n";
-		players.push_back( Player( name, 1500 ) );
+	log() << __FUNCTION__ << " name " << name << "\n";
+		players.emplace_back( Player( name, 1500 ) );
 	}
-	numPlayers = players.size();
+	numPlayers = static_cast<uint32_t>(players.size());
 }
 
-Poker::Poker( std::initializer_list<std::pair<string, int> > list )
+Poker::Poker( std::initializer_list<std::pair<std::string, int> > list )
 		: players(), gameDeck()
 {
 	/*
 	 * Specify list of pairs player : cash
 	 */
 	using std::pair;
-	for ( pair<string, int> nameCashPair : list )
+	for ( pair<std::string, int> nameCashPair : list )
 	{
 		players.push_back( Player( nameCashPair.first, nameCashPair.second ) );
 	}
@@ -62,7 +61,7 @@ Poker::~Poker()
 {};
 
 /*
-void Poker::enterGame(string &&name, int &&cash) {
+void Poker::enterGame(std::string &&name, int &&cash) {
 
     players.push_back(Player(std::move(name), std::move(cash)));
     log() << name << " has entered the game with $" << cash << "\n";
@@ -70,7 +69,7 @@ void Poker::enterGame(string &&name, int &&cash) {
     log() << "Number of players: " << numPlayers << "\n";
 }*/
 
-void Poker::enterGame( string name, int cash )
+void Poker::enterGame( std::string name, int cash )
 {
 	players.push_back( Player( name, cash ) );
 	log() << name << " has entered the game with $" << cash << "\n";
@@ -78,12 +77,12 @@ void Poker::enterGame( string name, int cash )
 	log() << "Number of players: " << numPlayers << "\n";
 }
 
-void Poker::enterGame( std::initializer_list<std::pair<string, int> > players )
+void Poker::enterGame( std::initializer_list<std::pair<std::string, int> > players )
 {
 	using std::pair;
 	using std::move;
 
-	for ( pair<string, int> player : players )
+	for ( pair<std::string, int> player : players )
 	{
 		this->players.push_back( Player( player.first, player.second ) );
 	}
@@ -100,13 +99,13 @@ void Poker::dealCard( Player* plyr )
 	plyr->hand.push_back( Card() );
 }
 
-vector<int> Poker::dupRankInd( const Player* plyr ) const
+std::vector<int> Poker::dupRankInd( const Player* plyr ) const
 {
 	using std::begin;
 	using std::end;
 
 	int* handRanks = getRankInd( plyr );         // array pointing to first element in handRanks
-	vector<int> dupRanksInd;
+	std::vector<int> dupRanksInd;
 	int cnt = 0;
 	int tmp = 0;
 	int index = 0;
@@ -162,7 +161,7 @@ bool Poker::hasPair( const Player* plyr ) const
 	/*returns true if player has a pair as best hand
 		throws error in case that player doesn't have 5 cards in hand
 	*/
-	vector<int> dupRanks = dupRankInd( plyr );
+	std::vector<int> dupRanks = dupRankInd( plyr );
 	bool condition = false;
 	if ( dupRanks.size() == 2 )
 	{
@@ -173,14 +172,14 @@ bool Poker::hasPair( const Player* plyr ) const
 
 Cards Poker::getPair( const Player* player ) const
 {
-	vector<Card> pair;
+	std::vector<Card> pair;
 	if ( !hasPair( player ) )
 	{
 		throw poker_error::HandIDError( "Error--> Poker:getPair(): HandIDError" );
 	}
 	else
 	{
-		vector<int> rankIndex = dupRankInd( player );
+		std::vector<int> rankIndex = dupRankInd( player );
 		pair.push_back( player->hand[ rankIndex[ 0 ] ] );
 		pair.push_back( player->hand[ rankIndex[ 1 ] ] );
 	}
@@ -189,7 +188,7 @@ Cards Poker::getPair( const Player* player ) const
 
 bool Poker::hasTwoPair( const Player* player ) const
 {
-	vector<int> handInd = dupRankInd( player );
+	std::vector<int> handInd = dupRankInd( player );
 	int* handRanks = getRankInd( player );
 	// checks to see if we have 4 in handInd and its not a 4 of a kind
 	bool condition = handInd.size() == 4 &&
@@ -201,7 +200,7 @@ bool Poker::hasTwoPair( const Player* player ) const
 
 Cards Poker::getTwoPair( const Player* player ) const
 {
-	vector<Card> cards;
+	std::vector<Card> cards;
 
 	if ( !hasTwoPair( player ) )
 	{
@@ -210,7 +209,7 @@ Cards Poker::getTwoPair( const Player* player ) const
 
 	else
 	{
-		vector<int> dupInd = dupRankInd( player );
+		std::vector<int> dupInd = dupRankInd( player );
 		auto i = dupInd.begin();
 
 		while ( i != dupInd.end() )
@@ -225,20 +224,20 @@ Cards Poker::getTwoPair( const Player* player ) const
 
 bool Poker::hasTrips( const Player* player ) const
 {
-	vector<int> dupInd = dupRankInd( player );
+	std::vector<int> dupInd = dupRankInd( player );
 	return dupInd.size() == 3;
 }
 
 Cards Poker::getTrips( const Player* player ) const
 {
-	vector<Card> cards;
+	std::vector<Card> cards;
 	if ( !hasTrips( player ) )
 	{
 		throw poker_error::HandIDError( "HandIDError-->getTrips()" );
 	}
 	else
 	{
-		vector<int> dupInd = dupRankInd( player );
+		std::vector<int> dupInd = dupRankInd( player );
 		auto i = dupInd.begin();
 		while ( i != dupInd.end() )
 		{
@@ -252,7 +251,7 @@ Cards Poker::getTrips( const Player* player ) const
 bool Poker::hasFourOfAKind( const Player* player ) const
 {
 	using std::count;
-	vector<int> dupInd = dupRankInd( player );
+	std::vector<int> dupInd = dupRankInd( player );
 	if ( dupInd.size() == 4 )
 	{
 		Card sampleCard = player->hand[ dupInd[ 0 ] ];
@@ -268,7 +267,7 @@ bool Poker::hasFourOfAKind( const Player* player ) const
 
 Cards Poker::getFourOfAKind( const Player* player ) const
 {
-	vector<int> dupInd = dupRankInd( player );
+	std::vector<int> dupInd = dupRankInd( player );
 	Cards cards;
 	if ( hasFourOfAKind( player ) )
 	{
@@ -290,7 +289,7 @@ Cards Poker::getFourOfAKind( const Player* player ) const
 bool Poker::hasStraight( const Player* player ) const
 {
 	Cards cards = player->hand;                 // copy hand and sort
-	vector<string> suits = getHandSuits( player );
+	std::vector<std::string> suits = getHandSuits( player );
 	std::sort( cards.begin(), cards.end() );
 	int cnt = 0;
 	for ( int i = 1; i < 5; i++ )
@@ -321,7 +320,7 @@ Cards Poker::getStraight( const Player* player ) const
 bool Poker::hasFlush( const Player* player ) const
 {
 	using std::count;
-	vector<string> suits = getHandSuits( player );
+	std::vector<std::string> suits = getHandSuits( player );
 	Cards cards = player->hand;
 	std::sort( cards.begin(), cards.end() );
 	int cnt = 0;
@@ -386,7 +385,7 @@ Cards Poker::getFullHouse( const Player* player ) const
 bool Poker::hasStraightFlush( const Player* player ) const
 {
 	Cards cards = player->hand;
-	vector<string> suits = getHandSuits( player );
+	std::vector<std::string> suits = getHandSuits( player );
 	std::sort( cards.begin(), cards.begin() );
 	int rnkCnt = 0, stCnt = 0;
 	for ( int i = 1; i < 5; i++ )
@@ -416,7 +415,7 @@ Cards Poker::getStraightFlush( const Player* player ) const
 bool Poker::hasRoyalFlush( const Player* player ) const
 {
 	Cards cards = player->hand;
-	vector<string> suits = getHandSuits( player );
+	std::vector<std::string> suits = getHandSuits( player );
 	sort( cards.begin(), cards.end() );
 	int rnkCnt = 0, stCnt = 0;
 	for ( int i = 1; i < 5; i++ )
@@ -443,10 +442,10 @@ Cards Poker::getRoyalFlush( const Player* player ) const
 	}
 }
 
-vector<string> Poker::getHandSuits( const Player* player ) const
+std::vector<std::string> Poker::getHandSuits( const Player* player ) const
 {
-	vector<string> suits;
-	for ( Card cd: player->hand )
+	std::vector<std::string> suits;
+	for ( const Card& cd: player->hand )
 	{
 		suits.push_back( cd.getSuit() );
 	}
@@ -459,7 +458,7 @@ Player& Poker::getPlayerRef( int index )
 	return players[ index ];
 }
 
-Player& Poker::getPlayerRef( string& name )
+Player& Poker::getPlayerRef( std::string& name )
 {
 	for ( auto& plyr : players )
 	{

@@ -17,7 +17,7 @@ TexasHoldem::TexasHoldem()
 	assign_dealer();
 }
 
-TexasHoldem::TexasHoldem( string& loadPath )
+TexasHoldem::TexasHoldem( std::string& loadPath )
 		: Poker(), pot( 0 )
 {
 
@@ -31,7 +31,7 @@ TexasHoldem::TexasHoldem( string& loadPath )
 	Json::Value def_val( -1 );
 	gameId = root[ "game" ][ "id" ].asInt(); //root.get( key, def_val );
 	log() << "game CFG::Game Id: " << gameId << std::endl;
-	string key = "small_blind";
+	std::string key = "small_blind";
 	def_val = 10;
 	smallBlind = root[ "game" ].get( key, def_val ).asInt();
 	log() << "game CFG::smallBlind:: " << smallBlind << std::endl;
@@ -668,7 +668,7 @@ void TexasHoldem::assign_dealer()
 	// helper function to be called in the ctor
 	log() << "NumPlayers: " << numPlayers << std::endl;
 	std::random_device rd;
-	int index_player = rd() % numPlayers;
+	uint32_t index_player = rd() % numPlayers;
 	log() << "Index of player: " << index_player << std::endl;
 	getPlayerRef( index_player ).dealer = true;
 	dealerIndex = (uint32_t)index_player;

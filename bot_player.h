@@ -63,26 +63,23 @@ class bot_player : public Player
 
 public:
 	bot_player();
-	bot_player( string name, int cash );
-	~bot_player() override;
-	int bet( int ) override { log() << "TODO implement me!"; }
+	bot_player( std::string name, int cash );
+	~bot_player() override = default;
+	int bet( int ) override;
 	int bet() override;
 	void setStartingPower( int amt );
 	void computeStartingPower();    // TODO:: should be moved to brain
 	std::string getBotStatus() const;
 	void initBrain( TexasHoldem& game );
-
 	inline int getCurrentHandStrength() { return currentBestHand.strength; }
-
-	inline void setCurrentHandStrength( int amt ) { currentBestHand.strength = amt; }
-	inline void setCurrentBestHand( Hand hand ) { currentBestHand = hand; }
+	inline void setCurrentHandStrength( const int& amt ) override { currentBestHand.strength = amt; }
+	inline void setCurrentBestHand( const Hand& hand ) override { currentBestHand = hand; }
 	bool assessTable( const Cards& cds, poker_states state );
-
 
 private:
 	// data members
 	float 	chancesOfVictory;	// expressed in % or could be 0...1
-	int 	startingPower;
+	int 		startingPower;
 	HAND 	currentBestHand;
 	Brain* 	brain;
 
