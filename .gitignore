@@ -1,6 +1,6 @@
 cmake_install*
 CMakeCache.txt
-cmake-build*
+cmake-build-*
 .idea
 .idea/*.xml
 CMakeFiles

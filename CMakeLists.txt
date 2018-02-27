@@ -5,7 +5,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
 # build dependencies
 add_subdirectory(./external/jsoncpp)
-
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 add_definitions( -DTESTING )
 include_directories(include . ./external/jsoncpp)
@@ -44,5 +44,4 @@ link_libraries(poker jsoncpp)
 # target_link_libraries( testing pokerTest )
 
 # scrap
-add_executable( scrap_exe source/scrap.cpp)
-#target_link_libraries( scrap_exe poker )
+add_executable(scrap_exe source/scrap.cpp)
