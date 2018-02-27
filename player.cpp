@@ -3,6 +3,7 @@
 //
 #include "player.h"
 #include "logger.h"
+#include "hand_weight.h"
 
 Player::Player()
 		: smallBlind_bet( false ), bigBlind_bet( false ), dealer( false ),

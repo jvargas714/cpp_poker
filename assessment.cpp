@@ -1,22 +1,21 @@
 #include "assessment.h"
 #include "logger.h"
-#include <algorithm>
-#include <cstdint>
-
+#include "hand_weight.h"
 
 std::vector<std::string> assessment::getHandSuits( const Cards& cds )
 {
-	std::vector<std::string> suits;
-	for ( Card cd: cds )
+	std::vector<std::string> suits( cds.size() );
+	for ( const Card& cd: cds )
 	{
 		suits.push_back( cd.getSuit() );
 	}
 	return suits;
 }
 
+// TODO :: refactor this, no more new
 int* assessment::getRankInd( const Cards& cds )
 {
-	int* rankInds = new int[5];
+	auto* rankInds = new int[5];
 	int n = 0;
 	std::for_each( cds.begin(), cds.end(), [ &n, &rankInds ]( Card cd )
 	{

@@ -1,6 +1,7 @@
 #include "TexasHoldem.h"
 #include "logger.h"
 #include <random>
+#include "hand_weight.h"
 
 TexasHoldem::TexasHoldem()
 		: Poker(), pot( 0 ), smallBlind( 10 ), bigBlind( 20 ), gameId( 999 )

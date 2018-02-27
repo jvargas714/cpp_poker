@@ -5,9 +5,10 @@
  *      Author: jay
  */
 #include <cmath>  // std::round
-#include <tgmath.h>
+#include <ctgmath>
 #include "logger.h"
 #include "bot_player.h"
+
 
 bot_player::bot_player()
 		: Player(), chancesOfVictory( 0 ), startingPower( 0 ), currentBestHand()
