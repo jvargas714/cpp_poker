@@ -1,7 +1,7 @@
 #ifndef POKER_TEST_SUITE_H
 #define POKER_TEST_SUITE_H
 #include "master_poker.h"
-#include "logger.h"
+#include "include/logger.h"
 #define TEST_CNT 10
 
 typedef enum opts

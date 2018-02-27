@@ -1,0 +1,5 @@
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/external/lib)
+include_directories(".")
+add_library(jsoncpp SHARED jsoncpp.cpp)
