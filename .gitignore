@@ -9,3 +9,8 @@ Makefile
 .idea/misc.xml
 .idea/vcs.xml
 libpoker.a
+lib/*
+backups
+bin/*
+.DS_Store
+scrap_exe

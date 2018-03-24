@@ -4,13 +4,17 @@
 // Global interface
 logger& log()
 {
+	static logger* lg;
+	if(!lg)
+	{
 #ifdef TESTING
-	static logger* lg = new logger( TEST_SUITE_LOG );
+		lg = new logger( TEST_SUITE_LOG );
 #elif POKER_DEBUG
-	static logger* lg = new logger( DEBUG_LOG );
+		lg = new logger( DEBUG_LOG );
 #else
-	static logger* lg = new logger;
+		lg = new logger;
 #endif
+	}
 	return *lg;
 }
 
@@ -23,14 +27,3 @@ std::string now()
 {
 	return "";
 }
-
-/*
-std::string now()
-{
-    std::time_t t = std::time( nullptr );
-    std::tm* tm = std::localtime( &t );
-    char buff[128];
-    std::strftime( buff, sizeof(buff), "%Y-%m-%d.%X ", tm );
-    return buff;
-}
-*/

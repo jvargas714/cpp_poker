@@ -7,10 +7,8 @@ TexasHoldem::TexasHoldem()
 		: Poker(), pot( 0 ), smallBlind( 10 ), bigBlind( 20 ), gameId( 999 )
 {
 	// Constructor that inits from configuration
-	log() << "\n-----------Welcome!!!----------------\n New Texas Holdem game created!!!\n"
-		  << std::endl;
-	log() << "Small Blind: " << smallBlind << "\tBig Blind: " << bigBlind << "\n\nPlayers:\n"
-		  << std::endl;
+	log() << "\n-----------Welcome!!!----------------\n New Texas Holdem game created!!!\n" << std::endl;
+	log() << "Small Blind: " << smallBlind << "\tBig Blind: " << bigBlind << "\n\nPlayers:\n" << std::endl;
 	for ( auto& p: players )
 	{
 		log() << p << std::endl;
@@ -30,15 +28,15 @@ TexasHoldem::TexasHoldem( std::string& loadPath )
 	log() << "cfg file read:: " << std::endl;
 	log() << root << std::endl;
 	Json::Value def_val( -1 );
-	gameId = root[ "game" ][ "id" ].asInt(); //root.get( key, def_val );
+	gameId = root[ "game" ][ "id" ].asUInt(); //root.get( key, def_val );
 	log() << "game CFG::Game Id: " << gameId << std::endl;
 	std::string key = "small_blind";
 	def_val = 10;
-	smallBlind = root[ "game" ].get( key, def_val ).asInt();
+	smallBlind = root[ "game" ].get( key, def_val ).asUInt();
 	log() << "game CFG::smallBlind:: " << smallBlind << std::endl;
 	key = "big_blind";
 	def_val = 20;
-	bigBlind = root[ "game" ].get( key, def_val ).asInt();
+	bigBlind = root[ "game" ].get( key, def_val ).asUInt();
 	log() << "game CFG::bigBlind:: " << bigBlind << std::endl;
 	Json::Value player_array;
 	player_array = root[ "game" ][ "players" ];
@@ -63,13 +61,11 @@ TexasHoldem::TexasHoldem( std::string& loadPath )
 	assign_dealer();
 }
 
-TexasHoldem::TexasHoldem( int smallBlind, int bigBlind, int cash )
+TexasHoldem::TexasHoldem( uint32_t smallBlind, uint32_t bigBlind, uint32_t cash )
 		: Poker( cash ), pot( 0 ), smallBlind( smallBlind ), bigBlind( bigBlind ), gameId( 999 )
 {
-	log() << "\n-----------Welcome!!!----------------\n New Texas Holdem game created!!!\n"
-		  << std::endl;
-	log() << "Small Blind: " << smallBlind << "\tBig Blind: " << bigBlind << "\n\nPlayers:\n"
-		  << std::endl;
+	log() << "\n-----------Welcome!!!----------------\n New Texas Holdem game created!!!\n" << std::endl;
+	log() << "Small Blind: " << smallBlind << "\tBig Blind: " << bigBlind << "\n\nPlayers:\n" << std::endl;
 	for ( auto& p: players )
 	{
 		log() << p << std::endl;
@@ -80,10 +76,8 @@ TexasHoldem::TexasHoldem( int smallBlind, int bigBlind, int cash )
 TexasHoldem::TexasHoldem( std::initializer_list<std::pair<std::string, int>> list )
 		: Poker( list ), pot( 0 ), smallBlind( 10 ), bigBlind( 20 ), gameId( 999 )
 {
-	log() << "\n-----------Welcome!!!----------------\n New Texas Holdem game created!!!\n"
-		  << std::endl;
-	log() << "Small Blind: " << smallBlind << "\tBig Blind: " << bigBlind << "\n\nPlayers:\n"
-		  << std::endl;
+	log() << "\n-----------Welcome!!!----------------\n New Texas Holdem game created!!!\n" << std::endl;
+	log() << "Small Blind: " << smallBlind << "\tBig Blind: " << bigBlind << "\n\nPlayers:\n" << std::endl;
 	for ( auto& p: players )
 	{
 		log() << p << std::endl;
@@ -105,14 +99,20 @@ TexasHoldem::TexasHoldem( std::initializer_list<std::string> names )
 	assign_dealer();
 }
 
-void TexasHoldem::showHand( const Player* player ) const
-{
-	log() << *player;
-	for ( const Card& cd : player->hand )
-	{
-		log() << cd << std::endl;
-	}
-	log() << "\n";
+TexasHoldem::TexasHoldem(const TexasHoldem && game) noexcept {
+    this->smallBlind = game.smallBlind;
+    this->bigBlind = game.bigBlind;
+    this->gameDeck = game.gameDeck;
+    this->players = game.players;
+    this->gameId = game.gameId;
+    this->dealerIndex = game.dealerIndex;
+    this->numPlayers = game.numPlayers;
+    this->pot = game.pot;
+    this->tableCards = game.tableCards;
+}
+
+TexasHoldem::TexasHoldem(TexasHoldem& game) {
+
 }
 
 void TexasHoldem::dealHands()
@@ -724,3 +724,4 @@ void TexasHoldem::rotateDealer()
 		dealerIndex = (uint32_t)tmp;
 	}
 }
+
