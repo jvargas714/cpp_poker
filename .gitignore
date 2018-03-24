@@ -13,4 +13,3 @@ lib/*
 backups
 bin/*
 .DS_Store
-scrap_exe
