@@ -18,6 +18,8 @@ public:
     void resetDeck();                       // delete deck and create a new deck and shuffle use erase method
     Card dealCard();                        // deals card off the top of the d3ck
     size_t numCardsLeft() const;           // returns number of cards left in deck
+    bool operator==(const Deck& dk) const { return dk.deck == this->deck; }
+    bool operator!=(const Deck& dk) const { return dk.deck != this->deck; }
 };
 
 #endif // DECK_H_INCLUDED

@@ -15,9 +15,12 @@ set(TESTING_SUITE ON)
 # build dependencies
 add_subdirectory(./external/jsoncpp)
 
+# POKER_DEBUG or POKER_RELEASE
+add_definitions(-DPOKER_DEBUG)
+
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
-set(OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 include_directories(./include . ./external/jsoncpp )
 set(LIB_FILES
         include/logger.h
@@ -54,19 +57,13 @@ link_libraries(poker jsoncpp)
 
 # test suite
 if (TESTING_SUITE)
+    add_definitions(-DTESTING)
     include_directories( ./testing ./testing/googletest/googletest/include )
     # build google test api targets: gtest and gtest_main
     add_subdirectory( testing/googletest/googletest )
 
-    # google test suite
-    add_library( pokerGTestSuite STATIC testing/test_suite.cpp
-            testing/test_suite.h)
-    target_link_libraries( pokerGTestSuite poker gtest )
-
-    # poker testing TODO :: get this to build
-    add_executable( gPokerTestingMain testing/testingMain.cpp
-            testing/test_suite.h)
-    target_link_libraries( gPokerTestingMain pokerGTestSuite )
+    add_executable( gPokerTestingMain testing/testingMain.cpp)
+    target_link_libraries( gPokerTestingMain poker gtest)
 endif()
 
 # scrap exe

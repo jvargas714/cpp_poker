@@ -355,6 +355,6 @@ HAND assessment::findHandStrength(const Cards &cards) {
         hand.type = HIGH_CARD;
 
     }
-    log() << "hand type: " << hand.hand_str << ", with a hand strength of " << hand.strength << std::endl;
+    LOG << "hand type: " << hand.hand_str << ", with a hand strength of " << hand.strength << END;
     return hand;
 }

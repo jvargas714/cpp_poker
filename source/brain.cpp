@@ -35,7 +35,7 @@ bool Brain::assessTable(Player *bot,
 
 bool Brain::assessTable(const Cards &cds) {
     if (cds.size() != 5) {
-        log() << "Brain::assessTable(): need 5 cards present, exiting ..." << "\n";
+        LOG << "Brain::assessTable(): need 5 cards present, exiting ..." << "\n";
         return false;
     }
 
@@ -75,7 +75,7 @@ bool JayBrain::assessFlopScenario(Player *bot) {
     Card hole1 = bot->hand[0];
     Card hole2 = bot->hand[1];
     if (thGame->tableCards.size() != 3) {
-        log() << "JayBrain::assessFlopScenario(): Error -->"
+        LOG << "JayBrain::assessFlopScenario(): Error -->"
                  "tableCards.size() != 3, exiting" << "\n";
         return false;
     }

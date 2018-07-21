@@ -45,7 +45,7 @@ void Deck::resetDeck() { // clears deck, fills deck with new cards and shuffles
     }
     shuffleDeck();
 
-    log() << "Deck reset and shuffled!!\n";
+    LOG << "Deck reset and shuffled!!\n";
 }
 
 

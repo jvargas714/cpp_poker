@@ -32,7 +32,7 @@ Poker::Poker(std::initializer_list<std::string> names)
  */
         : players(), gameDeck() {
     for (const std::string &name : names) {
-        log() << __FUNCTION__ << " name " << name << "\n";
+        LOG << __FUNCTION__ << " name " << name << "\n";
         players.emplace_back(Player(name, 1500));
     }
     numPlayers = static_cast<uint32_t>(players.size());
@@ -50,22 +50,22 @@ Poker::Poker(std::initializer_list<std::pair<std::string, int> > list)
     numPlayers = list.size();
 }
 
-Poker::~Poker() {};
+Poker::~Poker()=default;
 
 /*
 void Poker::enterGame(std::string &&name, int &&cash) {
 
     players.push_back(Player(std::move(name), std::move(cash)));
-    log() << name << " has entered the game with $" << cash << "\n";
+    LOG << name << " has entered the game with $" << cash << "\n";
     numPlayers++;
-    log() << "Number of players: " << numPlayers << "\n";
+    LOG << "Number of players: " << numPlayers << "\n";
 }*/
 
 void Poker::enterGame(std::string name, int cash) {
-    players.push_back(Player(name, cash));
-    log() << name << " has entered the game with $" << cash << "\n";
+    players.emplace_back(Player(name, cash));
+    LOG << name << " has entered the game with $" << cash << "\n";
     numPlayers++;
-    log() << "Number of players: " << numPlayers << "\n";
+    LOG << "Number of players: " << numPlayers << "\n";
 }
 
 void Poker::enterGame(std::initializer_list<std::pair<std::string, int>> players) {
@@ -73,13 +73,13 @@ void Poker::enterGame(std::initializer_list<std::pair<std::string, int>> players
     using std::move;
 
     for (pair<std::string, int> player : players) {
-        this->players.push_back(Player(player.first, player.second));
+        this->players.emplace_back(Player(player.first, player.second));
     }
 }
 
 void Poker::dealCard(Player *plyr, Card &&card) {
     plyr->hand.push_back(std::move(card));
-    log() << plyr->name << " has been dealt " << card << "\n";
+    LOG << plyr->name << " has been dealt " << card << "\n";
 }
 
 void Poker::dealCard(Player *plyr) {
@@ -362,13 +362,15 @@ std::vector<std::string> Poker::getHandSuits(const Player *player) const {
 }
 
 std::vector<Player>::iterator Poker::getPlayerIterator(const int& index) {
-    if (index < 0 || index < players.size()-1) throw poker_error::FindPlayerError();
+    LOG << "finding player via index: " << index << END;
+    if (index < 0 || index > players.size()-1) throw poker_error::FindPlayerError();
 
     // returns a reference to a player's reference by index
     return players.begin()+index;
 }
 
 std::vector<Player>::iterator Poker::getPlayerIterator(const std::string &name) {
+    LOG << "finding player via name: " << name << END;
     for (auto it = players.begin(); it != players.end(); it++)
         if (it->name == name)
             return it;

@@ -129,7 +129,9 @@ public:
 
     TexasHoldem& operator=(TexasHoldem);
 
-    explicit TexasHoldem(std::string &cfg_path);
+    bool operator==(const TexasHoldem&) const;
+
+    explicit TexasHoldem(const std::string &cfg_path);
 
     TexasHoldem(uint32_t smallBlind, uint32_t bigBlind, uint32_t cash);
 
@@ -141,13 +143,15 @@ public:
 
     TexasHoldem(const TexasHoldem &) noexcept;
 
-    void showHand(const Player *) const override;
+    ~TexasHoldem()override=default;
+
+    void showHand(const Player *) const override {};
 
     void dealHands() override;
 
     void findHand(Player *) override;
 
-    void changeBlinds(int sm, int big);
+    void changeBlinds(uint32_t sm, uint32_t big);
 
     void dealFlop();
 
@@ -200,7 +204,7 @@ uint64_t fact(uint64_t n);
 intComb comb(uint64_t n, uint64_t k);
 
 // operator overloads
-std::ostream& operator<<(std::ostream& g1, TexasHoldem&);
+std::ostream& operator<<(std::ostream& os, TexasHoldem& game);
 
 // DEBUG
 void debugPrintVect(std::vector<int>);

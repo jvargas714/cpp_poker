@@ -13,6 +13,7 @@
 #include <chrono>   // std::chrono::system_clock::now() and std::time_point
 /*
  * TODO:: set module in logger as well, use #define to do so
+ * TODO :: improve << operator to have time date etc etc
  */
 // some macros for log prefix
 #define D       "::DEBUG::"
@@ -21,6 +22,8 @@
 #define I       "::INFO::"
 #define fstr()  std::string(__func__) + "(): "
 #define FN      fstr()
+#define END     std::endl
+#define LOG     log() << __FUNCTION__ << "(): "
 
 class logger;
 

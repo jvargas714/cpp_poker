@@ -24,12 +24,12 @@ void Player::namePlayer(std::string name) {
     std::string originalName(name);
     this->name = name;
 
-    log() << originalName << " was named to " << this->name << std::endl;
+    LOG << originalName << " was named to " << this->name << std::endl;
 
 }
 
 int Player::bet(int amt) {
-    log() << name << " bet $" << amt << std::endl;
+    LOG << name << " bet $" << amt << std::endl;
     cash -= amt;
     return 0;
 }
@@ -44,7 +44,7 @@ int Player::bet() {
 
 void Player::collectPot(int amt) {
     cash += amt;
-    log() << name << " collected $" << amt << ", new balance: $" << cash << "\n" << std::endl;
+    LOG << name << " collected $" << amt << ", new balance: $" << cash << "\n" << std::endl;
 }
 
 void Player::setBestHand(Cards &cards) {
@@ -55,7 +55,7 @@ void Player::setBestHand(Cards &cards) {
         bestHand[i] = cd;
         i++;
     }
-    log() << name << " has set best hand " << std::endl;
+    LOG << name << " has set best hand " << std::endl;
 }
 
 void Player::setHandStrength(const std::string &handType, int &rank) {
