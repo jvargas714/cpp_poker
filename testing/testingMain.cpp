@@ -1,5 +1,5 @@
 #include <iostream>
-#include <test_suite.h>
+#include "test_suite.h"
 
 int main(int argc, char** argv) {
     std::cout << "Google Testing Poker....." << std::endl;

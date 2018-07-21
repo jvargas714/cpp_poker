@@ -9,40 +9,36 @@
 #include <stdexcept>
 #include <string>
 
-namespace poker_error
-{
+namespace poker_error {
 
-	using std::runtime_error;
+    using std::runtime_error;
 
-	class HandIDError : public runtime_error
-	{
-		/* inherited functions from exception and runtime_error
-			1. what() --> gets string identifying exception
-		 */
+    class HandIDError : public runtime_error {
+        /* inherited functions from exception and runtime_error
+            1. what() --> gets string identifying exception
+         */
 
-	public:
-		HandIDError();
+    public:
+        HandIDError();
 
-		HandIDError( const std::string& msg );
-	};
+        HandIDError(const std::string &msg);
+    };
 
-	class FindWinnerError : public runtime_error
-	{
+    class FindWinnerError : public runtime_error {
 
-	public:
-		FindWinnerError();
+    public:
+        FindWinnerError();
 
-		FindWinnerError( const std::string& msg );
-	};
+        FindWinnerError(const std::string &msg);
+    };
 
-	class FindPlayerError : public runtime_error
-	{
+    class FindPlayerError : public runtime_error {
 
-	public:
-		FindPlayerError();
+    public:
+        FindPlayerError();
 
-		FindPlayerError( const std::string& msg );
-	};
+        FindPlayerError(const std::string &msg);
+    };
 } // END poker error namespace
 
 

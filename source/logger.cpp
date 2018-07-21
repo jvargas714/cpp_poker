@@ -2,28 +2,24 @@
 
 
 // Global interface
-logger& log()
-{
-	static logger* lg;
-	if(!lg)
-	{
+logger &log() {
+    static logger *lg;
+    if (!lg) {
 #ifdef TESTING
-		lg = new logger( TEST_SUITE_LOG );
+        lg = new logger( TEST_SUITE_LOG );
 #elif POKER_DEBUG
-		lg = new logger( DEBUG_LOG );
+        lg = new logger( DEBUG_LOG );
 #else
-		lg = new logger;
+        lg = new logger;
 #endif
-	}
-	return *lg;
+    }
+    return *lg;
 }
 
-void delete_logger()
-{
-	delete &log();
+void delete_logger() {
+    delete &log();
 }
 
-std::string now()
-{
-	return "";
+std::string now() {
+    return "";
 }

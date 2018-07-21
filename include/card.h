@@ -4,29 +4,27 @@
 #include <string>
 #include <vector>
 
-typedef enum
-{
-	TWO,
-	THREE,
-	FOUR,
-	FIVE,
-	SIX,
-	SEVEN,
-	EIGHT,
-	NINE,
-	TEN,
-	JACK,
-	QUEEN,
-	KING,
-	ACE
+typedef enum {
+    TWO,
+    THREE,
+    FOUR,
+    FIVE,
+    SIX,
+    SEVEN,
+    EIGHT,
+    NINE,
+    TEN,
+    JACK,
+    QUEEN,
+    KING,
+    ACE
 } CARD_RANK;
 
-typedef enum
-{
-	CLUB,
-	DIAMOND,
-	HEART,
-	SPADE
+typedef enum {
+    CLUB,
+    DIAMOND,
+    HEART,
+    SPADE
 } CARD_SUIT;
 
 /*
@@ -37,43 +35,41 @@ index range 0-3    0    1    2    3
 string suit[4] = {"C", "D", "H", "S"};
 */
 
-class Card
-{
+class Card {
 private:
-	const static std::string suit[4];
-	const static std::string rank[13];
+    const static std::string suit[4];
+    const static std::string rank[13];
 
 protected:
-	std::string rk, st;                // actual rank (string type)
+    std::string rk, st;                // actual rank (string type)
 
 public:
-	int rankIndex, suitIndex;        // index in actual array (int type)
-	Card();
+    int rankIndex, suitIndex;        // index in actual array (int type)
+    Card();
 
-	Card( int rkInd, int stInd );
+    Card(int rkInd, int stInd);
 
-	~Card();
+    ~Card();
 
-	const std::string getRank() const;    // returns string representation of ranking
-	const std::string getSuit() const;    // returns string representation of suite
-	friend std::ostream& operator<<( std::ostream& os, const Card& cd );
+    const std::string getRank() const;    // returns string representation of ranking
+    const std::string getSuit() const;    // returns string representation of suite
+    friend std::ostream &operator<<(std::ostream &os, const Card &cd);
 
-	// op overload cards are tested according to their ranking
-	bool operator==( const Card& cd ) const;
+    // op overload cards are tested according to their ranking
+    bool operator==(const Card &cd) const;
 
-	bool operator<( const Card& cd ) const;
+    bool operator<(const Card &cd) const;
 
-	bool operator>( const Card& cd ) const;
+    bool operator>(const Card &cd) const;
 
-	// compare function of cards returns 0 if equal -1 if less than and 1 if greater than
-	int cmp( const Card& cd ) const;
+    // compare function of cards returns 0 if equal -1 if less than and 1 if greater than
+    int cmp(const Card &cd) const;
 };
 
 
 // functor to set comparator for STL containers 
-struct CardCmp
-{
-	bool operator()( Card cd1, Card cd2 ) const;
+struct CardCmp {
+    bool operator()(Card cd1, Card cd2) const;
 };
 
 /*

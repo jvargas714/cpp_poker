@@ -1,3 +1,4 @@
+#include <iostream>
 #include "test_suite.h"
 
 void TexasHoldemTest::SetUp() {
@@ -9,5 +10,7 @@ void TexasHoldemTest::SetUp() {
     g1.enterGame( {{"player5", 2500}, {"player6", 2500}} );
 
     // performing copy operation
-
+    game = g1;
+    std::cout << g1 << std::endl;
+    std::cout << game << std::endl;
 }

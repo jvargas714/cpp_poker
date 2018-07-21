@@ -15,8 +15,9 @@ set(TESTING_SUITE ON)
 # build dependencies
 add_subdirectory(./external/jsoncpp)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
+set(OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bin)
 include_directories(./include . ./external/jsoncpp )
 set(LIB_FILES
         include/logger.h
@@ -30,7 +31,20 @@ set(LIB_FILES
         source/brain.cpp
         source/bot_player.cpp
         source/assessment.cpp
-        source/poker_error.cpp)
+        source/poker_error.cpp
+        include/assessment.h
+        include/bot_player.h
+        include/brain.h
+        include/card.h
+        include/cyclic_buff.h
+        include/deck.h
+        include/hand_weight.h
+        include/player.h
+        include/poker.h
+        include/poker_error.h
+        include/poker_fsm.h
+        include/poker_types.h
+        include/TexasHoldem.h)
 
 add_library( poker STATIC ${LIB_FILES} )
 
@@ -45,12 +59,15 @@ if (TESTING_SUITE)
     add_subdirectory( testing/googletest/googletest )
 
     # google test suite
-    add_library( pokerGTestSuite STATIC testing/test_suite.cpp )
+    add_library( pokerGTestSuite STATIC testing/test_suite.cpp
+            testing/test_suite.h)
     target_link_libraries( pokerGTestSuite poker gtest )
-    add_executable( gPokerTestingMain testing/testingMain.cpp )
-    target_link_libraries( gPokerTestingMain pokerGTestSuite )
 
+    # poker testing TODO :: get this to build
+    add_executable( gPokerTestingMain testing/testingMain.cpp
+            testing/test_suite.h)
+    target_link_libraries( gPokerTestingMain pokerGTestSuite )
 endif()
 
 # scrap exe
-add_executable(scrap_exe source/scrap.cpp)
+#add_executable(scrap_exe source/scrap.cpp)

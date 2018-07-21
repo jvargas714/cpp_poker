@@ -37,54 +37,64 @@
 // static const here in the head ensures that only one copy of this map is generated per cpp file
 // that includes this file
 const std::map<std::string, float> chen_map
-		{
-				{ "2",  1 },
-				{ "3",  1.5 },
-				{ "4",  2 },
-				{ "5",  2.5 },
-				{ "6",  3 },
-				{ "7",  3.5 },
-				{ "8",  4 },
-				{ "9",  4.5 },
-				{ "10", 5 },
-				{ "J",  6 },
-				{ "Q",  7 },
-				{ "K",  8 },
-				{ "A",  10 }
-		};
+        {
+                {"2",  1},
+                {"3",  1.5},
+                {"4",  2},
+                {"5",  2.5},
+                {"6",  3},
+                {"7",  3.5},
+                {"8",  4},
+                {"9",  4.5},
+                {"10", 5},
+                {"J",  6},
+                {"Q",  7},
+                {"K",  8},
+                {"A",  10}
+        };
 
 class Brain;
 
 typedef std::vector<Card> Cards;
 
-class bot_player : public Player
-{
-	friend class Brain;	// TODO :: make Brain just a private member of the class
+class bot_player : public Player {
+    friend class Brain;    // TODO :: make Brain just a private member of the class
 
 public:
-	bot_player();
-	bot_player( std::string name, int cash );
-	~bot_player() override = default;
-	int bet( int ) override;
-	int bet() override;
-	void setStartingPower( int amt );
-	void computeStartingPower();    // TODO:: should be moved to brain
-	std::string getBotStatus() const;
-	void initBrain( TexasHoldem& game );
-	inline int getCurrentHandStrength() { return currentBestHand.strength; }
-	inline void setCurrentHandStrength( const int& amt ) override { currentBestHand.strength = amt; }
-	inline void setCurrentBestHand( const Hand& hand ) override { currentBestHand = hand; }
-	bool assessTable( const Cards& cds, poker_states state );
+    bot_player();
+
+    bot_player(std::string name, int cash);
+
+    ~bot_player() override = default;
+
+    int bet(int) override;
+
+    int bet() override;
+
+    void setStartingPower(int amt);
+
+    void computeStartingPower();    // TODO:: should be moved to brain
+    std::string getBotStatus() const;
+
+    void initBrain(TexasHoldem &game);
+
+    inline int getCurrentHandStrength() { return currentBestHand.strength; }
+
+    inline void setCurrentHandStrength(const int &amt) override { currentBestHand.strength = amt; }
+
+    inline void setCurrentBestHand(const Hand &hand) override { currentBestHand = hand; }
+
+    bool assessTable(const Cards &cds, poker_states state);
 
 private:
-	// data members
-	float 	chancesOfVictory;	// expressed in % or could be 0...1
-	int 		startingPower;
-	HAND 	currentBestHand;
-	Brain* 	brain;
+    // data members
+    float chancesOfVictory;    // expressed in % or could be 0...1
+    int startingPower;
+    HAND currentBestHand;
+    Brain *brain;
 
-	// Helper functions
-	bool findValidHand();
+    // Helper functions
+    bool findValidHand();
 };
 
 #endif /* HEADERS_BOT_PLAYER_H_ */

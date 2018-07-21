@@ -117,48 +117,92 @@ const std::string CFG_FILE = "../config/TXHldm.json";
 
 class Poker;
 
-class TexasHoldem : public Poker
-{
+class TexasHoldem : public Poker {
 private:
-	uint32_t pot, smallBlind, bigBlind, gameId;
+    uint32_t pot, smallBlind, bigBlind, gameId;
 public:
-	Cards tableCards;
-	uint32_t dealerIndex;
-	TexasHoldem();
-    explicit TexasHoldem( std::string& cfg_path );
-	TexasHoldem( uint32_t smallBlind, uint32_t bigBlind, uint32_t cash );
-	TexasHoldem( std::initializer_list<std::string> );
-	TexasHoldem( std::initializer_list<std::pair<std::string, int>> );
-    TexasHoldem( const TexasHoldem&& ) noexcept;
-    TexasHoldem( TexasHoldem& ) noexcept;
-	void showHand( const Player* ) const override;
-	void dealHands() override;
-	void findHand( Player* ) override;
-	void changeBlinds( int sm, int big );
-	void dealFlop();
-	void dealTurn();
-	void dealRiver();
-	void playerBet( Player*, int amt );
-	void betSmallBlind( Player* );
-	void betBigBlind( Player* );
-	cardSuperVector comboCards( const Player* ) const;
-	void showTableCards() const;
-	void resetHand( int );
-	void collectPot( Player* );
-	void gameStatus() const;
-	void gameOverview() const;
-	virtual void findWinner();
-	void calculateHands();
-	inline void setBigBlind( uint32_t val ) noexcept { bigBlind = val; }
-	inline void setSmallBlind( uint32_t val ) noexcept  { smallBlind = val; }
+    Cards tableCards;
+    uint32_t dealerIndex;
+
+    TexasHoldem();
+    friend std::ostream& operator<<(std::ostream& g1, TexasHoldem&);
+
+    TexasHoldem& operator=(TexasHoldem);
+
+    explicit TexasHoldem(std::string &cfg_path);
+
+    TexasHoldem(uint32_t smallBlind, uint32_t bigBlind, uint32_t cash);
+
+    TexasHoldem(std::initializer_list<std::string>);
+
+    TexasHoldem(std::initializer_list<std::pair<std::string, int>>);
+
+    TexasHoldem(const TexasHoldem &&) noexcept;
+
+    TexasHoldem(const TexasHoldem &) noexcept;
+
+    void showHand(const Player *) const override;
+
+    void dealHands() override;
+
+    void findHand(Player *) override;
+
+    void changeBlinds(int sm, int big);
+
+    void dealFlop();
+
+    void dealTurn();
+
+    void dealRiver();
+
+    void playerBet(Player *, int amt);
+
+    void betSmallBlind(Player *);
+
+    void betBigBlind(Player *);
+
+    cardSuperVector comboCards(const Player *) const;
+
+    void showTableCards() const;
+
+    void resetHand(int);
+
+    void collectPot(Player *);
+
+    void gameStatus() const;
+
+    void gameOverview() const;
+
+    virtual void findWinner();
+
+    void calculateHands();
+
+    inline void setBigBlind(uint32_t val) noexcept { bigBlind = val; }
+
+    inline void setSmallBlind(uint32_t val) noexcept { smallBlind = val; }
+
+    inline std::vector<Player>::iterator getPlayerIterator(const int& index) override { return Poker::getPlayerIterator(index); }
+
+    inline std::vector<Player>::iterator getPlayerIterator(const std::string& name) override { return Poker::getPlayerIterator(name); }
+
 private:
-	Player* findPlayer( const std::string& name );
-	void assign_dealer();
-	void rotateDealer();
+    Player *findPlayer(const std::string &name);
+
+    void assign_dealer();
+
+    void rotateDealer();
 };
 
-uint64_t nCr( uint64_t n, uint64_t k );
-uint64_t fact( uint64_t n );
-intComb comb( uint64_t n, uint64_t k );
-void debugPrintVect( std::vector<int> );
+uint64_t nCr(uint64_t n, uint64_t k);
+
+uint64_t fact(uint64_t n);
+
+intComb comb(uint64_t n, uint64_t k);
+
+// operator overloads
+std::ostream& operator<<(std::ostream& g1, TexasHoldem&);
+
+// DEBUG
+void debugPrintVect(std::vector<int>);
+
 #endif
