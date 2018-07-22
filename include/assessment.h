@@ -9,11 +9,12 @@
 #ifndef HEADERS_ASSESSMENT_H_
 #define HEADERS_ASSESSMENT_H_
 
-#include "card.h"
+//#include "card.h"
 #include "deck.h"
 #include "poker_types.h"
 #include "poker_error.h"
 
+typedef  std::vector<Card> Cards;
 typedef enum {
     NONE,
     HIGH_CARD,
@@ -28,14 +29,17 @@ typedef enum {
     ROYAL_FLUSH
 } HAND_TYPE;
 
+std::string handTypeToString(const HAND_TYPE& type);
+
 typedef struct Hand {
     HAND_TYPE type;
     Cards cards;
     int strength;
     std::string hand_str;
-
+    friend std::ostream& operator<<(const Hand& hand, std::ostream& os);
     Hand() : type(NONE), strength(0), hand_str("") {}
 } HAND;
+
 
 namespace assessment {
     std::vector<std::string> getHandSuits(const Cards &);

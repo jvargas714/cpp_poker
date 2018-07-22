@@ -56,6 +56,147 @@ TEST (ctorTests, cfgLoad) {
     ASSERT_TRUE(game.numPlayers == 6);
 }
 
+// [0  1  2  3  4  5  6  7  8   9  10 11 12]
+// [2  3  4  5  6  7  8  9  10  j  q  k  a]
+TEST (assessTest, highCard) {
+    Cards cards = {
+            Card(1, 0),  // 3
+            Card(2, 0),  // 4
+            Card(8, 2),
+            Card(9, 3),
+            Card(10, 1)  // Q
+    };
+    Hand hnd = assessment::findHandStrength(cards);
+    ASSERT_TRUE(hnd.type == HAND_TYPE::HIGH_CARD);
+    ASSERT_TRUE(hnd.strength == 12);
+}
+
+TEST (assessTest, pairs) {
+    // pair of 6
+    Cards cards = {
+            Card(4, 1),
+            Card(7, 1),
+            Card(6, 0),
+            Card(4, 0),
+            Card(5, 0)
+    };
+    Hand hnd = assessment::findHandStrength(cards);
+    ASSERT_TRUE(hnd.type == HAND_TYPE::PAIR);
+    ASSERT_TRUE(hnd.strength == 19);
+}
+
+TEST (assessTest, twoPairs) {
+    // pair of 6 and k
+    Cards cards = {
+            Card(4, 1),
+            Card(11, 1),
+            Card(6, 0),
+            Card(4, 0),
+            Card(11, 0)
+    };
+    Hand hnd = assessment::findHandStrength(cards);
+    ASSERT_TRUE(hnd.type == HAND_TYPE::TWO_PAIR);
+    ASSERT_TRUE(hnd.strength == 37);
+}
+
+TEST (assessTest, trips) {
+    // trips Ace
+    Cards cards = {
+            Card(12, 1),
+            Card(3, 1),
+            Card(12, 0),
+            Card(4, 3),
+            Card(12, 2)
+    };
+    Hand hnd = assessment::findHandStrength(cards);
+    ASSERT_TRUE(hnd.type == HAND_TYPE::TRIPS);
+    ASSERT_TRUE(hnd.strength == 51);
+}
+
+TEST (assessTest, str8) {
+    // straight
+    Cards cards = {
+            Card(5, 1),
+            Card(6, 1),
+            Card(7, 0),
+            Card(8, 3),
+            Card(9, 2)
+    };
+    Hand hnd = assessment::findHandStrength(cards);
+    ASSERT_TRUE(hnd.type == HAND_TYPE::STRAIGHT);
+    ASSERT_TRUE(hnd.strength == 61);
+}
+
+TEST (assessTest, flush) {
+    // 9 high straight flush
+    Cards cards = {
+            Card(0, 0),
+            Card(4, 0),
+            Card(1, 0),
+            Card(6, 0),
+            Card(10, 0)
+    };
+    Hand hnd = assessment::findHandStrength(cards);
+    ASSERT_TRUE(hnd.type == HAND_TYPE::FLUSH);
+    ASSERT_TRUE(hnd.strength == 75);
+}
+
+TEST (assessTest, fullHouse) {
+    // 9 high straight flush
+    Cards cards = {
+            Card(8, 2),
+            Card(1, 0),
+            Card(8, 2),
+            Card(1, 1),
+            Card(8, 3)
+    };
+    Hand hnd = assessment::findHandStrength(cards);
+    ASSERT_TRUE(hnd.type == HAND_TYPE::FULL_HOUSE);
+    ASSERT_TRUE(hnd.strength == 86);
+}
+
+TEST (assessTest, fourOfaKind) {
+    // four 3's
+    Cards cards = {
+            Card(1, 0),
+            Card(4, 1),
+            Card(1, 3),
+            Card(1, 2),
+            Card(1, 1)
+    };
+    Hand hnd = assessment::findHandStrength(cards);
+    ASSERT_TRUE(hnd.type == HAND_TYPE::FOUR_OF_A_KIND);
+    ASSERT_TRUE(hnd.strength == 92);
+}
+
+TEST (assessTest, str8Flush) {
+    // 9 high straight flush
+    Cards cards = {
+            Card(5, 2),
+            Card(4, 2),
+            Card(7, 2),
+            Card(6, 2),
+            Card(3, 2)
+    };
+    Hand hnd = assessment::findHandStrength(cards);
+    ASSERT_TRUE(hnd.type == HAND_TYPE::STRAIGHT_FLUSH);
+    ASSERT_TRUE(hnd.strength == 111);
+}
+
+TEST (assessTest, royalFlush) {
+    // 9 high straight flush
+    Cards cards = {
+            Card(10, 3),
+            Card(11, 3),
+            Card(12, 3),
+            Card(9, 3),
+            Card(8, 3)
+    };
+    Hand hnd = assessment::findHandStrength(cards);
+    ASSERT_TRUE(hnd.type == HAND_TYPE::ROYAL_FLUSH);
+    ASSERT_TRUE(hnd.strength == 150);
+}
+
 bool setupGlobalGame() {
     g_game = new TexasHoldem();
     g_game->enterGame("Player 3", 1500);

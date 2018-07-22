@@ -12,12 +12,12 @@
 const std::string TEST_SUITE_LOG = "./test_suite.log";
 const std::string DEBUG_LOG = "./poker_debug.log";
 
-// types
 class Player;
-
 class Card;
 
+// types
 typedef std::vector<Card> Cards;
+typedef std::pair<Card, Card> HoleCards;
 typedef std::unordered_map<std::string, Player> PlayerMap;
 typedef std::vector<std::vector<Card>> cardSuperVector;    // card vector embedded in card set for combo Method
 typedef std::vector<std::vector<int>> intComb;

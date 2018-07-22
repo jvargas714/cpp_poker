@@ -1,39 +1,29 @@
+#include <utility>
+#include <string>
+#include <iostream> 
+using namespace std; 
 
-//class Player {
-//public:
-//    Player(string name) : name(name) {}
-//
-//    std::string name;
-//
-//    void namePlayer(const std::string &nm) { name = nm; }
-//};
-//
-//Player *getPlayer(const std::string &name, std::vector<Player> &players) {
-//    for (auto &player : players) {
-//        if (player.name == "jerkoff")
-//            return &player;
-//    }
-//    return nullptr;
-//}
+
+class Card {
+public:
+    int suite;
+    int rk;
+    std::string name;
+public:
+    Card()=default;
+    Card(int rk, int st) : rk(rk), suite(st) {
+        name = "testing";
+    }
+};
+
+void showCard(const Card& cd) {
+    cout << "Card: " << cd.suite << " " << cd.rk << " " << cd.name << endl;
+}
 
 int main() {
-//    Player p1("asshole!");
-//    Player p2("fucktard");
-//    Player p3("nardnerdFuck");
-//
-//    p3.namePlayer("jerkoff");
-//    std::vector<Player> plyrs = {p1, p2, p3};
-//
-//    for (auto &el : plyrs)
-//        cout << el.name << endl;
-//
-//    Player *plyr = getPlayer("jerkoff", plyrs);
-//
-//    std::cout << "player that has been looked up is named: " << plyr->name << std::endl;
-//    plyr->name = "new jerkoff";
-//
-//    for (auto &el : plyrs)
-//        cout << el.name << endl;
-//
+    std::pair<Card, Card> cards;
+    showCard(cards.first);
+    showCard(cards.second);
     return 0;
 }
+

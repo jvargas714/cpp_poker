@@ -72,24 +72,22 @@ bool JayBrain::assessFlopScenario(Player *bot) {
     */
     size_t numCardsDealt = 52 - game->gameDeck.numCardsLeft();
     int outs;   // number of cards left in the deck that contribute to achieving a best hand
-    Card hole1 = bot->hand[0];
-    Card hole2 = bot->hand[1];
+    Card hole1 = bot->holeCards.first;
+    Card hole2 = bot->holeCards.second;
     if (thGame->tableCards.size() != 3) {
-        LOG << "JayBrain::assessFlopScenario(): Error -->"
-                 "tableCards.size() != 3, exiting" << "\n";
+        LOG << __FUNCTION__ << "(): " << E << "Error --> tableCards.size() != 3, exiting" << END;
         return false;
     }
     // first we see if we have a valid hand off the flop
-    std::vector<Card>::iterator it = bot->hand.begin();
-    bot->hand.insert(it, thGame->tableCards.begin(), thGame->tableCards.end());
+    auto it = bot->hand.cards.begin();
+    bot->hand.cards.insert(it, thGame->tableCards.begin(), thGame->tableCards.end());
 
-    if (bot->hand.size() != 5) {
+    if (bot->hand.cards.size() != 5)
         return false;
-    }
+
     // here we can run through and determine what hand type we have based on the five cards out
-    bot->setCurrentBestHand(assessment::findHandStrength(bot->hand));
+    bot->setCurrentBestHand( assessment::findHandStrength(bot->hand.cards) );
 
     // find odds of achieving a better hand or acheiving a hand from nothing on the turn
-
     return true;
 }

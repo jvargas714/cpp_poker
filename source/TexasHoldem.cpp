@@ -136,20 +136,18 @@ TexasHoldem::TexasHoldem(const TexasHoldem &game) noexcept
 }
 
 void TexasHoldem::dealHands() {
-    using std::move;
-    for (auto i = 0; i < 2; i++) {
-        for (auto &player : players) {
-            player.hand.push_back(gameDeck.dealCard());
-        }
-    }
-    LOG << "cards dealt out to players.... \n\n" << std::endl;
+        for (auto &player : players)
+            player.holeCards.first = gameDeck.dealCard();
+        for (auto& player : players)
+            player.holeCards.second = gameDeck.dealCard();
+    LOG << "cards dealt out to players.... \n\n" << END;
 }
 
 void TexasHoldem::changeBlinds(uint32_t sm, uint32_t big) {
     smallBlind = sm;
     bigBlind = big;
-    LOG << "Small blind has been increased to $" << smallBlind << std::endl;
-    LOG << "Big blind has been increased to $" << bigBlind << "\n" << std::endl;
+    LOG << "Small blind has been increased to $" << smallBlind << END;
+    LOG << "Big blind has been increased to $" << bigBlind << "\n" << END;
 }
 
 void TexasHoldem::showTableCards() const {
@@ -164,7 +162,7 @@ void TexasHoldem::showTableCards() const {
 }
 
 void TexasHoldem::dealFlop() {
-    gameDeck.dealCard();
+    gameDeck.dealCard();  // burn card
     for (int i = 0; i < 3; i++) {
         tableCards.push_back(gameDeck.dealCard());
     }
@@ -172,13 +170,13 @@ void TexasHoldem::dealFlop() {
 }
 
 void TexasHoldem::dealTurn() {
-    gameDeck.dealCard();
+    gameDeck.dealCard();  // burn card
     tableCards.push_back(gameDeck.dealCard());
     LOG << "Turn card has been dealt....\n" << std::endl;
 }
 
 void TexasHoldem::dealRiver() {
-    gameDeck.dealCard();
+    gameDeck.dealCard();  // burn card
     tableCards.push_back(gameDeck.dealCard());
     LOG << "River card has been dealt...\n" << std::endl;
 }
@@ -219,46 +217,46 @@ void TexasHoldem::findHand(Player *plyr) {
                 the high card cannot be 8, need to fix this, 8/21/2015 @2236
     */
     using std::count;
-    if (tableCards.size() != 5 || plyr->hand.size() != 2) {
+    if (tableCards.size() != 5 || plyr->isValidHand()) {
         LOG << E << " table is not in a valid state, exiting...." << END;
         throw poker_error::HandIDError("Error--> TexasHoldem:findHand():: 7 cards not present");
     }
     Cards allCards = tableCards;
+    Cards bestHand;
     cardSuperVector possHands = comboCards(plyr);
-    Card hole1 = plyr->hand[0];
-    Card hole2 = plyr->hand[1];
+    Card hole1 = plyr->holeCards.first;
+    Card hole2 = plyr->holeCards.second;
     allCards.push_back(hole1);
     allCards.push_back(hole2);
     sort(allCards.begin(), allCards.end());
-    plyr->bestHand.clear();
     plyr->clearHand();
-    plyr->clearHandStrength();
     std::string message("error");
+
     for (Cards &possHand: possHands) {
-        plyr->hand = possHand;
-        if (hasRoyalFlush(plyr)) {
+        plyr->hand.cards = possHand;
+        if (assessment::hasRoyalFlush(plyr->hand.cards)) {
             int tmp = HandMapper::handMap.at("royalFlush")[0];
-            if (tmp > plyr->handStrength) {
-                plyr->bestHand = plyr->hand;
-                plyr->handStrength = tmp;
+            if (tmp > plyr->hand.strength) {
+                bestHand = plyr->hand.cards;
+                plyr->hand.strength = tmp;
                 plyr->highCardRnk = 0;
                 message = "a Royal Flush";
             }
-        } else if (hasStraightFlush(plyr)) {
-            int highCardRank = plyr->bestHand[4].rankIndex;
+        } else if (assessment::hasStraightFlush(plyr->hand.cards)) {
+            int highCardRank = plyr->hand.cards[4].rankIndex;
             int tmp = HandMapper::handMap.at("straightFlush")[highCardRank];
-            if (tmp > plyr->handStrength) {
-                plyr->bestHand = plyr->hand;
-                plyr->handStrength = tmp;
+            if (tmp > plyr->hand.strength) {
+                bestHand = plyr->hand.cards;
+                plyr->hand.strength = tmp;
                 plyr->highCardRnk = 0;
                 message = "a Straight Flush";
             }
-        } else if (hasFourOfAKind(plyr)) {
-            int cardRnk = getFourOfAKind(plyr)[0].rankIndex;
+        } else if (assessment::hasFourOfAKind(plyr->hand.cards)) {
+            int cardRnk = assessment::getFourOfAKind(plyr->hand.cards)[0].rankIndex;
             int tmp = HandMapper::handMap.at("fourOfAKind")[cardRnk];
-            if (tmp > plyr->handStrength) {
-                plyr->bestHand = plyr->hand;
-                plyr->handStrength = tmp;
+            if (tmp > plyr->hand.strength) {
+                bestHand = plyr->hand.cards;
+                plyr->hand.strength = tmp;
                 if (cardRnk == allCards[6].rankIndex) {
                     plyr->highCardRnk = allCards[2].rankIndex;  // c0 c1 c2 c3 c4 c5 c6-->
                 } else {
@@ -266,8 +264,8 @@ void TexasHoldem::findHand(Player *plyr) {
                 }
                 message = "a Four of a Kind";
             }
-        } else if (hasFullHouse(plyr)) {
-            Cards fullHouse = getFullHouse(plyr);
+        } else if (assessment::hasFullHouse(plyr->hand.cards)) {
+            Cards fullHouse = assessment::getFullHouse(plyr->hand.cards);
             int cardRnk;
             if (count(fullHouse.begin(), fullHouse.end(), fullHouse[0]) == 3) {
                 cardRnk = fullHouse[0].rankIndex;
@@ -275,37 +273,37 @@ void TexasHoldem::findHand(Player *plyr) {
                 cardRnk = fullHouse[4].rankIndex;
             }
             int tmp = HandMapper::handMap.at("fullHouse")[cardRnk];
-            if (tmp > plyr->handStrength) {
-                plyr->bestHand = plyr->hand;
-                plyr->handStrength = tmp;
+            if (tmp > plyr->hand.strength) {
+                bestHand = plyr->hand.cards;
+                plyr->hand.strength = tmp;
                 plyr->highCardRnk = 0;
                 message = "a Full House";
             }
-        } else if (hasFlush(plyr)) {
-            Cards flush = getFlush(plyr);
+        } else if (assessment::hasFlush(plyr->hand.cards)) {
+            Cards flush = assessment::getFlush(plyr->hand.cards);
             int cardRnk = flush[4].rankIndex;
             int tmp = HandMapper::handMap.at("flush")[cardRnk];
-            if (tmp > plyr->handStrength) {
-                plyr->bestHand = plyr->hand;
-                plyr->handStrength = tmp;
+            if (tmp > plyr->hand.strength) {
+                bestHand = plyr->hand.cards;
+                plyr->hand.strength = tmp;
                 plyr->highCardRnk = 0;
                 message = "a Flush";
             }
-        } else if (hasStraight(plyr)) {
-            int cardRnk = getStraight(plyr)[4].rankIndex;
+        } else if (assessment::hasStraight(plyr->hand.cards)) {
+            int cardRnk = assessment::getStraight(plyr->hand.cards)[4].rankIndex;
             int tmp = HandMapper::handMap.at("straight")[cardRnk];
-            if (tmp > plyr->handStrength) {
-                plyr->bestHand = plyr->hand;
-                plyr->handStrength = tmp;
+            if (tmp > plyr->hand.strength) {
+                bestHand = plyr->hand.cards;
+                plyr->hand.strength = tmp;
                 plyr->highCardRnk = 0;
                 message = "a Straight";
             }
-        } else if (hasTrips(plyr)) {
-            int cardRnk = getTrips(plyr)[0].rankIndex;
+        } else if (assessment::hasTrips(plyr->hand.cards)) {
+            int cardRnk = assessment::getTrips(plyr->hand.cards)[0].rankIndex;
             int tmp = HandMapper::handMap.at("trips")[cardRnk];
-            if (tmp > plyr->handStrength) {
-                plyr->bestHand = plyr->hand;
-                plyr->handStrength = tmp;
+            if (tmp > plyr->hand.strength) {
+                bestHand = plyr->hand.cards;
+                plyr->hand.strength = tmp;
                 if (cardRnk == allCards[6].rankIndex) {
                     plyr->highCardRnk = allCards[3].rankIndex;
                 } else {
@@ -313,28 +311,27 @@ void TexasHoldem::findHand(Player *plyr) {
                 }
                 message = "a Three of a Kind";
             }
-        } else if (hasTwoPair(plyr)) {
-            Cards twoPair = getTwoPair(plyr);
+        } else if (assessment::hasTwoPair(plyr->hand.cards)) {
+            Cards twoPair = assessment::getTwoPair(plyr->hand.cards);
             int cardRnk = twoPair[3].rankIndex;
             int tmp = HandMapper::handMap.at("twoPair")[cardRnk];
-            if (tmp > plyr->handStrength) {
-                plyr->bestHand = plyr->hand;
-                plyr->handStrength = tmp;
+            if (tmp > plyr->hand.strength) {
+                bestHand = plyr->hand.cards;
+                plyr->hand.strength = tmp;
                 for (size_t i = allCards.size() - 1; i != 0; --i) {
                     if (allCards[i].rankIndex != twoPair[0].rankIndex &&
-                        allCards[i].rankIndex != twoPair[3].rankIndex\
-) {
+                        allCards[i].rankIndex != twoPair[3].rankIndex) {
                         plyr->highCardRnk = allCards[i].rankIndex;
                     }
                 }
                 message = "Two Pair";
             }
-        } else if (hasPair(plyr)) {
-            int cardRnk = getPair(plyr)[0].rankIndex;
+        } else if (assessment::hasPair(plyr->hand.cards)) {
+            int cardRnk = assessment::getPair(plyr->hand.cards)[0].rankIndex;
             int tmp = HandMapper::handMap.at("pair")[cardRnk];
-            if (tmp > plyr->handStrength) {
-                plyr->bestHand = plyr->hand;
-                plyr->handStrength = tmp;
+            if (tmp > plyr->hand.strength) {
+                bestHand = plyr->hand.cards;
+                plyr->hand.strength = tmp;
                 if (allCards[6].rankIndex != cardRnk) {
                     plyr->highCardRnk = allCards[6].rankIndex;
                 } else {
@@ -343,22 +340,22 @@ void TexasHoldem::findHand(Player *plyr) {
                 message = "a Pair";
             }
         } else {
-            sort(plyr->hand.begin(), plyr->hand.end());
-            int cardRnk = plyr->hand[4].rankIndex;
+            std::sort(plyr->hand.cards.begin(), plyr->hand.cards.end());
+            int cardRnk = plyr->hand.cards[4].rankIndex;
             int tmp = HandMapper::handMap.at("high")[cardRnk];
-            if (tmp > plyr->handStrength) {
-                plyr->bestHand = plyr->hand;
-                plyr->handStrength = tmp;
+            if (tmp > plyr->hand.strength) {
+                bestHand = plyr->hand.cards;
+                plyr->hand.strength = tmp;
                 message = "a High Card";
                 plyr->highCardRnk = 0;
             }
         }
     }
-    plyr->hand.clear();
     LOG << plyr->name << " has " << message << " with a hand strength of " <<
-          plyr->handStrength << " with a high card value of " << plyr->highCardRnk << END;
-    plyr->hand.push_back(hole1);
-    plyr->hand.push_back(hole2);
+          plyr->hand.strength << " with a high card value of " << plyr->highCardRnk << END;
+    plyr->hand.cards = bestHand;
+    plyr->holeCards.first = hole1;
+    plyr->holeCards.second = hole2;
 }
 
 void TexasHoldem::calculateHands() {
@@ -383,31 +380,28 @@ void TexasHoldem::findWinner() {
 
     // ensure all players have assessed there hand strengths
     for (auto &p : players) {
-        if (p.handStrength == 0) {
+        if (p.hand.strength == 0)
             findHand(&p);
-        }
     }
     // put players in acesceding order iaw their handstrengths
     sort(players.begin(), players.end(), HandComparator()); //TODO: may change player order
+
     // check player order
-    for (Player plyr : players) {
-        LOG << "handStrengths " << plyr.handStrength
-              << std::endl;
-    }
+    for (Player plyr : players)
+        LOG << "handStrengths " << plyr.hand.strength << std::endl;
+
     // continue with find winner logic [. . . . . .]
     int cnt = 0;
     size_t maxInd = players.size() - 1;
     for (size_t i = 1; i <= maxInd; i++) {
-        if (players[maxInd].handStrength == players[maxInd - i].handStrength) {
+        if (players[maxInd].hand.strength == players[maxInd - i].hand.strength)
             cnt++;
-        }
     }
     LOG << "Count of ties: " << cnt << std::endl;
     std::vector<Player> tiedPlayers;
     if (cnt > 0) {
-        for (int i = 0; i <= cnt; i++) {
+        for (int i = 0; i <= cnt; i++)
             tiedPlayers.push_back(players[maxInd - i]);
-        }
     } else {
         LOG << players[maxInd].name << " has won the hand!!" << std::endl;
         players[maxInd].collectPot(pot);
@@ -415,29 +409,29 @@ void TexasHoldem::findWinner() {
     }
 
     // debug line
-    LOG << "tiedPlayers.size -->  " << tiedPlayers.size()
-          << std::endl;
+    LOG << "tiedPlayers.size -->  " << tiedPlayers.size() << END;
+
     // break tie if present using tiedPlayers vector
     sort(tiedPlayers.begin(), tiedPlayers.end(), HighCardRnkComparator());
     int stillTied = 0;
 
     // if we still have a tie then split pot amongst the winners
-    if (tiedPlayers[tiedPlayers.size() - 2].highCardRnk == \
+    if (tiedPlayers[tiedPlayers.size() - 2].highCardRnk ==
                                                 tiedPlayers[tiedPlayers.size() - 1].highCardRnk) {
         for (auto p : tiedPlayers) {
-            if (p.highCardRnk == tiedPlayers[tiedPlayers.size() - 1].highCardRnk) {
+            if (p.highCardRnk == tiedPlayers[tiedPlayers.size() - 1].highCardRnk)
                 stillTied++;    // count of how many people are tied
-            }
         }
+
         // debug line
         LOG << "We have " << stillTied << " players " << "still tied." << std::endl;
+
         std::vector<std::string> winningNames;
-        for (int i = 0; i < stillTied; ++i) {    // [ * * * * *]  say stillTied = 3; loop goes 0 1 2
+        for (int i = 0; i < stillTied; ++i)    // [ * * * * *]  say stillTied = 3; loop goes 0 1 2
             winningNames.push_back(tiedPlayers[tiedPlayers.size() - 1 - i].name);
-        }
+
         size_t numTies = winningNames.size();
-        size_t amtAwarded =
-                pot / numTies;            // to split pot amongst ppl involved in the tie
+        size_t amtAwarded = pot / numTies;            // to split pot amongst ppl involved in the tie
 
         LOG << "Pot must be split amongst " << numTies << " players\n" << std::endl;
         for (auto &name : winningNames) {                // award winners split pot
@@ -467,15 +461,20 @@ cardSuperVector TexasHoldem::comboCards(const Player *plyr) const {
     Cards cardSubSet;
     intComb combInd;
     Cards allCards = tableCards;
-    for (auto &cd: plyr->hand) {
-        allCards.push_back(cd);
+    if (!plyr->isValidHand()) {
+        throw poker_error::InvalidHandError("TexasHoldem::comboCards(): invalid hand when assessing table");
     }
+    allCards.push_back(plyr->holeCards.first);
+    allCards.push_back(plyr->holeCards.second);
+
     if (allCards.size() != 7) {
         LOG << "ERROR" << "7 cards not present" << END;
         throw poker_error::HandIDError("Error @ comboCards(): 7 cards not present...");
     }
+
     uint64_t numCombos = nCr(7, 5);
     combInd = comb(7, 5);
+
     for (std::vector<int> subIndVect: combInd) {
         for (int index: subIndVect) {
             cardSubSet.push_back(allCards[index]);
@@ -483,6 +482,7 @@ cardSuperVector TexasHoldem::comboCards(const Player *plyr) const {
         result.push_back(cardSubSet);
         cardSubSet.clear();
     }
+
     if (result.size() != numCombos) {
         LOG << "ERROR: 21 combos not present in hand combos" << END;
         throw poker_error::HandIDError(

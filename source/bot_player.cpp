@@ -31,8 +31,8 @@ void bot_player::computeStartingPower() {
      */
     LOG << END;
     float tmp_scr;
-    const Card cd1 = hand[0];
-    const Card cd2 = hand[1];
+    const Card cd1 = holeCards.first;
+    const Card cd2 = holeCards.second;
     float cdPwr1 = chen_map.at(cd1.getRank());
     float cdPwr2 = chen_map.at(cd2.getRank());
     bool pair = false;

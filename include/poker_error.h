@@ -44,6 +44,12 @@ namespace poker_error {
         CfgLoadError();
         explicit CfgLoadError(const std::string& msg);
     };
+
+    class InvalidHandError : public runtime_error {
+    public:
+        InvalidHandError();
+        explicit InvalidHandError(const std::string& msg);
+    };
 } // END poker error namespace
 
 

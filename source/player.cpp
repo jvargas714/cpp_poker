@@ -6,26 +6,23 @@
 
 Player::Player()
         : smallBlind_bet(false), bigBlind_bet(false), dealer(false),
-          cash(1500), handStrength(0), highCardRnk(0), name("Player") {
+          cash(1500), hand(), highCardRnk(0), name("Player") {
     name = "Player";
 }
 
 
 Player::Player(std::string name, int cash)
         : smallBlind_bet(false), bigBlind_bet(false), dealer(false),
-          cash(cash), handStrength(0), highCardRnk(0), name(name) {}
+          cash(cash), hand(), highCardRnk(0), name(name) {}
 
 
 Player::~Player() {}
 
 
 void Player::namePlayer(std::string name) {
-
     std::string originalName(name);
     this->name = name;
-
     LOG << originalName << " was named to " << this->name << std::endl;
-
 }
 
 int Player::bet(int amt) {
@@ -47,33 +44,29 @@ void Player::collectPot(int amt) {
     LOG << name << " collected $" << amt << ", new balance: $" << cash << "\n" << std::endl;
 }
 
-void Player::setBestHand(Cards &cards) {
-    // copys over cards to best hand, then deletes cards
-    int i = 0;
-
-    for (Card cd: cards) {
-        bestHand[i] = cd;
-        i++;
-    }
-    LOG << name << " has set best hand " << std::endl;
-}
-
 void Player::setHandStrength(const std::string &handType, int &rank) {
-    handStrength = HandMapper::handMap.at(handType)[rank];
+    hand.strength = HandMapper::handMap.at(handType)[rank];
 }
 
 void Player::clearHand() {
-    hand.clear();
+    clearHandStrength();
+    hand.cards.clear();
+    hand.hand_str = "";
+    hand.type = HAND_TYPE::NONE;
+}
+
+void Player::clearHoleCards() {
+    holeCards.first = Card(-1, -1);
+    holeCards.second = Card(-1, -1);
 }
 
 void Player::clearHandStrength() {
-    handStrength = 0;
+    hand.strength = 0;
 }
 
 void Player::reset() {
     clearHand();
     clearHandStrength();
-    bestHand.clear();
     highCardRnk = 0;
 }
 
@@ -99,10 +92,14 @@ std::ostream &operator<<(std::ostream &os, const Player &plyr) {
     return os;
 }
 
+bool Player::isValidHand() const {
+    return !(holeCards.first.rankIndex<0||holeCards.second.rankIndex<0||
+                    holeCards.first.suitIndex<0||holeCards.second.suitIndex<0);
+}
 
 // impement Player hand comparator functor
 bool HandComparator::operator()(const Player &p1, const Player &p2) const {
-    return p1.handStrength < p2.handStrength;
+    return p1.hand.strength < p2.hand.strength;
 }
 
 // implement player high card rank functor

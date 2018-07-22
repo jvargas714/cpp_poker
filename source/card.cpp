@@ -2,18 +2,20 @@
 #include <chrono>
 #include <random>
 #include <iostream>
+#include "logger.h"
 
-const std::string Card::rank[13] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K",
-                                    "A"};      // index range:: 0 - 12
+// index range:: 0 - 12
+const std::string Card::rank[13] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
 const std::string Card::suit[4] = {"C", "D", "H", "S"};
 
 Card::Card() {
     /*
         generates a random card
     */
-    static int randomizer;
+    static int randomizer = 1;
     std::minstd_rand gen(
-            std::chrono::system_clock::now().time_since_epoch().count() + randomizer);
+            std::chrono::system_clock::now().time_since_epoch().count() + randomizer
+    );
     rankIndex = gen() % 13;
     suitIndex = gen() % 4;
 
@@ -25,7 +27,7 @@ Card::Card() {
 
 Card::Card(int rkInd, int stInd) {
     if (rkInd > 12 || rkInd < 0 || stInd > 3 || stInd < 0) {
-        std::cerr << "Error: rank/suit index out of range setting card to (0,0) \n";
+        LOG << "Error: rank/suit index out of range setting card to (0,0)" << END;
         rankIndex = 0;
         suitIndex = 0;
         st = suit[0];
@@ -59,7 +61,7 @@ std::ostream &operator<<(std::ostream &os, const Card &cd) {
 
 int Card::cmp(const Card &cd) const {
     int result;
-    if (rankIndex == cd.rankIndex && suitIndex == cd.suitIndex) {
+    if (rankIndex == cd.rankIndex) {
         result = 0;
     } else {
         result = (rankIndex < cd.rankIndex) ? -1 : 1;

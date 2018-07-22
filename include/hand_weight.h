@@ -51,7 +51,7 @@ namespace HandMapper {
 
 
     // putting it all together
-    static const std::map<std::string, std::array<int, 13> > handMap{
+    static const std::map<std::string, std::array<int, 13> > handMap {
             {"high",          high},
             {"pair",          pair},
             {"twoPair",       twoPair},

@@ -1,16 +1,15 @@
+#include "poker_types.h"
 #include "assessment.h"
 #include "hand_weight.h"
 #include <algorithm>
 
 std::vector<std::string> assessment::getHandSuits(const Cards &cds) {
-    std::vector<std::string> suits(cds.size());
-    for (const Card &cd: cds) {
+    std::vector<std::string> suits;
+    for (const Card &cd: cds)
         suits.push_back(cd.getSuit());
-    }
     return suits;
 }
 
-// TODO :: refactor this, no more new
 std::vector<int> assessment::getRankInd(const Cards &cds) {
     std::vector<int> rankInds(cds.size());
     int n = 0;
@@ -20,9 +19,6 @@ std::vector<int> assessment::getRankInd(const Cards &cds) {
 }
 
 std::vector<int> assessment::dupRankInd(const Cards &cds) {
-    using std::begin;
-    using std::end;
-
     std::vector<int> handRanks = assessment::getRankInd(cds);
     std::vector<int> dupRanksInd;
     int cnt = 0;
@@ -63,11 +59,9 @@ bool assessment::hasPair(const Cards &cds) {
 bool assessment::hasTwoPair(const Cards &cds) {
     std::vector<int> handInd = assessment::dupRankInd(cds);
     std::vector<int> handRanks = assessment::getRankInd(cds);
-
     // checks to see if we have 4 in handInd and its not a 4 of a kind
     bool condition = handInd.size() == 4 &&
-                     std::count(handRanks.begin(), handRanks.end(),
-                                cds[handInd[0]].rankIndex) != 4;
+            std::count(handRanks.begin(), handRanks.end(), cds[handInd[0]].rankIndex) != 4;
     return condition;
 }
 
@@ -195,7 +189,6 @@ Cards assessment::getTrips(const Cards &cds) {
     } else {
         std::vector<int> dupInd = dupRankInd(cds);
         auto i = dupInd.begin();
-
         while (i != dupInd.end()) {
             cards.push_back(cds[*i]);
             i++;
@@ -209,14 +202,13 @@ Cards assessment::getFourOfAKind(const Cards &cds) {
     Cards cards;
 
     if (hasFourOfAKind(cds)) {
-        throw poker_error::HandIDError("HandIDError-->assessment::getFourOfAKind()");
-    } else {
         auto i = dupInd.begin();
         while (i != dupInd.end()) {
             cards.push_back(cds[*i]);
             i++;
         }
-    }
+    } else
+        throw poker_error::HandIDError("HandIDError-->assessment::getFourOfAKind()");
     return cards;
 }
 
@@ -357,4 +349,31 @@ HAND assessment::findHandStrength(const Cards &cards) {
     }
     LOG << "hand type: " << hand.hand_str << ", with a hand strength of " << hand.strength << END;
     return hand;
+}
+
+std::ostream &operator<<(const Hand& hand, std::ostream &os) {
+    os << "Hand:\n\tstrength: " << hand.strength;
+    os << "\n\thand Type: " << handTypeToString(hand.type);
+    os << "\n\thand str:" << hand.hand_str;
+    os << "\n\t" << "cards: ";
+    for (const auto& cd: hand.cards)
+        os << "\n\t\t" << cd;
+    return os;
+}
+
+std::string handTypeToString(const HAND_TYPE& type) {
+    switch (type) {
+        case HAND_TYPE::NONE: return "NONE";
+        case HAND_TYPE::HIGH_CARD: return "HIGH CARD";
+        case HAND_TYPE::PAIR: return "PAIR";
+        case HAND_TYPE::TWO_PAIR: return "TWO PAIR";
+        case HAND_TYPE::TRIPS: return "THREE OF A KIND";
+        case HAND_TYPE::STRAIGHT: return "STRAIGHT";
+        case HAND_TYPE::FLUSH: return "FLUSH";
+        case HAND_TYPE::STRAIGHT_FLUSH: return "STRAIGHT FLUSH";
+        case HAND_TYPE::FOUR_OF_A_KIND: return "FOUR OF A KIND";
+        case HAND_TYPE::ROYAL_FLUSH: return "ROYAL FLUSH";
+        default:
+            return "UNKNOWN";
+    }
 }

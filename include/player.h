@@ -2,69 +2,57 @@
 #ifndef POKER_PLAYER_H
 #define POKER_PLAYER_H
 
-#include "poker_types.h"
 #include <string>
 #include <vector>
 #include <cstdint>
 #include <iostream>
 #include "logger.h"
+#include "poker_types.h"
 #include "card.h"
+#include "assessment.h"
 
 
-typedef std::vector<Card> Cards;
-struct Hand;
+/*
+ * HAND_TYPE type;
+    Cards cards;
+    int strength;
+    std::string hand_str;
+ */
 
-/* TODO :: this class needs a redesign, should not have public data */
+typedef std::pair<Card, Card> HoleCards;
+
 class Player {
 public:
     bool smallBlind_bet;
     bool bigBlind_bet;
     bool dealer;
     int cash;
-    int handStrength;
     int highCardRnk;
     std::string name;
-    Cards hand;
-    Cards bestHand;
+    Hand hand;
+    HoleCards holeCards;
 
     Player();
-
     Player(std::string name, int cash);
-
     virtual ~Player();
-
     void namePlayer(std::string name);
-
     virtual int bet(int amt);
-
     virtual int bet();
-
     void collectPot(int amt);
-
-    void setBestHand(Cards &cards);
-
     void setHandStrength(const std::string &handType, int &rank);
-
-    virtual void setHandStrength(int val) { handStrength = val; }
-
+    virtual void setHandStrength(int val) { hand.strength = val; }
     void clearHand();
-
     void clearHandStrength();
-
-    virtual void setCurrentHandStrength(const int &amt) { handStrength = amt; }  // TODO :: needs implentation
+    bool isValidHand() const;
+    virtual void setCurrentHandStrength(const int &amt) { hand.strength = amt; }  // TODO :: needs implentation
     virtual void setCurrentBestHand(const Hand &) { ; }
-
     static bool cmpCash(const Player &plyr1, const Player &plyr2);
-
     bool operator==(const Player &plyr) const;
-
     bool operator<(const Player &plyr) const;
-
     bool operator>(const Player &plyr) const;
-
     void reset();
-
     friend std::ostream &operator<<(std::ostream &os, const Player &plyr);
+    void clearHoleCards();
 };
 
 struct HandComparator {

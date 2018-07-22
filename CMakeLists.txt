@@ -24,6 +24,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 include_directories(./include . ./external/jsoncpp )
 set(LIB_FILES
         include/logger.h
+        include/poker_types.h
         source/logger.cpp
         source/card.cpp
         source/deck.cpp
@@ -46,7 +47,6 @@ set(LIB_FILES
         include/poker.h
         include/poker_error.h
         include/poker_fsm.h
-        include/poker_types.h
         include/TexasHoldem.h)
 
 add_library( poker STATIC ${LIB_FILES} )
@@ -66,5 +66,3 @@ if (TESTING_SUITE)
     target_link_libraries( gPokerTestingMain poker gtest)
 endif()
 
-# scrap exe
-#add_executable(scrap_exe source/scrap.cpp)
