@@ -45,20 +45,15 @@ TEST (ctorTests, initListNameMoney) {
     ASSERT_TRUE(plyr3->cash == 1500);
 }
 
-// TODO :: finish more test cases
 TEST (ctorTests, cfgLoad) {
     TexasHoldem game(TEST_CFG_PATH);
-}
-
-
-bool setupGlobalGame();
-
-int main(int argc, char** argv) {
-    setupGlobalGame();
-
-    std::cout << "Google Testing Poker....." << std::endl;
-    testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    ASSERT_TRUE(game.getGameId() == 7140);
+    ASSERT_TRUE(game.getBigBlind() == 50);
+    ASSERT_TRUE(game.getSmallBlind() == 25);
+    ASSERT_TRUE(game.dealerIndex == 2);
+    ASSERT_TRUE(game.players[0].name == "Jay");
+    ASSERT_TRUE(game.players[2].cash == 1500 && game.players[2].name == "Oscar");
+    ASSERT_TRUE(game.numPlayers == 6);
 }
 
 bool setupGlobalGame() {
@@ -68,3 +63,19 @@ bool setupGlobalGame() {
     g_game->enterGame("Player 5", 2000);
     g_game->enterGame("Player 6", 2500);
 }
+
+
+
+
+
+
+
+
+// --------------------------------start tests----------------------------------
+int main(int argc, char** argv) {
+    setupGlobalGame();
+    std::cout << "Google Testing Poker....." << std::endl;
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
+

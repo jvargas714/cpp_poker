@@ -1,6 +1,8 @@
+#include <random>
 #include "TexasHoldem.h"
 #include "hand_weight.h"
-#include <random>
+#include "poker_error.h"
+#include "assessment.h"
 
 TexasHoldem::TexasHoldem()
         : Poker(), pot(0), smallBlind(10), bigBlind(20), gameId(999) {
@@ -16,24 +18,34 @@ TexasHoldem::TexasHoldem()
 TexasHoldem::TexasHoldem(const std::string &loadPath)
         : Poker(), pot(0) {
 
+    players.clear();
+
     // Init game from supplied config file
-    LOG << "TexasHoldem:: Game init via " << loadPath << std::endl;
-    std::ifstream file(loadPath);
-    Json::Value root, game;
-    file >> root;
-    LOG << "cfg file read:: " << std::endl;
-    LOG << root << std::endl;
+    LOG << "Game init via " << loadPath << std::endl;
+    std::ifstream cfgFile(loadPath);
+
+    if (!cfgFile.is_open()) {
+        LOG << "ERROR :: cfg file not open, exiting..." << END;
+        throw poker_error::CfgLoadError("Error loading config file: " + loadPath);
+    }
+
+    Json::Value root;
+    cfgFile >> root;
+    LOG << "cfg file read:: " << root << END;
     Json::Value def_val(-1);
-    gameId = root["game"]["id"].asUInt(); //root.get( key, def_val );
-    LOG << "game CFG::Game Id: " << gameId << std::endl;
+    gameId = root["game"]["id"].asUInt();
+    LOG << "game CFG::Game Id: " << gameId << END;
+
     std::string key = "small_blind";
     def_val = 10;
     smallBlind = root["game"].get(key, def_val).asUInt();
     LOG << "game CFG::smallBlind:: " << smallBlind << std::endl;
+
     key = "big_blind";
     def_val = 20;
     bigBlind = root["game"].get(key, def_val).asUInt();
     LOG << "game CFG::bigBlind:: " << bigBlind << std::endl;
+
     Json::Value player_array;
     player_array = root["game"]["players"];
     if (!player_array.isArray()) {
@@ -43,7 +55,8 @@ TexasHoldem::TexasHoldem(const std::string &loadPath)
     }
     Json::Value::iterator it = player_array.begin();
     std::string player_name;
-    numPlayers = static_cast<uint32_t>( root["game"]["number_of_players"].asInt());
+    numPlayers = root["game"]["number_of_players"].asUInt();
+
     while (it != player_array.end()) {
         player_name = (*it)["name"].asString();
         Player plyr(player_name, (*it)["starting_cash"].asInt());
@@ -51,7 +64,17 @@ TexasHoldem::TexasHoldem(const std::string &loadPath)
         LOG << "Created player: " + player_name << std::endl;
         it++;
     }
-    assign_dealer();
+
+    def_val = true;
+    key = "random_dealer";
+    if(!root["game"].get(key, def_val).asBool()) {
+        assign_dealer();
+    } else {
+        def_val = 0;
+        key = "dealer_index";
+        dealerIndex = root["game"].get(key, def_val).asUInt();
+    }
+
 }
 
 TexasHoldem::TexasHoldem(uint32_t smallBlind, uint32_t bigBlind, uint32_t cash)
@@ -197,6 +220,7 @@ void TexasHoldem::findHand(Player *plyr) {
     */
     using std::count;
     if (tableCards.size() != 5 || plyr->hand.size() != 2) {
+        LOG << E << " table is not in a valid state, exiting...." << END;
         throw poker_error::HandIDError("Error--> TexasHoldem:findHand():: 7 cards not present");
     }
     Cards allCards = tableCards;
@@ -332,7 +356,7 @@ void TexasHoldem::findHand(Player *plyr) {
     }
     plyr->hand.clear();
     LOG << plyr->name << " has " << message << " with a hand strength of " <<
-          plyr->handStrength << " with a high card value of " << plyr->highCardRnk << std::endl;
+          plyr->handStrength << " with a high card value of " << plyr->highCardRnk << END;
     plyr->hand.push_back(hole1);
     plyr->hand.push_back(hole2);
 }

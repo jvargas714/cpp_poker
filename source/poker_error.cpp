@@ -22,3 +22,7 @@ poker_error::FindPlayerError::FindPlayerError() :
 
 poker_error::FindPlayerError::FindPlayerError(const std::string &msg) :
         runtime_error(msg) {}
+
+poker_error::CfgLoadError::CfgLoadError(const std::string &msg) : runtime_error(msg) {}
+
+poker_error::CfgLoadError::CfgLoadError() :runtime_error("Error loading application configuration") {}

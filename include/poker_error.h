@@ -21,7 +21,7 @@ namespace poker_error {
     public:
         HandIDError();
 
-        HandIDError(const std::string &msg);
+        explicit HandIDError(const std::string &msg);
     };
 
     class FindWinnerError : public runtime_error {
@@ -29,15 +29,20 @@ namespace poker_error {
     public:
         FindWinnerError();
 
-        FindWinnerError(const std::string &msg);
+        explicit FindWinnerError(const std::string &msg);
     };
 
     class FindPlayerError : public runtime_error {
 
     public:
         FindPlayerError();
+        explicit FindPlayerError(const std::string &msg);
+    };
 
-        FindPlayerError(const std::string &msg);
+    class CfgLoadError : public runtime_error {
+    public:
+        CfgLoadError();
+        explicit CfgLoadError(const std::string& msg);
     };
 } // END poker error namespace
 

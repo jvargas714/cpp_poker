@@ -177,6 +177,12 @@ public:
 
     void gameOverview() const;
 
+    inline uint32_t getSmallBlind() const noexcept { return smallBlind; }
+
+    inline uint32_t getBigBlind() const noexcept { return bigBlind; }
+
+    inline uint32_t getGameId() const noexcept { return gameId; }
+
     virtual void findWinner();
 
     void calculateHands();

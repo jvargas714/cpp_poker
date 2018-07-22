@@ -334,7 +334,8 @@ bool Poker::hasRoyalFlush(const Player *player) const {
     Cards cards = player->hand;
     std::vector<std::string> suits = getHandSuits(player);
     sort(cards.begin(), cards.end());
-    int rnkCnt = 0, stCnt = 0;
+    int rnkCnt = 0;
+    long stCnt = 0;
     for (int i = 1; i < 5; i++) {
         if (cards[i].rankIndex - cards[i - 1].rankIndex == 1) {
             rnkCnt++;
