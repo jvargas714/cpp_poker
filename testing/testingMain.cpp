@@ -1,10 +1,11 @@
 #include <iostream>
+#include <memory>
 #include "gtest/gtest.h"
 #include "master_poker.h"
 
 // globals
 const std::string TEST_CFG_PATH = "../config/test1.cfg";
-TexasHoldem* g_game;
+std::unique_ptr<TexasHoldem> g_game;
 
 TEST (ctorTests, defaultCtor) {
     TexasHoldem game;
@@ -197,17 +198,13 @@ TEST (assessTest, royalFlush) {
     ASSERT_TRUE(hnd.strength == 150);
 }
 
-bool setupGlobalGame() {
-    g_game = new TexasHoldem();
+void setupGlobalGame() {
+    g_game = std::make_unique<TexasHoldem>( );
     g_game->enterGame("Player 3", 1500);
     g_game->enterGame("Player 4", 1500);
     g_game->enterGame("Player 5", 2000);
     g_game->enterGame("Player 6", 2500);
 }
-
-
-
-
 
 
 
@@ -219,4 +216,3 @@ int main(int argc, char** argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
-
