@@ -284,21 +284,18 @@ HAND assessment::findHandStrength(const Cards &cards) {
         hand.cards = getStraightFlush(cds);
         hand.type = STRAIGHT_FLUSH;
     } else if (hasFourOfAKind(cds)) {
-        int cardRnk = getFourOfAKind(cds)[0].rankIndex;
-        hand.strength = HandMapper::handMap.at("fourOfAKind")[cardRnk];
+        Cards inHand = getFourOfAKind(cds);
+        hand.strength = HandMapper::handMap.at("fourOfAKind")[inHand[inHand.size()-1].rankIndex];
         hand.hand_str = "a Four of a Kind";
         hand.cards = getFourOfAKind(cds);
         hand.type = FOUR_OF_A_KIND;
     } else if (hasFullHouse(cds)) {
         Cards fullHouse = getFullHouse(cds);
         int cardRnk;
-
-        if (std::count(fullHouse.begin(), fullHouse.end(), fullHouse[0]) == 3) {
+        if (std::count(fullHouse.begin(), fullHouse.end(), fullHouse[0]) == 3)
             cardRnk = fullHouse[0].rankIndex;
-        } else {
+        else
             cardRnk = fullHouse[4].rankIndex;
-        }
-
         hand.strength = HandMapper::handMap.at("fullHouse")[cardRnk];
         hand.hand_str = "a Full House";
         hand.cards = fullHouse;
@@ -353,7 +350,7 @@ HAND assessment::findHandStrength(const Cards &cards) {
 
 std::ostream &operator<<(const Hand& hand, std::ostream &os) {
     os << "Hand:\n\tstrength: " << hand.strength;
-    os << "\n\thand Type: " << handTypeToString(hand.type);
+    os << "\n\thand Type: " << assessment::handTypeToString(hand.type);
     os << "\n\thand str:" << hand.hand_str;
     os << "\n\t" << "cards: ";
     for (const auto& cd: hand.cards)
@@ -361,7 +358,7 @@ std::ostream &operator<<(const Hand& hand, std::ostream &os) {
     return os;
 }
 
-std::string handTypeToString(const HAND_TYPE& type) {
+std::string assessment::handTypeToString(const HAND_TYPE& type) {
     switch (type) {
         case HAND_TYPE::NONE: return "NONE";
         case HAND_TYPE::HIGH_CARD: return "HIGH CARD";

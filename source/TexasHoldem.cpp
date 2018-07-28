@@ -216,8 +216,7 @@ void TexasHoldem::findHand(Player *plyr) {
                 ie if a player has a pair of 8s and 8s are the highest card on the table
                 the high card cannot be 8, need to fix this, 8/21/2015 @2236
     */
-    using std::count;
-    if (tableCards.size() != 5 || plyr->isValidHand()) {
+    if (tableCards.size() != 5 || !plyr->isValidHand()) {
         LOG << E << " table is not in a valid state, exiting...." << END;
         throw poker_error::HandIDError("Error--> TexasHoldem:findHand():: 7 cards not present");
     }
@@ -240,6 +239,8 @@ void TexasHoldem::findHand(Player *plyr) {
                 bestHand = plyr->hand.cards;
                 plyr->hand.strength = tmp;
                 plyr->highCardRnk = 0;
+                plyr->hand.type = HAND_TYPE::ROYAL_FLUSH;
+                plyr->hand.hand_str = assessment::handTypeToString(HAND_TYPE::ROYAL_FLUSH);
                 message = "a Royal Flush";
             }
         } else if (assessment::hasStraightFlush(plyr->hand.cards)) {
@@ -249,6 +250,8 @@ void TexasHoldem::findHand(Player *plyr) {
                 bestHand = plyr->hand.cards;
                 plyr->hand.strength = tmp;
                 plyr->highCardRnk = 0;
+                plyr->hand.type = HAND_TYPE::STRAIGHT_FLUSH;
+                plyr->hand.hand_str = assessment::handTypeToString(HAND_TYPE::STRAIGHT_FLUSH);
                 message = "a Straight Flush";
             }
         } else if (assessment::hasFourOfAKind(plyr->hand.cards)) {
@@ -257,6 +260,8 @@ void TexasHoldem::findHand(Player *plyr) {
             if (tmp > plyr->hand.strength) {
                 bestHand = plyr->hand.cards;
                 plyr->hand.strength = tmp;
+                plyr->hand.hand_str = assessment::handTypeToString(HAND_TYPE::FOUR_OF_A_KIND);
+                plyr->hand.type = HAND_TYPE::FOUR_OF_A_KIND;
                 if (cardRnk == allCards[6].rankIndex) {
                     plyr->highCardRnk = allCards[2].rankIndex;  // c0 c1 c2 c3 c4 c5 c6-->
                 } else {
@@ -267,7 +272,7 @@ void TexasHoldem::findHand(Player *plyr) {
         } else if (assessment::hasFullHouse(plyr->hand.cards)) {
             Cards fullHouse = assessment::getFullHouse(plyr->hand.cards);
             int cardRnk;
-            if (count(fullHouse.begin(), fullHouse.end(), fullHouse[0]) == 3) {
+            if (std::count(fullHouse.begin(), fullHouse.end(), fullHouse[0]) == 3) {
                 cardRnk = fullHouse[0].rankIndex;
             } else {
                 cardRnk = fullHouse[4].rankIndex;
@@ -277,6 +282,7 @@ void TexasHoldem::findHand(Player *plyr) {
                 bestHand = plyr->hand.cards;
                 plyr->hand.strength = tmp;
                 plyr->highCardRnk = 0;
+                plyr->hand.type = HAND_TYPE::FULL_HOUSE;
                 message = "a Full House";
             }
         } else if (assessment::hasFlush(plyr->hand.cards)) {
@@ -287,6 +293,7 @@ void TexasHoldem::findHand(Player *plyr) {
                 bestHand = plyr->hand.cards;
                 plyr->hand.strength = tmp;
                 plyr->highCardRnk = 0;
+                plyr->hand.type = HAND_TYPE::FLUSH;
                 message = "a Flush";
             }
         } else if (assessment::hasStraight(plyr->hand.cards)) {
@@ -296,6 +303,8 @@ void TexasHoldem::findHand(Player *plyr) {
                 bestHand = plyr->hand.cards;
                 plyr->hand.strength = tmp;
                 plyr->highCardRnk = 0;
+                plyr->hand.type = HAND_TYPE::STRAIGHT;
+                plyr->hand.hand_str = assessment::handTypeToString(HAND_TYPE::STRAIGHT);
                 message = "a Straight";
             }
         } else if (assessment::hasTrips(plyr->hand.cards)) {
@@ -304,6 +313,8 @@ void TexasHoldem::findHand(Player *plyr) {
             if (tmp > plyr->hand.strength) {
                 bestHand = plyr->hand.cards;
                 plyr->hand.strength = tmp;
+                plyr->hand.hand_str = assessment::handTypeToString(HAND_TYPE::TRIPS);
+                plyr->hand.type = HAND_TYPE::TRIPS;
                 if (cardRnk == allCards[6].rankIndex) {
                     plyr->highCardRnk = allCards[3].rankIndex;
                 } else {
@@ -318,6 +329,8 @@ void TexasHoldem::findHand(Player *plyr) {
             if (tmp > plyr->hand.strength) {
                 bestHand = plyr->hand.cards;
                 plyr->hand.strength = tmp;
+                plyr->hand.hand_str = assessment::handTypeToString(HAND_TYPE::TWO_PAIR);
+                plyr->hand.type = HAND_TYPE::TWO_PAIR;
                 for (size_t i = allCards.size() - 1; i != 0; --i) {
                     if (allCards[i].rankIndex != twoPair[0].rankIndex &&
                         allCards[i].rankIndex != twoPair[3].rankIndex) {
@@ -332,6 +345,9 @@ void TexasHoldem::findHand(Player *plyr) {
             if (tmp > plyr->hand.strength) {
                 bestHand = plyr->hand.cards;
                 plyr->hand.strength = tmp;
+                plyr->hand.type = HAND_TYPE::PAIR;
+                plyr->hand.hand_str = assessment::handTypeToString(HAND_TYPE::PAIR);
+                // high card is highest card not part of the pair
                 if (allCards[6].rankIndex != cardRnk) {
                     plyr->highCardRnk = allCards[6].rankIndex;
                 } else {
@@ -346,6 +362,8 @@ void TexasHoldem::findHand(Player *plyr) {
             if (tmp > plyr->hand.strength) {
                 bestHand = plyr->hand.cards;
                 plyr->hand.strength = tmp;
+                plyr->hand.type = HAND_TYPE::HIGH_CARD;
+                plyr->hand.hand_str = assessment::handTypeToString(HAND_TYPE::HIGH_CARD);
                 message = "a High Card";
                 plyr->highCardRnk = 0;
             }
@@ -377,7 +395,7 @@ void TexasHoldem::findWinner() {
       - first sorting call changes order of players vector, thus changing the order player go in
         * possibly make a copy of the players first then call collectPot using players[i] pointer
     */
-
+    LOG << END;
     // ensure all players have assessed there hand strengths
     for (auto &p : players) {
         if (p.hand.strength == 0)
@@ -456,50 +474,38 @@ Player *TexasHoldem::findPlayer(const std::string &name) {
     return nullptr;
 }
 
+cardSuperVector TexasHoldem::permuteCards(const Player& plyr) const {
+    LOG << "NEED IMPLEMENTATION..." << END;
+    return {{}};
+}
+
 cardSuperVector TexasHoldem::comboCards(const Player *plyr) const {
+    LOG << "generating possible 5 card hands..." << END;
+    if (tableCards.size() != 5) return {{}};
     cardSuperVector result;
-    Cards cardSubSet;
-    intComb combInd;
-    Cards allCards = tableCards;
-    if (!plyr->isValidHand()) {
-        throw poker_error::InvalidHandError("TexasHoldem::comboCards(): invalid hand when assessing table");
-    }
-    allCards.push_back(plyr->holeCards.first);
-    allCards.push_back(plyr->holeCards.second);
+    Cards tmpHand;
 
-    if (allCards.size() != 7) {
-        LOG << "ERROR" << "7 cards not present" << END;
-        throw poker_error::HandIDError("Error @ comboCards(): 7 cards not present...");
-    }
+    Cards plyrCards = tableCards;
+    plyrCards.push_back(plyr->holeCards.first);
+    plyrCards.push_back(plyr->holeCards.second);
 
-    uint64_t numCombos = nCr(7, 5);
-    combInd = comb(7, 5);
-
-    for (std::vector<int> subIndVect: combInd) {
-        for (int index: subIndVect) {
-            cardSubSet.push_back(allCards[index]);
-        }
-        result.push_back(cardSubSet);
-        cardSubSet.clear();
+    for (const auto& indexTmp : HAND_INDEX_COMBINATIONS) {
+        for (const auto& ind : indexTmp)
+            tmpHand.push_back(plyrCards[ind]);
+        result.push_back(tmpHand);
+        tmpHand.clear();
     }
-
-    if (result.size() != numCombos) {
-        LOG << "ERROR: 21 combos not present in hand combos" << END;
-        throw poker_error::HandIDError(
-                "Error @ comboCards(): 21 combos not present in hand combos");
-    }
+    LOG << "result.size(): " << result.size() << END;
     return result;
 }
 
-void TexasHoldem::resetHand(int num) {
+void TexasHoldem::resetHand() {
     pot = 0;
     gameDeck.resetDeck();
     tableCards.clear();
-    for (auto &player : players) {
+    for (auto &player : players)
         player.reset();
-    }
-    LOG << "======================hand reset!!=======#" << num << "==================\n\n"
-          << std::endl;
+    LOG << "======================hand reset!!=========================" << END;
 }
 
 intComb comb(uint64_t n, uint64_t k) {

@@ -66,3 +66,6 @@ if (TESTING_SUITE)
     target_link_libraries( gPokerTestingMain poker gtest)
 endif()
 
+# scrap exe
+add_executable(scrapExe source/scrap.cpp)
+

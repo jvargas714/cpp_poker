@@ -8,7 +8,7 @@ TexasHoldem* g_game;
 
 TEST (ctorTests, defaultCtor) {
     TexasHoldem game;
-    LOG << "\n" << game << END;
+    LOG << "\ntesting game ctor: \n" << game << END;
     ASSERT_TRUE(game.players.size()==2);
 }
 
@@ -19,6 +19,7 @@ TEST (ctorTests, copyCtor) {
 }
 
 TEST (ctorTests, initListNames) {
+    LOG << "ctorTests --> initListNames" << END;
     std::initializer_list<std::string> lst = {"jake", "john", "jerry", "jacob", "silvia"};
     TexasHoldem game(lst);
     ASSERT_TRUE(game.numPlayers == 5);
@@ -37,6 +38,7 @@ TEST (ctorTests, initListNames) {
 TEST (ctorTests, initListNameMoney) {
     std::initializer_list<std::pair<std::string, int>> lst = {{"mark", 1234}, {"scott", 5}, {"john", 1500}};
     TexasHoldem game(lst);
+    LOG << "ctorTests :: initListNameMoney -->" << END;
     auto plyr1 = game.getPlayerIterator("mark");
     auto plyr2 = game.getPlayerIterator("scott");
     auto plyr3 = game.getPlayerIterator("john");
@@ -46,6 +48,7 @@ TEST (ctorTests, initListNameMoney) {
 }
 
 TEST (ctorTests, cfgLoad) {
+    LOG << "ctorTests :: cfgLoad :: " << END;
     TexasHoldem game(TEST_CFG_PATH);
     ASSERT_TRUE(game.getGameId() == 7140);
     ASSERT_TRUE(game.getBigBlind() == 50);
@@ -59,6 +62,7 @@ TEST (ctorTests, cfgLoad) {
 // [0  1  2  3  4  5  6  7  8   9  10 11 12]
 // [2  3  4  5  6  7  8  9  10  j  q  k  a]
 TEST (assessTest, highCard) {
+    LOG << "assessTest :: highCard: " << END;
     Cards cards = {
             Card(1, 0),  // 3
             Card(2, 0),  // 4
@@ -72,6 +76,7 @@ TEST (assessTest, highCard) {
 }
 
 TEST (assessTest, pairs) {
+    LOG << "assessTest :: pairs: " << END;
     // pair of 6
     Cards cards = {
             Card(4, 1),
@@ -86,6 +91,7 @@ TEST (assessTest, pairs) {
 }
 
 TEST (assessTest, twoPairs) {
+    LOG << "assessTest :: twoPairs: " << END;
     // pair of 6 and k
     Cards cards = {
             Card(4, 1),
@@ -96,10 +102,11 @@ TEST (assessTest, twoPairs) {
     };
     Hand hnd = assessment::findHandStrength(cards);
     ASSERT_TRUE(hnd.type == HAND_TYPE::TWO_PAIR);
-    ASSERT_TRUE(hnd.strength == 37);
+    ASSERT_TRUE(hnd.strength == 39);
 }
 
 TEST (assessTest, trips) {
+    LOG << "assessTest :: trips: " << END;
     // trips Ace
     Cards cards = {
             Card(12, 1),
@@ -110,10 +117,11 @@ TEST (assessTest, trips) {
     };
     Hand hnd = assessment::findHandStrength(cards);
     ASSERT_TRUE(hnd.type == HAND_TYPE::TRIPS);
-    ASSERT_TRUE(hnd.strength == 51);
+    ASSERT_TRUE(hnd.strength == 53);
 }
 
 TEST (assessTest, str8) {
+    LOG << "assessTest :: str8: " << END;
     // straight
     Cards cards = {
             Card(5, 1),
@@ -124,10 +132,11 @@ TEST (assessTest, str8) {
     };
     Hand hnd = assessment::findHandStrength(cards);
     ASSERT_TRUE(hnd.type == HAND_TYPE::STRAIGHT);
-    ASSERT_TRUE(hnd.strength == 61);
+    ASSERT_TRUE(hnd.strength == 63);
 }
 
 TEST (assessTest, flush) {
+    LOG << "assessTest :: flush: " << END;
     // 9 high straight flush
     Cards cards = {
             Card(0, 0),
@@ -138,10 +147,11 @@ TEST (assessTest, flush) {
     };
     Hand hnd = assessment::findHandStrength(cards);
     ASSERT_TRUE(hnd.type == HAND_TYPE::FLUSH);
-    ASSERT_TRUE(hnd.strength == 75);
+    ASSERT_TRUE(hnd.strength == 77);
 }
 
 TEST (assessTest, fullHouse) {
+    LOG << "assessTest :: fullHouse: " << END;
     // 9 high straight flush
     Cards cards = {
             Card(8, 2),
@@ -152,10 +162,11 @@ TEST (assessTest, fullHouse) {
     };
     Hand hnd = assessment::findHandStrength(cards);
     ASSERT_TRUE(hnd.type == HAND_TYPE::FULL_HOUSE);
-    ASSERT_TRUE(hnd.strength == 86);
+    ASSERT_TRUE(hnd.strength == 88);
 }
 
 TEST (assessTest, fourOfaKind) {
+    LOG << "assessTest :: fourOfaKind: " << END;
     // four 3's
     Cards cards = {
             Card(1, 0),
@@ -166,10 +177,11 @@ TEST (assessTest, fourOfaKind) {
     };
     Hand hnd = assessment::findHandStrength(cards);
     ASSERT_TRUE(hnd.type == HAND_TYPE::FOUR_OF_A_KIND);
-    ASSERT_TRUE(hnd.strength == 92);
+    ASSERT_TRUE(hnd.strength == 94);
 }
 
 TEST (assessTest, str8Flush) {
+    LOG << "assessTest :: str8Flush: " << END;
     // 9 high straight flush
     Cards cards = {
             Card(5, 2),
@@ -180,10 +192,11 @@ TEST (assessTest, str8Flush) {
     };
     Hand hnd = assessment::findHandStrength(cards);
     ASSERT_TRUE(hnd.type == HAND_TYPE::STRAIGHT_FLUSH);
-    ASSERT_TRUE(hnd.strength == 111);
+    ASSERT_TRUE(hnd.strength == 113);
 }
 
 TEST (assessTest, royalFlush) {
+    LOG << "assessTest :: royalFlush: " << END;
     // 9 high straight flush
     Cards cards = {
             Card(10, 3),
@@ -197,20 +210,70 @@ TEST (assessTest, royalFlush) {
     ASSERT_TRUE(hnd.strength == 150);
 }
 
-bool setupGlobalGame() {
-    g_game = new TexasHoldem();
-    g_game->enterGame("Player 3", 1500);
-    g_game->enterGame("Player 4", 1500);
-    g_game->enterGame("Player 5", 2000);
-    g_game->enterGame("Player 6", 2500);
+TEST (inGameAssess, inGameHighCardDueToTie) {
+    LOG << "inGameAssess :: inGameHighCardDueToTie: " << END;
+    // set winnings
+    g_game->setPot(250);
+
+    // PAIR High card King
+    g_game->getPlayerIterator("Player 1")->holeCards.first = Card(TWO, SPADE);
+    g_game->getPlayerIterator("Player 1")->holeCards.second = Card(THREE, CLUB);
+
+    // PAIR High card King
+    g_game->getPlayerIterator("Player 2")->holeCards.first = Card(FOUR, SPADE);
+    g_game->getPlayerIterator("Player 2")->holeCards.second = Card(TWO, CLUB);
+
+    // PAIR High card King
+    g_game->getPlayerIterator("Player 3")->holeCards.first = Card(EIGHT, DIAMOND);
+    g_game->getPlayerIterator("Player 3")->holeCards.second = Card(NINE, HEART);
+
+    // PAIR high card king
+    g_game->getPlayerIterator("Player 4")->holeCards.first = Card(TWO, DIAMOND);
+    g_game->getPlayerIterator("Player 4")->holeCards.second = Card(THREE, SPADE);
+
+    // // PAIR high card king
+    g_game->getPlayerIterator("Player 5")->holeCards.first = Card(TWO, HEART);
+    g_game->getPlayerIterator("Player 5")->holeCards.second = Card(THREE, DIAMOND);
+
+    // PAIR high card ace (winner)
+    g_game->getPlayerIterator("Player 6")->holeCards.first = Card(SEVEN, SPADE);
+    g_game->getPlayerIterator("Player 6")->holeCards.second = Card(ACE, SPADE);
+
+    // set table
+    g_game->getTableCards().push_back(Card(QUEEN, SPADE));
+    g_game->getTableCards().push_back(Card(KING, CLUB));
+    g_game->getTableCards().push_back(Card(FIVE, CLUB));
+    g_game->getTableCards().push_back(Card(QUEEN, DIAMOND));
+    g_game->getTableCards().push_back(Card(TEN, SPADE));
+
+    // assess table
+    g_game->findWinner();
+
+    // check status of players
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 1")->hand.type == HAND_TYPE::PAIR);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 2")->hand.type == HAND_TYPE::PAIR);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 3")->hand.type == HAND_TYPE::PAIR);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 4")->hand.type == HAND_TYPE::PAIR);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 5")->hand.type == HAND_TYPE::PAIR);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 6")->hand.type == HAND_TYPE::PAIR);
+
+    // player 6 should win via high card as everyone else has a pair from table due to a tie
+    LOG << "player 6 cash: " << g_game->getPlayerIterator("Player 6")->cash << END;
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 6")->cash == 250);
+
+    // reset table
+    g_game->resetHand();
 }
 
-
-
-
-
-
-
+void setupGlobalGame() {
+    g_game = new TexasHoldem();
+    g_game->enterGame("Player 3", 0);
+    g_game->enterGame("Player 4", 0);
+    g_game->enterGame("Player 5", 0);
+    g_game->enterGame("Player 6", 0);
+    g_game->getPlayerIterator("Player 1")->cash = 0;
+    g_game->getPlayerIterator("Player 2")->cash = 0;
+}
 
 // --------------------------------start tests----------------------------------
 int main(int argc, char** argv) {

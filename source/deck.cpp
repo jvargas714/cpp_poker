@@ -37,7 +37,6 @@ void Deck::resetDeck() { // clears deck, fills deck with new cards and shuffles
     deck.clear();               // clears vector leaving it with a size of 0
 
     for (int i = 0; i < 13; i++) {
-
         for (int j = 0; j < 4; j++) {
             Card card(i, j);
             deck.push_back(card);

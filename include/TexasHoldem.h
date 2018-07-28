@@ -120,8 +120,8 @@ class Poker;
 class TexasHoldem : public Poker {
 private:
     uint32_t pot, smallBlind, bigBlind, gameId;
-public:
     Cards tableCards;
+public:
     uint32_t dealerIndex;
 
     TexasHoldem();
@@ -167,9 +167,11 @@ public:
 
     cardSuperVector comboCards(const Player *) const;
 
-    void showTableCards() const;
+    cardSuperVector permuteCards(const Player& plyr) const;
 
-    void resetHand(int);
+        void showTableCards() const;
+
+    void resetHand();
 
     void collectPot(Player *);
 
@@ -195,6 +197,8 @@ public:
 
     inline std::vector<Player>::iterator getPlayerIterator(const std::string& name) override { return Poker::getPlayerIterator(name); }
 
+    inline Cards& getTableCards() { return tableCards; }
+    inline void setPot(uint32_t amt) { pot = amt; }
 private:
     Player *findPlayer(const std::string &name);
 

@@ -29,8 +29,6 @@ typedef enum {
     ROYAL_FLUSH
 } HAND_TYPE;
 
-std::string handTypeToString(const HAND_TYPE& type);
-
 typedef struct Hand {
     HAND_TYPE type;
     Cards cards;
@@ -88,5 +86,6 @@ namespace assessment {
 
     Cards getRoyalFlush(const Cards &);
 
+    std::string handTypeToString(const HAND_TYPE& type);
 } // END assessment namespace
 #endif /* HEADERS_ASSESSMENT_H_ */

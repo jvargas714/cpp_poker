@@ -66,7 +66,6 @@ void Player::clearHandStrength() {
 
 void Player::reset() {
     clearHand();
-    clearHandStrength();
     highCardRnk = 0;
 }
 

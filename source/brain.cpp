@@ -74,13 +74,13 @@ bool JayBrain::assessFlopScenario(Player *bot) {
     int outs;   // number of cards left in the deck that contribute to achieving a best hand
     Card hole1 = bot->holeCards.first;
     Card hole2 = bot->holeCards.second;
-    if (thGame->tableCards.size() != 3) {
+    if (thGame->getTableCards().size() != 3) {
         LOG << __FUNCTION__ << "(): " << E << "Error --> tableCards.size() != 3, exiting" << END;
         return false;
     }
     // first we see if we have a valid hand off the flop
     auto it = bot->hand.cards.begin();
-    bot->hand.cards.insert(it, thGame->tableCards.begin(), thGame->tableCards.end());
+    bot->hand.cards.insert(it, thGame->getTableCards().begin(), thGame->getTableCards().end());
 
     if (bot->hand.cards.size() != 5)
         return false;
