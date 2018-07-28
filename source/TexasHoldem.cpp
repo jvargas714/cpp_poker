@@ -500,12 +500,12 @@ cardSuperVector TexasHoldem::comboCards(const Player *plyr) const {
 }
 
 void TexasHoldem::resetHand() {
+    LOG << "resetting table" << END;
     pot = 0;
     gameDeck.resetDeck();
     tableCards.clear();
     for (auto &player : players)
         player.reset();
-    LOG << "======================hand reset!!=========================" << END;
 }
 
 intComb comb(uint64_t n, uint64_t k) {

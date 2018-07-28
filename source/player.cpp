@@ -51,7 +51,7 @@ void Player::setHandStrength(const std::string &handType, int &rank) {
 void Player::clearHand() {
     clearHandStrength();
     hand.cards.clear();
-    hand.hand_str = "";
+    hand.hand_str = assessment::handTypeToString(HAND_TYPE::NONE);
     hand.type = HAND_TYPE::NONE;
 }
 

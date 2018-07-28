@@ -258,8 +258,59 @@ TEST (inGameAssess, inGameHighCardDueToTie) {
     ASSERT_TRUE(g_game->getPlayerIterator("Player 6")->hand.type == HAND_TYPE::PAIR);
 
     // player 6 should win via high card as everyone else has a pair from table due to a tie
-    LOG << "player 6 cash: " << g_game->getPlayerIterator("Player 6")->cash << END;
     ASSERT_TRUE(g_game->getPlayerIterator("Player 6")->cash == 250);
+
+    g_game->getPlayerIterator("Player 6")->cash = 0;
+
+    // reset table
+    g_game->resetHand();
+}
+
+TEST (inGameAssess, pairWin) {
+    // set winnings
+    g_game->setPot(250);
+
+    g_game->getPlayerIterator("Player 1")->holeCards.first = Card(TWO, SPADE);
+    g_game->getPlayerIterator("Player 1")->holeCards.second = Card(THREE, CLUB);
+
+    g_game->getPlayerIterator("Player 2")->holeCards.first = Card(FOUR, SPADE);
+    g_game->getPlayerIterator("Player 2")->holeCards.second = Card(TWO, CLUB);
+
+    // winner Queen pair
+    g_game->getPlayerIterator("Player 3")->holeCards.first = Card(EIGHT, DIAMOND);
+    g_game->getPlayerIterator("Player 3")->holeCards.second = Card(QUEEN, HEART);
+
+    g_game->getPlayerIterator("Player 4")->holeCards.first = Card(TWO, DIAMOND);
+    g_game->getPlayerIterator("Player 4")->holeCards.second = Card(FIVE, SPADE);
+
+    g_game->getPlayerIterator("Player 5")->holeCards.first = Card(TWO, HEART);
+    g_game->getPlayerIterator("Player 5")->holeCards.second = Card(THREE, DIAMOND);
+
+    g_game->getPlayerIterator("Player 6")->holeCards.first = Card(NINE, SPADE);
+    g_game->getPlayerIterator("Player 6")->holeCards.second = Card(ACE, SPADE);
+
+    // set table
+    g_game->getTableCards().push_back(Card(THREE, HEART));
+    g_game->getTableCards().push_back(Card(KING, CLUB));
+    g_game->getTableCards().push_back(Card(FIVE, CLUB));
+    g_game->getTableCards().push_back(Card(QUEEN, DIAMOND));
+    g_game->getTableCards().push_back(Card(TEN, SPADE));
+
+    // assess table
+    g_game->findWinner();
+
+    // check status of players
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 1")->hand.type == HAND_TYPE::PAIR);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 2")->hand.type == HAND_TYPE::HIGH_CARD);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 3")->hand.type == HAND_TYPE::PAIR);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 4")->hand.type == HAND_TYPE::PAIR);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 5")->hand.type == HAND_TYPE::PAIR);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 6")->hand.type == HAND_TYPE::HIGH_CARD);
+
+    // player 3 wins via queen pair
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 3")->cash == 250);
+
+    g_game->getPlayerIterator("Player 3")->cash = 0;
 
     // reset table
     g_game->resetHand();
