@@ -457,16 +457,6 @@ void TexasHoldem::findWinner() {
     }
 }
 
-Player *TexasHoldem::findPlayer(const std::string &name) {
-    // private method that returns pointer to player identified by the name
-    for (auto &player : players) {
-        if (player.name == name) {
-            return &player;
-        }
-    }
-    return nullptr;
-}
-
 cardSuperVector TexasHoldem::permuteCards(const Player& plyr) const {
     LOG << "NEED IMPLEMENTATION..." << END;
     return {{}};

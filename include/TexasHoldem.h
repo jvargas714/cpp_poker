@@ -185,7 +185,8 @@ public:
 
     inline uint32_t getGameId() const noexcept { return gameId; }
 
-    virtual void findWinner();
+
+    void findWinner() override;
 
     void calculateHands();
 
@@ -204,7 +205,7 @@ private:
 
     void assign_dealer();
 
-    void rotateDealer();
+    void rotateDealer() override;
 };
 
 uint64_t nCr(uint64_t n, uint64_t k);

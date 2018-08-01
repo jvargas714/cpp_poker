@@ -56,12 +56,13 @@
 class Poker {
 public:
     std::vector<Player> players;
-    uint32_t numPlayers = 0;
+    uint32_t numPlayers;
+    uint32_t pot;
     Deck gameDeck;
 
-    Poker();
-    Poker(std::initializer_list<std::pair<std::string, int> >);
+    Poker() : pot(0), numPlayers(0) {}
     explicit Poker(int cash);
+    Poker(std::initializer_list<std::pair<std::string, int>>);
     Poker(std::initializer_list<std::string> names);
     virtual ~Poker();
     void enterGame(std::string name, int cash);
@@ -69,7 +70,8 @@ public:
     virtual std::vector<Player>::iterator getPlayerIterator(const int& index);
     virtual std::vector<Player>::iterator getPlayerIterator(const std::string &name);
 
-    /*pure virtual methods*/
+    virtual void rotateDealer()=0;
+    virtual void findWinner()=0;
     virtual void showHand(const Player *) const = 0;
     virtual void dealHands() = 0;
     virtual void findHand(Player *) = 0;

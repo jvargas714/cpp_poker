@@ -13,26 +13,6 @@
 
 static const int TIME_DELAY = 3; // 3 second delay before the AI makes a move
 
-enum poker_states {
-    DEAL_HOLE_CARDS,
-    PREFLOP,
-    ROUND_OF_BETS,
-    DEAL_FLOP,
-    FLOP,
-    DEAL_TURN,
-    TURN,
-    DEAL_RIVER,
-    RIVER,
-    SHOWDOWN,
-};
-
-enum player_actions {
-    BET = 10,
-    RAISE,
-    FOLD,
-    ALL_IN,
-    CHECK
-};
 
 // pre-flop bets, returns next game state
 int pre_flop_bets(TexasHoldem &game);

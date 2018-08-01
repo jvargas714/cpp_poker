@@ -47,7 +47,7 @@ set(LIB_FILES
         include/poker.h
         include/poker_error.h
         include/poker_fsm.h
-        include/TexasHoldem.h)
+        include/TexasHoldem.h include/pokerServer.h)
 
 add_library( poker STATIC ${LIB_FILES} )
 
