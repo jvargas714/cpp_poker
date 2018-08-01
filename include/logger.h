@@ -8,27 +8,33 @@
 #include <cstdio>
 #include <cstring>  // std::strcat
 #include <cstdlib>
-#include <ctime>    // std::strftime
+#include <ctime>    // std::strftime, std::time(), std::put_time, std::localtime
 #include <memory>   // unique_ptr
 #include <chrono>   // std::chrono::system_clock::now() and std::time_point
 /*
  * TODO:: set module in logger as well, use #define to do so
  * TODO :: improve << operator to have time date etc etc
+ * TODO :: enforce log levels
  */
 // some macros for log prefix
+#define T       "::TRACE::"
 #define D       "::DEBUG::"
-#define V       "::VERBOSE"
+#define V       "::VERBOSE::"
 #define E       "::ERROR::"
 #define I       "::INFO::"
+#define W       "::WARNING::"
+
 #define fstr()  std::string(__func__) + "(): "
 #define FN      fstr()
 #define END     std::endl
-#define LOG     log() << __FUNCTION__ << "(): "
+
+#define LOG     log() << I << FN
+#define LOG_TRACE log() << T << FN
+#define LOG_DEBUG log() << D << FN
+#define LOG_WARNING log() << W << FN
+#define LOG_ERROR log() << E << FN
 
 class logger;
-
-// helper function
-std::string now();
 
 logger &log();
 
@@ -84,34 +90,37 @@ public:
 
     template<typename toPrint>
     std::ostream &operator<<(const toPrint &msg) {
+        std::time_t tm = std::time(nullptr);
         if (strm == &std::cout) {
-//			std::cout << now() << mode << " " << msg;
-            std::cout << msg;
+            std::cout << std::put_time( std::localtime( &tm ), "%c" ) << msg;
         } else {
             auto *fstrm = dynamic_cast<std::ofstream *>( strm );
             if (fstrm->is_open() && mode == "OFF") {
-                std::cerr << "Mode is set to OFF, closing log_file: " << log_filename << std::endl;
+                std::cerr << std::put_time( std::localtime( &tm ), "%c" )
+                        << "Mode is set to OFF, closing log_file: " << log_filename << std::endl;
                 fstrm->flush();
                 fstrm->close();
             } else if (fstrm->is_open()) {
-//				*fstrm << now() << mode << " " << msg;
-                *fstrm << msg;
+                *fstrm << std::put_time( std::localtime( &tm ), "%c" ) << msg;
                 fstrm->flush();
             } else {
-                std::cerr << "Error log file: " << log_filename << " is not opened." << std::endl;
+                std::cerr << std::put_time( std::localtime( &tm ), "%c" ) <<
+                            "Error log file: " << log_filename <<
+                            " is not opened." << std::endl;
             }
         }
         return *strm;
     }
 
     inline void log(std::string &&msg, bool log_prefix = true) {
+        std::time_t tm = std::time(nullptr);
         if (strm == &std::cout) {
-            std::cout << now() << mode << " " << msg;
+            std::cout << std::put_time( std::localtime( &tm ), "%c" ) << mode << " " << msg;
         } else {
             auto *fstrm = dynamic_cast<std::ofstream *>(strm);
             if (fstrm->is_open()) {
                 if (log_prefix) {
-                    *fstrm << now() << mode << " " << msg;
+                    *fstrm << std::put_time( std::localtime( &tm ), "%c" ) << mode << " " << msg;
                 } else {
                     *fstrm << msg;
                 }

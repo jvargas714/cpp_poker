@@ -19,7 +19,3 @@ logger &log() {
 void delete_logger() {
     delete &log();
 }
-
-std::string now() {
-    return "";
-}
