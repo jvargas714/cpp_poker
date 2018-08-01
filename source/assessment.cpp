@@ -3,6 +3,31 @@
 #include "hand_weight.h"
 #include <algorithm>
 
+const std::vector<std::vector<int>> HAND_INDEX_COMBINATIONS = {
+{0, 1, 2, 3, 4},
+{0, 1, 2, 3, 5},
+{0, 1, 2, 3, 6},
+{0, 1, 2, 5, 4},
+{0, 1, 2, 6, 4},
+{0, 1, 5, 3, 4},
+{0, 1, 6, 3, 4},
+{0, 5, 2, 3, 4},
+{0, 6, 2, 3, 4},
+{5, 1, 2, 3, 4},
+{6, 1, 2, 3, 4},
+{5, 6, 2, 3, 4},
+{5, 1, 6, 3, 4},
+{5, 1, 2, 6, 4},
+{5, 1, 2, 3, 6},
+{0, 5, 6, 3, 4},
+{0, 5, 2, 6, 4},
+{0, 5, 2, 3, 6},
+{0, 1, 5, 6, 4},
+{0, 1, 5, 3, 6},
+{0, 1, 2, 5, 6}
+};
+
+
 std::vector<std::string> assessment::getHandSuits(const Cards &cds) {
     std::vector<std::string> suits;
     for (const Card &cd: cds)

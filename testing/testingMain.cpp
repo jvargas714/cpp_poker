@@ -6,6 +6,11 @@
 const std::string TEST_CFG_PATH = "../config/test1.cfg";
 TexasHoldem* g_game;
 
+static void clearCash() {
+    for (auto &plyr : g_game->players)
+        plyr.cash = 0;
+}
+
 TEST (ctorTests, defaultCtor) {
     TexasHoldem game;
     LOG_TRACE << "\ntesting game ctor: \n" << game << END;
@@ -260,7 +265,7 @@ TEST (inGameAssess, inGameHighCardDueToTie) {
     // player 6 should win via high card as everyone else has a pair from table due to a tie
     ASSERT_TRUE(g_game->getPlayerIterator("Player 6")->cash == 250);
 
-    g_game->getPlayerIterator("Player 6")->cash = 0;
+    clearCash();
 
     // reset table
     g_game->resetHand();
@@ -311,7 +316,7 @@ TEST (inGameAssess, pairWin) {
     // player 3 wins via queen pair
     ASSERT_TRUE(g_game->getPlayerIterator("Player 3")->cash == 250);
 
-    g_game->getPlayerIterator("Player 3")->cash = 0;
+    clearCash();
 
     // reset table
     g_game->resetHand();
@@ -362,7 +367,7 @@ TEST (inGameAssess, tripsWin) {
     // player 3 wins via queen pair
     ASSERT_TRUE(g_game->getPlayerIterator("Player 2")->cash == 250);
 
-    g_game->getPlayerIterator("Player 2")->cash = 0;
+    clearCash();
 
     // reset table
     g_game->resetHand();
@@ -413,7 +418,7 @@ TEST (inGameAssess, fourOfaKindWin) {
     // player 3 wins via queen pair
     ASSERT_TRUE(g_game->getPlayerIterator("Player 6")->cash == 250);
 
-    g_game->getPlayerIterator("Player 6")->cash = 0;
+    clearCash();
 
     // reset table
     g_game->resetHand();
@@ -464,14 +469,13 @@ TEST (inGameAssess, fullHouseHighTrips) {
     // player 3 wins via queen pair
     ASSERT_TRUE(g_game->getPlayerIterator("Player 3")->cash == 250);
 
-    g_game->getPlayerIterator("Player 3")->cash = 0;
+    clearCash();
 
     // reset table
     g_game->resetHand();
 }
 
-// TODO :: finish scenario
-TEST (inGameAssess, tiedPairSplitPot) {
+TEST (inGameAssess, tiedPairWinKicker) {
     LOG_TRACE << "inGameAssess::tiedPairSplitPot >> " << END;
 
     // set winnings
@@ -507,17 +511,126 @@ TEST (inGameAssess, tiedPairSplitPot) {
     g_game->findWinner();
 
     // check status of players
-    ASSERT_TRUE(g_game->getPlayerIterator("Player 1")->hand.type == HAND_TYPE::FULL_HOUSE);
-    ASSERT_TRUE(g_game->getPlayerIterator("Player 2")->hand.type == HAND_TYPE::PAIR);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 1")->hand.type == HAND_TYPE::PAIR);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 2")->hand.type == HAND_TYPE::HIGH_CARD);
     ASSERT_TRUE(g_game->getPlayerIterator("Player 3")->hand.type == HAND_TYPE::PAIR);
     ASSERT_TRUE(g_game->getPlayerIterator("Player 4")->hand.type == HAND_TYPE::PAIR);
     ASSERT_TRUE(g_game->getPlayerIterator("Player 5")->hand.type == HAND_TYPE::PAIR);
     ASSERT_TRUE(g_game->getPlayerIterator("Player 6")->hand.type == HAND_TYPE::HIGH_CARD);
 
     // player 3 wins via queen pair
-    ASSERT_TRUE(g_game->getPlayerIterator("Player 3")->cash == 250);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 1")->cash == 250);
 
-    g_game->getPlayerIterator("Player 3")->cash = 0;
+    clearCash();
+
+    // reset table
+    g_game->resetHand();
+}
+
+TEST (inGameAssess, tiedPairSplitPot) {
+    LOG_TRACE << "inGameAssess::tiedPairSplitPot >> " << END;
+
+    // set winnings
+    g_game->setPot(250);
+    // pair of queens ACE kicker
+    g_game->getPlayerIterator("Player 1")->holeCards.first = Card(QUEEN, SPADE);
+    g_game->getPlayerIterator("Player 1")->holeCards.second = Card(ACE, CLUB);
+
+    g_game->getPlayerIterator("Player 2")->holeCards.first = Card(FOUR, SPADE);
+    g_game->getPlayerIterator("Player 2")->holeCards.second = Card(TWO, CLUB);
+
+    // pair of queens ACE kicker
+    g_game->getPlayerIterator("Player 3")->holeCards.first = Card(QUEEN, DIAMOND);
+    g_game->getPlayerIterator("Player 3")->holeCards.second = Card(ACE, HEART);
+
+    g_game->getPlayerIterator("Player 4")->holeCards.first = Card(TWO, DIAMOND);
+    g_game->getPlayerIterator("Player 4")->holeCards.second = Card(FIVE, SPADE);
+
+    g_game->getPlayerIterator("Player 5")->holeCards.first = Card(TWO, HEART);
+    g_game->getPlayerIterator("Player 5")->holeCards.second = Card(THREE, DIAMOND);
+
+    g_game->getPlayerIterator("Player 6")->holeCards.first = Card(NINE, SPADE);
+    g_game->getPlayerIterator("Player 6")->holeCards.second = Card(ACE, SPADE);
+
+    // set table
+    g_game->getTableCards().push_back(Card(THREE, HEART));
+    g_game->getTableCards().push_back(Card(KING, CLUB));
+    g_game->getTableCards().push_back(Card(FIVE, CLUB));
+    g_game->getTableCards().push_back(Card(JACK, DIAMOND));
+    g_game->getTableCards().push_back(Card(QUEEN, SPADE));
+
+    // assess table
+    g_game->findWinner();
+
+    // check status of players
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 1")->hand.type == HAND_TYPE::PAIR);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 2")->hand.type == HAND_TYPE::HIGH_CARD);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 3")->hand.type == HAND_TYPE::PAIR);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 4")->hand.type == HAND_TYPE::PAIR);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 5")->hand.type == HAND_TYPE::PAIR);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 6")->hand.type == HAND_TYPE::HIGH_CARD);
+
+    // player 3 wins via queen pair
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 1")->cash == 125);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 3")->cash == 125);
+
+    clearCash();
+
+    // reset table
+    g_game->resetHand();
+}
+
+TEST (inGameAssess, highCardWins) {
+    LOG_TRACE << "inGameAssess::tiedPairSplitPot >> " << END;
+
+    // set winnings
+    g_game->setPot(250);
+    // winner high card of ACE
+    g_game->getPlayerIterator("Player 1")->holeCards.first = Card(TEN, SPADE);
+    g_game->getPlayerIterator("Player 1")->holeCards.second = Card(SIX, CLUB);
+
+    g_game->getPlayerIterator("Player 2")->holeCards.first = Card(FOUR, SPADE);
+    g_game->getPlayerIterator("Player 2")->holeCards.second = Card(ACE, CLUB);
+
+    g_game->getPlayerIterator("Player 3")->holeCards.first = Card(TEN, DIAMOND);
+    g_game->getPlayerIterator("Player 3")->holeCards.second = Card(SEVEN, HEART);
+
+    g_game->getPlayerIterator("Player 4")->holeCards.first = Card(TWO, DIAMOND);
+    g_game->getPlayerIterator("Player 4")->holeCards.second = Card(ACE, SPADE);
+
+    g_game->getPlayerIterator("Player 5")->holeCards.first = Card(TWO, HEART);
+    g_game->getPlayerIterator("Player 5")->holeCards.second = Card(ACE, DIAMOND);
+
+    g_game->getPlayerIterator("Player 6")->holeCards.first = Card(NINE, SPADE);
+    g_game->getPlayerIterator("Player 6")->holeCards.second = Card(ACE, HEART);
+
+    // set table
+    g_game->getTableCards().push_back(Card(THREE, HEART));
+    g_game->getTableCards().push_back(Card(KING, CLUB));
+    g_game->getTableCards().push_back(Card(FIVE, CLUB));
+    g_game->getTableCards().push_back(Card(JACK, DIAMOND));
+    g_game->getTableCards().push_back(Card(QUEEN, SPADE));
+
+    // assess table
+    g_game->findWinner();
+
+    // check status of players
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 1")->hand.type == HAND_TYPE::HIGH_CARD);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 2")->hand.type == HAND_TYPE::HIGH_CARD);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 3")->hand.type == HAND_TYPE::HIGH_CARD);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 4")->hand.type == HAND_TYPE::HIGH_CARD);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 5")->hand.type == HAND_TYPE::HIGH_CARD);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 6")->hand.type == HAND_TYPE::HIGH_CARD);
+
+    // player 3 wins via queen pair
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 4")->highCardRnk == 12);
+
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 4")->cash == 62);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 6")->cash == 62);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 2")->cash == 62);
+    ASSERT_TRUE(g_game->getPlayerIterator("Player 5")->cash == 62);
+
+    clearCash();
 
     // reset table
     g_game->resetHand();

@@ -1,8 +1,6 @@
 #include <random>
 #include "TexasHoldem.h"
 #include "hand_weight.h"
-#include "poker_error.h"
-#include "assessment.h"
 
 TexasHoldem::TexasHoldem()
         : Poker(), pot(0), smallBlind(10), bigBlind(20), gameId(999) {
@@ -365,7 +363,7 @@ void TexasHoldem::findHand(Player *plyr) {
                 plyr->hand.type = HAND_TYPE::HIGH_CARD;
                 plyr->hand.hand_str = assessment::handTypeToString(HAND_TYPE::HIGH_CARD);
                 message = "a High Card";
-                plyr->highCardRnk = 0;
+                plyr->highCardRnk = cardRnk;
             }
         }
     }
@@ -395,18 +393,16 @@ void TexasHoldem::findWinner() {
       - first sorting call changes order of players vector, thus changing the order player go in
         * possibly make a copy of the players first then call collectPot using players[i] pointer
     */
-    LOG << END;
+    LOG_TRACE << END;
     // ensure all players have assessed there hand strengths
-    for (auto &p : players) {
-        if (p.hand.strength == 0)
-            findHand(&p);
-    }
+    calculateHands();
+
     // put players in acesceding order iaw their handstrengths
-    sort(players.begin(), players.end(), HandComparator()); //TODO: may change player order
+    sort(players.begin(), players.end(), HandComparator());
 
     // check player order
     for (Player plyr : players)
-        LOG << "handStrengths " << plyr.hand.strength << std::endl;
+        LOG << plyr.name << "'s handStrength: " << plyr.hand.strength << END;
 
     // continue with find winner logic [. . . . . .]
     int cnt = 0;
@@ -421,7 +417,7 @@ void TexasHoldem::findWinner() {
         for (int i = 0; i <= cnt; i++)
             tiedPlayers.push_back(players[maxInd - i]);
     } else {
-        LOG << players[maxInd].name << " has won the hand!!" << std::endl;
+        LOG << players[maxInd].name << " has won the hand!!" << END;
         players[maxInd].collectPot(pot);
         return;
     }
@@ -448,19 +444,16 @@ void TexasHoldem::findWinner() {
         for (int i = 0; i < stillTied; ++i)    // [ * * * * *]  say stillTied = 3; loop goes 0 1 2
             winningNames.push_back(tiedPlayers[tiedPlayers.size() - 1 - i].name);
 
-        size_t numTies = winningNames.size();
-        size_t amtAwarded = pot / numTies;            // to split pot amongst ppl involved in the tie
+        auto numTies = static_cast<int>(winningNames.size());
+        int amtAwarded = pot / numTies;            // to split pot amongst ppl involved in the tie
 
         LOG << "Pot must be split amongst " << numTies << " players\n" << std::endl;
-        for (auto &name : winningNames) {                // award winners split pot
-            Player *winner = findPlayer(name);
-            winner->collectPot((int) amtAwarded);
-        }
+        for (auto &name : winningNames)               // award winners split pot
+            getPlayerIterator(name)->collectPot(amtAwarded);
     } else {
         // winner of hand when tie is broken
         std::string winnerName(tiedPlayers[tiedPlayers.size() - 1].name);
-        Player *winner = findPlayer(winnerName);
-        winner->collectPot(pot);
+        getPlayerIterator(winnerName)->collectPot(pot);
     }
 }
 
@@ -611,28 +604,15 @@ void TexasHoldem::assign_dealer() {
 }
 
 void TexasHoldem::rotateDealer() {
+    LOG_TRACE << END;
+
     // rotates to next dealer, small and big blind players
     for (auto &plyr : players) {
         plyr.dealer = false;
         plyr.smallBlind_bet = false;
         plyr.bigBlind_bet = false;
     }
-    LOG << "Dealer Index: " << dealerIndex << std::endl;
-    getPlayerIterator(dealerIndex++)->dealer = true;
-    if (dealerIndex >= numPlayers - 1) {
-        dealerIndex = 0;
-        LOG << "smallBlind Index: " << dealerIndex << std::endl;
-        getPlayerIterator(dealerIndex++)->smallBlind_bet = true;
-        LOG << "bigBlind Index: " << dealerIndex << std::endl;
-        getPlayerIterator(dealerIndex)->bigBlind_bet = true;
-    } else {
-        int tmp = dealerIndex;
-        LOG << "smallBlind Index: " << dealerIndex << std::endl;
-        getPlayerIterator(dealerIndex++)->smallBlind_bet = true;
-        LOG << "smallBlind Index: " << dealerIndex << std::endl;
-        getPlayerIterator(dealerIndex)->bigBlind_bet = true;
-        dealerIndex = (uint32_t) tmp;
-    }
+
 }
 
 std::ostream &operator<<(std::ostream& os, TexasHoldem& g1) {
