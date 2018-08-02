@@ -1,9 +1,8 @@
 //
 // Created by jay on 12/18/16.
 //
-#ifndef POKER_POKER_TYPES_H_H
-#define POKER_POKER_TYPES_H_H
-
+#ifndef POKER_TYPES_H
+#define POKER_TYPES_H
 #include <unordered_map>
 #include "card.h"
 #include "player.h"
@@ -14,7 +13,8 @@ class Card;
 // const strings
 const std::string TEST_SUITE_LOG = "./test_suite.log";
 const std::string DEBUG_LOG = "./poker_debug.log";
-\
+const std::string SERVER_LOG = "./gameServer.log";
+
 // 7 choose 5 Five cards on the table and two hole cards, combinations of 5 cards out of 7
 extern const std::vector<std::vector<int>> HAND_INDEX_COMBINATIONS;
 
@@ -50,6 +50,7 @@ typedef enum {
 } CARD_SUIT;
 
 // -----------------------------Event and Command Types-----------------------------------
+
 enum class HOLDEM_STATES {
     PREFLOP,
     ROUND_OF_BETS,
@@ -98,4 +99,4 @@ struct HoldemEvent {
     uint64_t gameId;
     HoldemAction action;
 };
-#endif //POKER_POKER_TYPES_H_H
+#endif // POKER_TYPES_H

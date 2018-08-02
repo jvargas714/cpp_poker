@@ -1,4 +1,4 @@
-#include "include/poker_fsm.h"
+#include "poker_fsm.h"
 
 int pre_flop_bets(TexasHoldem &game) {
     /*

@@ -18,7 +18,7 @@
 
 Poker::Poker()
 // creates new game defaulting to 0 players with default cash $1500
-        : players({Player("Player 1", 1500), Player("Player 2", 1500)}), numPlayers(2), gameDeck() {}
+        : pot(0), players({Player("Player 1", 1500), Player("Player 2", 1500)}), numPlayers(2), gameDeck() {}
 
 Poker::Poker(int cash)
 // creates new game defaulting to 2 players with specified starting cash

@@ -8,6 +8,7 @@
 #include <ctgmath>
 #include "logger.h"
 #include "bot_player.h"
+#include "poker_fsm.h"
 
 
 bot_player::bot_player()

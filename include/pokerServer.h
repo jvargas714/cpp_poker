@@ -14,6 +14,7 @@
 
 #include "json-forwards.h"
 #include "json.h"
+#include "net_types.h"
 #include "poker.h"
 #include "poker_types.h"
 
@@ -24,18 +25,26 @@ enum SERVER_TYPE {
     HTTP_TYPE
 };
 
+// TODO :: get to compile up to this point
+
+#define DEFAULT_GAME_SERVER_PORT 5025
+
 // todo :: poker classes need a connection manager of sorts to keep track of port connected etc etc
 
 template<typename EventType, typename GameType>
 class GameServer {
 public:
-    GameServer() : evtProcThread(), recvThread(), eventProcIsAlive(false),
+    GameServer() : RECV_THREAD(1), Q_PROC_THREAD(2), evtProcThread(), recvThread(), eventProcIsAlive(false),
                    recvIsAlive(false), mtx(), serverType(SERVER_TYPE::TCP_TYPE) {};
     virtual ~GameServer() = default;
     inline bool setProtocol(SERVER_TYPE servType=TCP_TYPE) { serverType = servType; }
-    virtual int run()=0;
+    virtual int run();
     void stopEventRecievingThread() { recvIsAlive = false; };
     void stopEventProcessing() { eventProcIsAlive = false; };
+    const uint32_t RECV_THREAD;
+    const uint32_t Q_PROC_THREAD;
+    bool isAlive(uint32_t threadType) const;
+    std::queue<EventType> eventQueue;
 protected:
     std::thread evtProcThread;
     std::thread recvThread;
@@ -43,8 +52,7 @@ protected:
     bool recvIsAlive;
     std::mutex mtx;
     SERVER_TYPE serverType;
-    std::queue<EventType> eventQueue;
-    std::map<uint64_t, std::unique_ptr<GameType>> m_gameMap;
+    std::map<uint64_t, NetConnection<GameType>> gameConnectionMap;
     virtual bool EventRecieving()=0;
     virtual bool EventProcessing()=0;
     virtual bool processEvent(const EventType&)=0;
@@ -54,10 +62,14 @@ protected:
 template <typename PokerEventType, typename PokerGameType>
 class PokerServer : public GameServer<PokerEventType, PokerGameType> {
 public:
+    typedef PokerServer<PokerEventType, PokerGameType> PServer;
+    PokerServer()=default;
     explicit PokerServer(const std::string& cfgPath);
     ~PokerServer();
     bool processEvent(const PokerEventType& evt) override;
-    int run() override;
+protected:
+    bool EventRecieving() override;
+    bool EventProcessing() override;
 private:
     // send functions
     bool sendErrorEvent(POKER_ERROR err) const;
@@ -68,13 +80,6 @@ private:
     bool processFold(const PokerEventType& evt);
     bool processAllIn(const PokerEventType& evt);
     bool processCheck(const PokerEventType& evt);
-
-protected:
-    bool EventRecieving() override;
-
-    bool EventProcessing() override;
-
-private:
     bool processAddGame(const PokerEventType& evt);
     bool processFindWinner(const PokerEventType& evt);
     bool processDealHoleCards(const PokerEventType& evt);
@@ -95,13 +100,23 @@ private:
 };
 
 // -------------------------------------------implementation---------------------------------------------
-template<typename PokerEventTypem, typename PokerGameType>
-PokerServer::PokerServer(const std::string &cfgPath) : GameServer() {
+template<typename PokerEventType, typename PokerGameType>
+PokerServer<PokerEventType, PokerGameType>::PokerServer(const std::string &cfgPath) :
+        GameServer<PokerEventType, PokerGameType>() {
     if (!initViaCfgFile(cfgPath)) {
         LOG_ERROR << "there was an error initializing from config file " << cfgPath << END;
         sendErrorEvent(POKER_ERROR::CFG_LOAD_ERROR);
     }
 }
+
+//template<typename PokerEventType, typename PokerGameType>
+//PokerServer<PokerEventType, PokerGameType>::PokerServer(const std::string &cfgPath) :
+//GameServer<PokerEventType, PokerGameType>() {
+//    if (!initViaCfgFile(cfgPath)) {
+//        LOG_ERROR << "there was an error initializing from config file " << cfgPath << END;
+//        sendErrorEvent(POKER_ERROR::CFG_LOAD_ERROR);
+//    }
+//}
 
 template<typename PokerEventType, typename PokerGameType>
 bool PokerServer<PokerEventType, PokerGameType>::processEvent(const PokerEventType &evt){
@@ -109,9 +124,7 @@ bool PokerServer<PokerEventType, PokerGameType>::processEvent(const PokerEventTy
 }
 
 template<typename PokerEventType, typename PokerGameType>
-PokerServer<PokerEventType, PokerGameType>::~PokerServer() {
-
-}
+PokerServer<PokerEventType, PokerGameType>::~PokerServer() = default;
 
 template<typename PokerEventType, typename PokerGameType>
 bool PokerServer<PokerEventType, PokerGameType>::sendErrorEvent(POKER_ERROR err) const {
@@ -123,15 +136,28 @@ bool PokerServer<PokerEventType, PokerGameType>::initViaCfgFile(const std::strin
     return false;
 }
 
-template<typename PokerEventType, typename PokerGameType>
-int PokerServer<PokerEventType, PokerGameType>::run() {
+template<typename EventType, typename GameType>
+int GameServer<EventType, GameType>::run() {
     LOG_TRACE << "starting event processing and recv threads";
-    eventProcIsAlive = true;
-    recvIsAlive = true;
-    recvThread = std::thread(EventRecieving);
-    evtProcThread = std::thread(EventProcessing);
+    GameServer<EventType, GameType>::eventProcIsAlive = true;
+    this->recvIsAlive = true;
+    recvThread = std::thread(this->EventRecieving);
+    evtProcThread = std::thread(this->EventProcessing);
     LOG_DEBUG << "recv thread id=" << recvThread.get_id() << END;
     LOG_DEBUG << "event processing thread id=" << evtProcThread.get_id() << END;
+    return 0;
+}
+
+template<typename EventType, typename GameType>
+bool GameServer<EventType, GameType>::isAlive(uint32_t threadType) const {
+    switch(threadType) {
+        case RECV_THREAD:
+            return recvIsAlive;
+        case Q_PROC_THREAD:
+            return eventProcIsAlive;
+        default:
+            return false;
+    }
 }
 
 template<typename PokerEventType, typename PokerGameType>
@@ -141,19 +167,21 @@ bool PokerServer<PokerEventType, PokerGameType>::processBet(const PokerEventType
 
 template<typename PokerEventType, typename PokerGameType>
 bool PokerServer<PokerEventType, PokerGameType>::EventRecieving() {
-    return false;
+    while (threadAlive(GameServer<PokerEventType, PokerGameType>::Q_PROC_THREAD)) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    return true;
 }
 
 template<typename PokerEventType, typename PokerGameType>
 bool PokerServer<PokerEventType, PokerGameType>::EventProcessing() {
-
-    while (eventProcIsAlive) {
+    while (isAlive(this->Q_PROC_THREAD)) {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        if (!eventQueue.empty()) {
-            mtx.lock();
-            PokerEventType pkrEvent = eventQueue.front();
-            eventQueue.pop();
-            mtx.unlock();
+        if (!this->eventQueue.empty()) {
+            this->mtx.lock();
+            PokerEventType pkrEvent = this->eventQueue.front();
+            this->eventQueue.pop();
+            this->mtx.unlock();
             processEvent(pkrEvent);
         }
     }

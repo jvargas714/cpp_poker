@@ -13,7 +13,6 @@
 
 #ifndef POKER_H_INCLUDED
 #define POKER_H_INCLUDED
-
 #include "player.h"
 #include "card.h"
 #include "deck.h"
@@ -60,7 +59,7 @@ public:
     uint32_t pot;
     Deck gameDeck;
 
-    Poker() : pot(0), numPlayers(0) {}
+    Poker();
     explicit Poker(int cash);
     Poker(std::initializer_list<std::pair<std::string, int>>);
     Poker(std::initializer_list<std::string> names);
