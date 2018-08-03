@@ -12,11 +12,11 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 set(TESTING_SUITE ON)
 
+# compile definitions
+add_compile_definitions(SERVER_DEBUG)
+
 # build dependencies
 add_subdirectory(./external/jsoncpp)
-
-# POKER_DEBUG or POKER_RELEASE
-add_definitions(-DPOKER_DEBUG)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
@@ -48,7 +48,7 @@ set(LIB_FILES
         include/poker_types.h
         include/TexasHoldem.h include/pokerServer.h)
 
-add_library( poker STATIC ${LIB_FILES} )
+add_library( poker STATIC ${LIB_FILES} include/logger.h source/logger.cpp)
 
 # link built dependencies to poker lib
 link_directories(./external/lib)
@@ -56,11 +56,8 @@ link_libraries(poker jsoncpp)
 
 # test suite
 if (TESTING_SUITE)
-    add_definitions(-DTESTING)
     include_directories( ./testing ./testing/googletest/googletest/include )
-    # build google test api targets: gtest and gtest_main
     add_subdirectory( testing/googletest/googletest )
-
     add_executable( gPokerTestingMain testing/testingMain.cpp)
     target_link_libraries( gPokerTestingMain poker gtest)
 endif()

@@ -16,6 +16,8 @@
 //    char		sa_data[14];	/* [XSI] addr value (actually larger) */
 //    };
 
+#define DEFAULT_GAME_SERVER_PORT 5025
+
 template<typename Data>
 struct NetConnection {
     NetConnection(): port(0), ipAddr(), sa(){}
