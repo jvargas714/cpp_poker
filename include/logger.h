@@ -33,6 +33,7 @@
 #define LOG_ERROR log() << E << FN
 
 #define LOG_DIR std::string ("./log/current")
+#define DEFAULT_LOG_FILENAME LOG_DIR +
 #define BACKUP_LOG_DIR std::string ("./log/backups")
 
 // output to COUT as well
@@ -56,7 +57,6 @@ enum LOG_LEVEL {
 };
 
 struct S_LOG_ITEM {
-    std::string filename;
     std::string msg;
     LOG_MODULE mdl;
     LOG_LEVEL lvl;
@@ -69,19 +69,19 @@ class logger {
 private:
     std::string log_filename;
     std::queue<S_LOG_ITEM> log_items;
-    std::map<std::string, std::unique_ptr<std::ofstream>> files_map;
+    std::unique_ptr<std::ofstream> strm;
     LOG_LEVEL current_level;
     LOG_MODULE current_module;
     bool output_stdout;
     std::mutex mtx;
     bool log_proc_is_alive;
-
-    logger();
-
     static std::unique_ptr<logger> lg;
+    logger() noexcept;
+    logger(const std::string& filename, bool log_to_stdout=true);
+
 
 public:
-    static logger& get_instance();
+    static logger& get_instance(const std::string& filename="");
 
     ~logger() = default;
 
@@ -89,11 +89,13 @@ public:
 
     void set_level(LOG_LEVEL lvl = DEBUG);
 
+    void set_log_file(const std::string&);
+
     template<typename ToPrint>
     logger& operator<<(const ToPrint &msg);
 
     template<typename toLog>
-    void log(LOG_MODULE mdl, toLog &msg);
+    void log(LOG_MODULE mdl, LOG_LEVEL lvl, toLog &msg);
 
     inline void toggle_std_out() { output_stdout = !output_stdout; }
 
