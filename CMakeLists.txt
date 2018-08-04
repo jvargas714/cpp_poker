@@ -48,7 +48,7 @@ set(LIB_FILES
         include/poker_types.h
         include/TexasHoldem.h include/pokerServer.h)
 
-add_library( poker STATIC ${LIB_FILES} include/logger.h source/logger.cpp)
+add_library( poker STATIC ${LIB_FILES})
 
 # link built dependencies to poker lib
 link_directories(./external/lib)
