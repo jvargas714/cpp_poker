@@ -12,14 +12,6 @@
 #include <map>
 #include <mutex>
 
-// some macros for log prefix
-#define T       "::TRACE::"
-#define D       "::DEBUG::"
-#define E       "::ERROR::"
-#define I       "::INFO::"
-#define W       "::WARNING::"
-
-#define DEFAULT_LOG_LVL LOG_LEVEL::
 #define THREAD_MILLI_SLEEP 100
 
 #define fstr()  std::string(__func__) + "(): "
@@ -32,6 +24,7 @@
 #define LOG_TRACE logger::get_instance() << FN
 #define LOG_DEBUG logger::get_instance() << FN
 #define LOG_WARNING logger::get_instance() << FN
+#define LOG_ERROR logger::get_instanace() << FN
 
 #define LOG_DIR std::string ("./log/current")
 #define DEFAULT_LOG_FILENAME LOG_DIR +
@@ -67,21 +60,6 @@ const std::string log_module(LOG_MODULE mld);
 const std::string log_level(LOG_LEVEL lvl);
 
 class logger {
-private:
-    std::string log_filename;
-    std::queue<S_LOG_ITEM> log_items;
-    std::unique_ptr<std::ofstream> strm_uptr;
-    LOG_LEVEL current_level;
-    LOG_MODULE current_module;
-    bool output_stdout;
-    std::mutex mtx;
-    bool log_proc_is_alive;
-    static logger* lg;
-
-protected:
-    logger() noexcept;
-    explicit logger(const std::string& filename, bool log_to_stdout=true);
-
 public:
     static bool instCreated;
 
@@ -96,6 +74,18 @@ public:
     template<typename ToPrint>
     std::ostream& operator<<(const ToPrint &msg);
 
+    template<typename T>
+    void log(LOG_MODULE mdl, LOG_LEVEL lvl, T t);
+
+    template<typename T>
+    void log(LOG_MODULE mdl, LOG_LEVEL lvl, T* t);
+
+    template<typename T, typename...Args>
+    void log(LOG_MODULE mdl, LOG_LEVEL lvl, T t, Args...args);
+
+    template<typename T, typename...Args>
+    void log(LOG_MODULE mdl, LOG_LEVEL lvl, T* t, Args...args);
+
     template<typename toLog>
     void log(LOG_MODULE mdl, LOG_LEVEL lvl, toLog &msg);
 
@@ -109,6 +99,20 @@ public:
 
     // logging thread to process Logging Queue Items
     void log_processing();
+
+private:
+    std::string log_filename;
+    std::queue<S_LOG_ITEM> log_items;
+    std::unique_ptr<std::ofstream> strm_uptr;
+    LOG_LEVEL current_level;
+    LOG_MODULE current_module;
+    bool output_stdout;
+    std::mutex mtx;
+    bool log_proc_is_alive;
+    static logger* lg;
+    logger() noexcept;
+    explicit logger(const std::string& filename, bool log_to_stdout=true);
+
 };
 
 #endif  // LOGGER_H

@@ -28,7 +28,7 @@ enum SERVER_TYPE {
 // todo :: poker classes need a connection manager of sorts to keep track of port connected etc etc
 
 
-
+// ---------------------------------------------GameServer Base Class---------------------------------------------------
 template<typename EventType, typename GameType>
 class GameServer {
 public:
@@ -54,9 +54,7 @@ protected:
 };
 
 
-
-
-
+// ---------------------------------------------PokerServer Base Class--------------------------------------------------
 template <typename PokerEventType, typename PokerGameType>
 class PokerServer : public GameServer<PokerEventType, PokerGameType> {
 public:
@@ -101,13 +99,34 @@ private:
     std::unique_ptr<PokerGameType> lookupGame(uint64_t gameId);
 };
 
-// -------------------------------------------implementation---------------------------------------------
+// -----------------------------------------------GameServer implementation---------------------------------------------
 template<typename EventType, typename GameType>
 const uint32_t GameServer<EventType, GameType>::Q_PROC_THREAD = 1;
 
 template<typename EventType, typename GameType>
 const uint32_t GameServer<EventType, GameType>::RECV_THREAD = 2;
 
+template<typename EventType, typename GameType>
+int GameServer<EventType, GameType>::run() {
+    LOG_TRACE << "starting event processing and recv threads";
+    eventProcIsAlive = true;
+    recvIsAlive = true;
+    return 0;
+}
+
+template<typename EventType, typename GameType>
+bool GameServer<EventType, GameType>::isAlive(uint32_t threadType) const {
+    switch(threadType) {
+        case RECV_THREAD:
+            return recvIsAlive;
+        case Q_PROC_THREAD:
+            return eventProcIsAlive;
+        default:
+            return false;
+    }
+}
+
+// -----------------------------------------------PokerServer implementation--------------------------------------------
 
 template<typename PokerEventType, typename PokerGameType>
 PokerServer<PokerEventType, PokerGameType>::PokerServer(const std::string &cfgPath) :
@@ -143,26 +162,6 @@ bool PokerServer<PokerEventType, PokerGameType>::sendErrorEvent(POKER_ERROR err)
 template<typename PokerEventType, typename PokerGameType>
 bool PokerServer<PokerEventType, PokerGameType>::initViaCfgFile(const std::string &cfgPath) {
     return false;
-}
-
-template<typename EventType, typename GameType>
-int GameServer<EventType, GameType>::run() {
-    LOG_TRACE << "starting event processing and recv threads";
-    eventProcIsAlive = true;
-    recvIsAlive = true;
-    return 0;
-}
-
-template<typename EventType, typename GameType>
-bool GameServer<EventType, GameType>::isAlive(uint32_t threadType) const {
-    switch(threadType) {
-        case RECV_THREAD:
-            return recvIsAlive;
-        case Q_PROC_THREAD:
-            return eventProcIsAlive;
-        default:
-            return false;
-    }
 }
 
 template<typename PokerEventType, typename PokerGameType>
