@@ -95,17 +95,17 @@ public:
     template<typename ToPrint>
     std::ostream& operator<<(const ToPrint &msg);
 
-    template<typename ToLog>
-    void log(LOG_MODULE mdl, LOG_LEVEL lvl, ToLog* msg);
+//    template<typename ToLog>
+//    void log(LOG_MODULE mdl, LOG_LEVEL lvl, ToLog* msg);
+//
+//    template<typename ToLog, typename...Args>
+//    void log(LOG_MODULE mdl, LOG_LEVEL lvl, ToLog* data, Args...args);
 
     template<typename ToLog, typename...Args>
-    void log(LOG_MODULE mdl, LOG_LEVEL lvl, ToLog data, Args...args);
-
-    template<typename ToLog, typename...Args>
-    void log(LOG_MODULE mdl, LOG_LEVEL lvl, ToLog* data, Args...args);
+    void log(LOG_MODULE mdl, LOG_LEVEL lvl, const ToLog& data, Args...args);
 
     template<typename ToLog>
-    void log(LOG_MODULE mdl, LOG_LEVEL lvl, ToLog &msg);
+    void log(LOG_MODULE mdl, LOG_LEVEL lvl, const ToLog& msg);
 
 private:
     logger();
@@ -113,16 +113,16 @@ private:
     explicit logger(const std::string& filename, bool log_to_stdout=true);
 
     template<typename ToLog, typename...Args>
-    void build_stream(std::stringstream& ss, ToLog data, Args...args);
-
-    template<typename ToLog, typename...Args>
-    void build_stream(std::stringstream& ss, ToLog* data, Args...args);
+    void build_stream(std::stringstream& ss, const ToLog& data, Args...args);
 
     template<typename ToLog>
-    void build_stream(std::stringstream& ss, ToLog* data);
+    void build_stream(std::stringstream& ss, const ToLog& data);
 
-    template<typename ToLog>
-    void build_stream(std::stringstream& ss, ToLog data);
+//    template<typename ToLog, typename...Args>
+//    void build_stream(std::stringstream& ss, const ToLog* data, Args...args);
+//
+//    template<typename ToLog>
+//    void build_stream(std::stringstream& ss, const ToLog* data);
 
     // data
     std::string log_filename;
@@ -270,7 +270,7 @@ bool logger::set_log_file(const std::string& filename) {
 
 // non recurse const ref version
 template<typename ToLog>
-void logger::log(LOG_MODULE mdl, LOG_LEVEL lvl, ToLog& msg) {
+void logger::log(LOG_MODULE mdl, LOG_LEVEL lvl, const ToLog& msg) {
     std::cout << __FUNCTION__ << "ref :: logging an item!!" << std::endl;
     std::stringstream ss;
     ss << msg;
@@ -278,17 +278,25 @@ void logger::log(LOG_MODULE mdl, LOG_LEVEL lvl, ToLog& msg) {
     log_items.push( S_LOG_ITEM(mdl, lvl, ss.str()) );
 }
 
-template<typename ToLog>
-void logger::log(LOG_MODULE mdl, LOG_LEVEL lvl, ToLog* msg) {
-    std::cout << __FUNCTION__ << "ptr :: logging an item!!" << std::endl;
-    std::stringstream ss;
-    ss << *msg;
-    LOCK_GUARD;
-    log_items.push( S_LOG_ITEM(mdl, lvl, ss.str()) );
-}
+//template<typename ToLog>
+//void logger::log(LOG_MODULE mdl, LOG_LEVEL lvl, const ToLog* msg) {
+//    std::cout << __FUNCTION__ << "ptr :: logging an item!!" << std::endl;
+//    std::stringstream ss;
+//    ss << *msg;
+//    LOCK_GUARD;
+//    log_items.push( S_LOG_ITEM(mdl, lvl, ss.str()) );
+//}
+
+//template<typename ToLog, typename... Args>
+//void logger::log(LOG_MODULE mdl, LOG_LEVEL lvl, const ToLog *data, Args...args) {
+//    std::stringstream ss;
+//    build_stream(ss, data, args...);
+//    LOCK_GUARD;
+//    log_items.push( S_LOG_ITEM(mdl, lvl, ss.str()) );
+//}
 
 template<typename ToLog, typename... Args>
-void logger::log(LOG_MODULE mdl, LOG_LEVEL lvl, ToLog *data, Args...args) {
+void logger::log(LOG_MODULE mdl, LOG_LEVEL lvl, const ToLog& data, Args...args) {
     std::stringstream ss;
     build_stream(ss, data, args...);
     LOCK_GUARD;
@@ -296,32 +304,24 @@ void logger::log(LOG_MODULE mdl, LOG_LEVEL lvl, ToLog *data, Args...args) {
 }
 
 template<typename ToLog, typename... Args>
-void logger::log(LOG_MODULE mdl, LOG_LEVEL lvl, ToLog data, Args...args) {
-    std::stringstream ss;
-    build_stream(ss, data, args...);
-    LOCK_GUARD;
-    log_items.push( S_LOG_ITEM(mdl, lvl, ss.str()) );
-}
-
-template<typename ToLog, typename... Args>
-void logger::build_stream(std::stringstream& ss, ToLog data, Args...args) {
+void logger::build_stream(std::stringstream& ss, const ToLog& data, Args...args) {
     ss << data << " ";
     build_stream(ss, args...);
 }
 
-template<typename ToLog, typename... Args>
-void logger::build_stream(std::stringstream& ss, ToLog *data, Args...args) {
-    ss << *data << " ";
-    build_stream(ss, args...);
-}
+//template<typename ToLog, typename... Args>
+//void logger::build_stream(std::stringstream& ss, ToLog *data, Args...args) {
+//    ss << *data << " ";
+//    build_stream(ss, args...);
+//}
+
+//template<typename ToLog>
+//void logger::build_stream(std::stringstream& ss, ToLog *data) {
+//    ss << *data << " ";
+//}
 
 template<typename ToLog>
-void logger::build_stream(std::stringstream& ss, ToLog *data) {
-    ss << *data << " ";
-}
-
-template<typename ToLog>
-void logger::build_stream(std::stringstream& ss, ToLog data) {
+void logger::build_stream(std::stringstream& ss, const ToLog& data) {
     ss << data << " ";
 }
 
