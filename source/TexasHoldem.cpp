@@ -215,7 +215,7 @@ void TexasHoldem::findHand(Player *plyr) {
                 the high card cannot be 8, need to fix this, 8/21/2015 @2236
     */
     if (tableCards.size() != 5 || !plyr->isValidHand()) {
-        LOG << E << " table is not in a valid state, exiting...." << END;
+        LOG << "::ERROR::" << " table is not in a valid state, exiting...." << END;
         throw poker_error::HandIDError("Error--> TexasHoldem:findHand():: 7 cards not present");
     }
     Cards allCards = tableCards;

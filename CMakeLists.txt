@@ -17,14 +17,14 @@ add_compile_definitions(SERVER_DEBUG)
 
 # build dependencies
 add_subdirectory(./external/jsoncpp)
-
+message("-----------------------JDEBUG-------------------")
+message(${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 include_directories(./include . ./external/jsoncpp )
 set(LIB_FILES
         include/logger.h
-        source/logger.cpp
         source/card.cpp
         source/deck.cpp
         source/player.cpp
@@ -58,12 +58,14 @@ link_libraries(poker jsoncpp)
 if (TESTING_SUITE)
     include_directories( ./testing ./testing/googletest/googletest/include )
     add_subdirectory( testing/googletest/googletest )
-    add_executable( gPokerTestingMain testing/testingMain.cpp)
-    target_link_libraries( gPokerTestingMain poker gtest)
+    add_executable( gPokerTestingMain testing/testingMain.cpp )
+    target_link_libraries( gPokerTestingMain poker gtest )
 endif()
 
 # misc executables
-add_executable(scrapExe source/scrap.cpp)
-add_executable(pokerServer source/pokerServer.cpp)
-target_link_libraries(pokerServer poker)
+add_executable( scrapExe source/scrap.cpp include/logger.h )
+target_link_libraries( scrapExe poker )
+
+add_executable( pokerServer source/pokerServer.cpp )
+target_link_libraries( pokerServer poker )
 

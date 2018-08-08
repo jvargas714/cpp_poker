@@ -75,7 +75,7 @@ bool JayBrain::assessFlopScenario(Player *bot) {
     Card hole1 = bot->holeCards.first;
     Card hole2 = bot->holeCards.second;
     if (thGame->getTableCards().size() != 3) {
-        LOG << __FUNCTION__ << "(): " << E << "Error --> tableCards.size() != 3, exiting" << END;
+        LOG << __FUNCTION__ << "(): " << "::ERROR::" << "Error --> tableCards.size() != 3, exiting" << END;
         return false;
     }
     // first we see if we have a valid hand off the flop

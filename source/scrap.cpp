@@ -2,69 +2,35 @@
 #include <set>
 #include <ctime>
 #include <sstream>
+#include "logger.h"
+
 using namespace std;
 
-#define LOG(msg) (Log(__FILE__, __LINE__, LogData<None>() << msg))
-
-// Workaround GCC 4.7.2 not recognizing noinline attribute
-#ifndef NOINLINE_ATTRIBUTE
-#ifdef __ICC
-#define NOINLINE_ATTRIBUTE __attribute__(( noinline ))
-#else
-#define NOINLINE_ATTRIBUTE
-#endif // __ICC
-#endif // NOINLINE_ATTRIBUTE
-
-template<typename List>
-struct LogData {
-    List list;
+class TestSingleton {
+    static TestSingleton* tst;
+public:
+    TestSingleton()=default;
+    static bool alive;
+    static TestSingleton* get_instance() {
+        if (!TestSingleton::alive)
+            TestSingleton::tst = new TestSingleton;
+        return TestSingleton::tst;
+    }
+    void doStuff() { cout << __FUNCTION__ << "(): has been called" << endl; }
 };
 
-template<typename List>
-void Log(const char* file, int line,
-         LogData<List>&& data) NOINLINE_ATTRIBUTE
-{
-    std::cout << file << ":" << line << ": ";
-    output(std::cout, std::move(data.list));
-    std::cout << std::endl;
-}
-
-struct None { };
-
-template<typename Begin, typename Value>
-constexpr LogData<std::pair<Begin&&, Value&&>> operator<<(LogData<Begin>&& begin,
-                                                          Value&& value) noexcept
-{
-    return {{ std::forward<Begin>(begin.list), std::forward<Value>(value) }};
-}
-
-template<typename Begin, size_t n>
-constexpr LogData<std::pair<Begin&&, const char*>> operator<<(LogData<Begin>&& begin,
-                                                              const char (&value)[n]) noexcept
-{
-    return {{ std::forward<Begin>(begin.list), value }};
-}
-
-typedef std::ostream& (*PfnManipulator)(std::ostream&);
-
-template<typename Begin>
-constexpr LogData<std::pair<Begin&&, PfnManipulator>> operator<<(LogData<Begin>&& begin,
-                                                                 PfnManipulator value) noexcept
-{
-    return {{ std::forward<Begin>(begin.list), value }};
-}
-
-template <typename Begin, typename Last>
-void output(std::ostream& os, std::pair<Begin, Last>&& data)
-{
-    output(os, std::move(data.first));
-    os << data.second;
-}
-
-inline void output(std::ostream& os, None)
-{ }
+bool TestSingleton::alive = false;
+TestSingleton* TestSingleton::tst = nullptr;
 
 int main() {
+     logger::get_instance();
+    // log statements
+     logger::get_instance().log(LOG_MODULE::TEXASHOLDEM, LOG_LEVEL::TRACE, "hello this is testing 1");
+    logger::get_instance().log(LOG_MODULE::TEXASHOLDEM, LOG_LEVEL::INFO, "hello this is testing 2", 456, 789);
+    logger::get_instance() << "hello << operator at work here !!!" << 345456567 << END;
+//    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    logger::get_instance().stopLogging();
+    g_QProcThread.join();
     return 0;
 }
 
