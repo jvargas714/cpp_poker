@@ -370,6 +370,7 @@ HAND assessment::findHandStrength(const Cards &cards) {
 
     }
     LOG << "hand type: " << hand.hand_str << ", with a hand strength of " << hand.strength << END;
+
     return hand;
 }
 

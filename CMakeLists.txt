@@ -11,6 +11,9 @@ project(poker)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 set(TESTING_SUITE ON)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+
+find_package(Threads REQUIRED)
 
 # compile definitions
 add_compile_definitions(SERVER_DEBUG)
@@ -52,7 +55,7 @@ add_library( poker STATIC ${LIB_FILES})
 
 # link built dependencies to poker lib
 link_directories(./external/lib)
-link_libraries(poker jsoncpp)
+link_libraries(poker jsoncpp Threads::Threads)
 
 # test suite
 if (TESTING_SUITE)
@@ -60,6 +63,8 @@ if (TESTING_SUITE)
     add_subdirectory( testing/googletest/googletest )
     add_executable( gPokerTestingMain testing/testingMain.cpp )
     target_link_libraries( gPokerTestingMain poker gtest )
+    add_executable( logTester testing/testingLogger.cpp include/logger.h )
+    target_link_libraries( logTester Threads::Threads )
 endif()
 
 # misc executables

@@ -14,11 +14,12 @@
 #include <thread>
 #include <sstream>
 #include <ctime>
+#include <sys/stat.h>
 
 #define THREAD_MILLI_SLEEP 100
 #define LOCK_GUARD std::lock_guard<std::mutex> lock(mtx)
 
-// FORMAT  ::>>>  [Thu Aug  2 20:28:31 2018] <GSVR> ::TRACE:: this is an example log entry
+// FORMAT  ::>>>  [Thu Aug  2 20:28:31 2018] <GSVR> ::TRACE:: classNamespace::functionName(): this is an example log entry
 
 std::thread g_QProcThread;
 void Q_Proc_Thread();
@@ -30,16 +31,12 @@ void Q_Proc_Thread();
 #define CERR    std::cerr
 
 #define LOG_DIR std::string ("./log/current")
-#define DEFAULT_LOG_FILENAME LOG_DIR +
 #define BACKUP_LOG_DIR std::string ("./log/backups")
-
-// output to COUT as well
-#define OUTPUT_COUT 1
 
 enum class LOG_MODULE {
     POKER_GAME,
     GAME_SERVER,
-    TESTING,
+    TEST,
     GAME_SERVER_CLIENT,
     GENERAL,
     TEXASHOLDEM
@@ -57,8 +54,10 @@ struct S_LOG_ITEM {
     LOG_MODULE mdl;
     LOG_LEVEL lvl;
     std::string msg;
-    S_LOG_ITEM(): mdl(LOG_MODULE::GENERAL), lvl(LOG_LEVEL::TRACE), msg() { }
-    S_LOG_ITEM(LOG_MODULE mdl, LOG_LEVEL lvl, std::string&& msg) : mdl(mdl), lvl(lvl), msg(std::move(msg)) { }
+    std::string funct;
+    S_LOG_ITEM() : mdl(LOG_MODULE::GENERAL), lvl(LOG_LEVEL::TRACE), msg(), funct("") { }
+    S_LOG_ITEM(LOG_MODULE mdl, LOG_LEVEL lvl, std::string&& fn, std::string&& msg) : mdl(mdl), lvl(lvl), msg(std::move(msg)), funct(std::move(fn)) { }
+    S_LOG_ITEM(LOG_MODULE mdl, LOG_LEVEL lvl, std::string&& msg) : mdl(mdl), lvl(lvl), msg(std::move(msg)), funct("") { }
 };
 
 const std::string log_module(LOG_MODULE mld);
@@ -82,7 +81,7 @@ public:
 
     bool set_log_file(const std::string&);
 
-    inline void toggle_std_out() { output_stdout = !output_stdout; }
+    inline void set_std_out(bool stdout_on) { output_stdout = stdout_on; }
 
     inline void stopLogging() { logger::log_proc_is_alive = false; }
 
@@ -95,17 +94,11 @@ public:
     template<typename ToPrint>
     std::ostream& operator<<(const ToPrint &msg);
 
-//    template<typename ToLog>
-//    void log(LOG_MODULE mdl, LOG_LEVEL lvl, ToLog* msg);
-//
-//    template<typename ToLog, typename...Args>
-//    void log(LOG_MODULE mdl, LOG_LEVEL lvl, ToLog* data, Args...args);
-
     template<typename ToLog, typename...Args>
-    void log(LOG_MODULE mdl, LOG_LEVEL lvl, const ToLog& data, Args...args);
+    void log(LOG_MODULE mdl, LOG_LEVEL lvl, const std::string& funct, const ToLog& data,  Args...args);
 
     template<typename ToLog>
-    void log(LOG_MODULE mdl, LOG_LEVEL lvl, const ToLog& msg);
+    void log(LOG_MODULE mdl, LOG_LEVEL lvl, const std::string& funct, const ToLog& msg);
 
 private:
     logger();
@@ -117,12 +110,6 @@ private:
 
     template<typename ToLog>
     void build_stream(std::stringstream& ss, const ToLog& data);
-
-//    template<typename ToLog, typename...Args>
-//    void build_stream(std::stringstream& ss, const ToLog* data, Args...args);
-//
-//    template<typename ToLog>
-//    void build_stream(std::stringstream& ss, const ToLog* data);
 
     // data
     std::string log_filename;
@@ -173,7 +160,7 @@ const std::string log_module(LOG_MODULE mld) {
         case LOG_MODULE::GAME_SERVER:         return "<GSVR>";
         case LOG_MODULE::GAME_SERVER_CLIENT:  return "<GSVRC";
         case LOG_MODULE::POKER_GAME:          return "<PKR>";
-        case LOG_MODULE::TESTING:             return "<TST>";
+        case LOG_MODULE::TEST:                return "<TEST>";
         case LOG_MODULE::GENERAL:             return "<GEN>";
         case LOG_MODULE::TEXASHOLDEM:         return "<TXHDM>";
     }
@@ -181,21 +168,23 @@ const std::string log_module(LOG_MODULE mld) {
 
 logger::logger() :
         log_filename(gen_def_filename()),
-        strm_uptr(std::make_unique<std::ofstream>(log_filename, std::ios::app)),
         current_level(DEFAULT_LOG_LEVEL),
         current_module(DEFAULT_MODULE),
         output_stdout(true),
         mtx() {
+    mkdir(LOG_DIR.c_str(), DEFFILEMODE);
+    strm_uptr = std::make_unique<std::ofstream>(LOG_DIR + log_filename, std::ios::app);
     COUT << "logger with default filname: " << log_filename << " has been created" << END;
 }
 
 logger::logger(const std::string &filename, bool log_to_stdout) :
         log_filename(filename),
-        strm_uptr(std::make_unique<std::ofstream>(log_filename, std::ios::app)),
         current_level(DEFAULT_LOG_LEVEL),
         current_module(DEFAULT_MODULE),
         output_stdout(log_to_stdout),
         mtx() {
+    mkdir(LOG_DIR.c_str(), DEFFILEMODE);
+    strm_uptr = std::make_unique<std::ofstream>(LOG_DIR + log_filename, std::ios::app);
     COUT << "logger with filename: " << log_filename << " has been created" << END;
 }
 
@@ -225,7 +214,7 @@ std::ostream& logger::operator << (const ToPrint &msg) {
     std::stringstream ss;
     ss << msg;
     LOCK_GUARD;
-    log_items.push( S_LOG_ITEM( current_module, current_level, ss.str()) );
+    log_items.emplace( current_module, current_level, ss.str() );
     return *strm_uptr;
 }
 
@@ -242,15 +231,14 @@ void logger::log_processing() {
             mtx.unlock();
 
             std::string tmp =
-                    "[" + now_is() + "] " + log_module(item.mdl) + " " + log_level(item.lvl) + " " + item.msg;
-            std::cout << "LINE TO LOG: " << tmp << std::endl;
-
+                    "[" + now_is() + "] " + log_module(item.mdl) + " " + log_level(item.lvl) + " " + item.funct + item.msg;
             if (item.lvl < current_level)
                 continue;
             else if (strm_uptr->is_open())
                 *strm_uptr << tmp << END;
 
-            if (output_stdout) COUT << tmp << END;
+            if (output_stdout)
+                COUT << tmp << END;
         }
     }
     std::cout << "terminating log processing thread" << std::endl;
@@ -270,37 +258,20 @@ bool logger::set_log_file(const std::string& filename) {
 
 // non recurse const ref version
 template<typename ToLog>
-void logger::log(LOG_MODULE mdl, LOG_LEVEL lvl, const ToLog& msg) {
+void logger::log(LOG_MODULE mdl, LOG_LEVEL lvl, const std::string& funct, const ToLog& msg) {
     std::cout << __FUNCTION__ << "ref :: logging an item!!" << std::endl;
     std::stringstream ss;
     ss << msg;
     LOCK_GUARD;
-    log_items.push( S_LOG_ITEM(mdl, lvl, ss.str()) );
+    log_items.emplace( mdl, lvl, funct, ss.str() );
 }
 
-//template<typename ToLog>
-//void logger::log(LOG_MODULE mdl, LOG_LEVEL lvl, const ToLog* msg) {
-//    std::cout << __FUNCTION__ << "ptr :: logging an item!!" << std::endl;
-//    std::stringstream ss;
-//    ss << *msg;
-//    LOCK_GUARD;
-//    log_items.push( S_LOG_ITEM(mdl, lvl, ss.str()) );
-//}
-
-//template<typename ToLog, typename... Args>
-//void logger::log(LOG_MODULE mdl, LOG_LEVEL lvl, const ToLog *data, Args...args) {
-//    std::stringstream ss;
-//    build_stream(ss, data, args...);
-//    LOCK_GUARD;
-//    log_items.push( S_LOG_ITEM(mdl, lvl, ss.str()) );
-//}
-
 template<typename ToLog, typename... Args>
-void logger::log(LOG_MODULE mdl, LOG_LEVEL lvl, const ToLog& data, Args...args) {
+void logger::log(LOG_MODULE mdl, LOG_LEVEL lvl, const std::string& funct, const ToLog& data, Args...args) {
     std::stringstream ss;
     build_stream(ss, data, args...);
     LOCK_GUARD;
-    log_items.push( S_LOG_ITEM(mdl, lvl, ss.str()) );
+    log_items.emplace( mdl, lvl, funct, ss.str() );
 }
 
 template<typename ToLog, typename... Args>
@@ -308,17 +279,6 @@ void logger::build_stream(std::stringstream& ss, const ToLog& data, Args...args)
     ss << data << " ";
     build_stream(ss, args...);
 }
-
-//template<typename ToLog, typename... Args>
-//void logger::build_stream(std::stringstream& ss, ToLog *data, Args...args) {
-//    ss << *data << " ";
-//    build_stream(ss, args...);
-//}
-
-//template<typename ToLog>
-//void logger::build_stream(std::stringstream& ss, ToLog *data) {
-//    ss << *data << " ";
-//}
 
 template<typename ToLog>
 void logger::build_stream(std::stringstream& ss, const ToLog& data) {
@@ -329,10 +289,13 @@ void Q_Proc_Thread() {
     g_QProcThread = std::thread( &logger::log_processing, &logger::get_instance() );
 }
 
-#define LOG logger::get_instance() << FN
-#define LOG_TRACE logger::get_instance() << FN
-#define LOG_DEBUG logger::get_instance() << FN
-#define LOG_WARNING logger::get_instance() << FN
-#define LOG_ERROR logger::get_instanace() << FN
+
+// LOG_TRACE :: is used to just log the function call first, just a blank message
+#define LOG logger::get_instance() << "asdf"
+#define LOG_INFO(mod, ...) logger::get_instance().log(mod, LOG_LEVEL::INFO, FN, __VA_ARGS__)
+#define LOG_TRACE(mod) logger::get_instance().log(mod, LOG_LEVEL::TRACE, FN, "")
+#define LOG_DEBUG(mod, ...) logger::get_instance().log(mod, LOG_LEVEL::DEBUG, FN, __VA_ARGS__)
+#define LOG_WARNING(mod, ...) logger::get_instance().log(mod, LOG_LEVEL::WARNING, FN, __VA_ARGS__)
+#define LOG_ERROR(mod, ...) logger::get_instance().log(mod, LOG_LEVEL::ERROR, FN, __VA_ARGS__)
 #endif  // LOGGER_H
 

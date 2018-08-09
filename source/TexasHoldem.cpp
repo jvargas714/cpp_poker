@@ -393,7 +393,7 @@ void TexasHoldem::findWinner() {
       - first sorting call changes order of players vector, thus changing the order player go in
         * possibly make a copy of the players first then call collectPot using players[i] pointer
     */
-    LOG_TRACE << END;
+//    LOG_TRACE << END;
     // ensure all players have assessed there hand strengths
     calculateHands();
 
@@ -401,8 +401,8 @@ void TexasHoldem::findWinner() {
     sort(players.begin(), players.end(), HandComparator());
 
     // check player order
-    for (Player plyr : players)
-        LOG << plyr.name << "'s handStrength: " << plyr.hand.strength << END;
+//    for (Player plyr : players)
+//        LOG << plyr.name << "'s handStrength: " << plyr.hand.strength << END;
 
     // continue with find winner logic [. . . . . .]
     int cnt = 0;
@@ -594,7 +594,7 @@ void TexasHoldem::assign_dealer() {
 }
 
 void TexasHoldem::rotateDealer() {
-    LOG_TRACE << END;
+//    LOG_TRACE << END;
 
     // rotates to next dealer, small and big blind players
     for (auto &plyr : players) {
