@@ -56,8 +56,8 @@ struct S_LOG_ITEM {
     std::string msg;
     std::string funct;
     S_LOG_ITEM() : mdl(LOG_MODULE::GENERAL), lvl(LOG_LEVEL::TRACE), msg(), funct("") { }
-    S_LOG_ITEM(LOG_MODULE mdl, LOG_LEVEL lvl, std::string&& fn, std::string&& msg) : mdl(mdl), lvl(lvl), msg(std::move(msg)), funct(std::move(fn)) { }
-    S_LOG_ITEM(LOG_MODULE mdl, LOG_LEVEL lvl, std::string&& msg) : mdl(mdl), lvl(lvl), msg(std::move(msg)), funct("") { }
+    S_LOG_ITEM(LOG_MODULE mdl, LOG_LEVEL lvl, std::string fn, std::string msg) : mdl(mdl), lvl(lvl), msg(std::move(msg)), funct(std::move(fn)) { }
+    S_LOG_ITEM(LOG_MODULE mdl, LOG_LEVEL lvl, std::string msg) : mdl(mdl), lvl(lvl), msg(std::move(msg)) { }
 };
 
 const std::string log_module(LOG_MODULE mld);
@@ -172,7 +172,8 @@ logger::logger() :
         current_module(DEFAULT_MODULE),
         output_stdout(true),
         mtx() {
-    mkdir(LOG_DIR.c_str(), DEFFILEMODE);
+//    COUT << "JDEBUG :: " << mkdir(LOG_DIR.c_str(), DEFFILEMODE) << END;
+    COUT << "JDEBUG :: " << mkdir("log", DEFFILEMODE) << END;
     strm_uptr = std::make_unique<std::ofstream>(LOG_DIR + log_filename, std::ios::app);
     COUT << "logger with default filname: " << log_filename << " has been created" << END;
 }
@@ -183,7 +184,8 @@ logger::logger(const std::string &filename, bool log_to_stdout) :
         current_module(DEFAULT_MODULE),
         output_stdout(log_to_stdout),
         mtx() {
-    mkdir(LOG_DIR.c_str(), DEFFILEMODE);
+    // COUT << "JDEBUG :: " << mkdir(LOG_DIR.c_str(), DEFFILEMODE) << END;
+    COUT << "JDEBUG :: " << mkdir("log", DEFFILEMODE) << END;
     strm_uptr = std::make_unique<std::ofstream>(LOG_DIR + log_filename, std::ios::app);
     COUT << "logger with filename: " << log_filename << " has been created" << END;
 }

@@ -51,7 +51,7 @@ int main() {
     strmOpTesting();
     lvlEnforcer();
     stressTest();
-    g_QProcThread.join();
     logger::get_instance().stopLogging();
+    g_QProcThread.join();
     return 0;
 }
